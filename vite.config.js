@@ -66,9 +66,6 @@ export default defineConfig({
     },
     // Optimize dependencies
     optimizeDeps: {
-        include: [
-            '@inertiajs/vue3',
-            '@headlessui/vue',
-        ],
+        include: ['@inertiajs/vue3', '@headlessui/vue'],
     },
 });

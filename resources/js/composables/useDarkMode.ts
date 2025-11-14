@@ -18,9 +18,7 @@ const isDarkMode = ref(false);
 const getSystemTheme = (): 'dark' | 'light' => {
     if (typeof window === 'undefined') return THEME_LIGHT;
 
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? THEME_DARK
-        : THEME_LIGHT;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? THEME_DARK : THEME_LIGHT;
 };
 
 /**

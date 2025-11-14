@@ -9,9 +9,7 @@ import { onMounted } from 'vue';
  * Preload components by importing them
  * @param loaders - Array of dynamic import functions
  */
-export const usePreloadComponents = (
-    loaders: Array<() => Promise<any>>
-) => {
+export const usePreloadComponents = (loaders: Array<() => Promise<any>>) => {
     onMounted(() => {
         // Use requestIdleCallback if available, otherwise fallback to setTimeout
         const callback = () => {
@@ -42,9 +40,7 @@ export const usePreloadComponent = (loader: () => Promise<any>) => {
  * Batch preload multiple component sets
  * Useful for preloading related components
  */
-export const usePreloadComponentSet = (
-    sets: Record<string, Array<() => Promise<any>>>
-) => {
+export const usePreloadComponentSet = (sets: Record<string, Array<() => Promise<any>>>) => {
     onMounted(() => {
         const allLoaders = Object.values(sets).flat();
 

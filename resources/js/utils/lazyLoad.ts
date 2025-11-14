@@ -10,10 +10,7 @@ import { defineAsyncComponent, AsyncComponentLoader } from 'vue';
  * @param importStatement - The dynamic import statement
  * @param delayMs - Delay in milliseconds before showing loading component
  */
-export const lazyComponent = (
-    importStatement: () => Promise<any>,
-    delayMs: number = 200
-) => {
+export const lazyComponent = (importStatement: () => Promise<any>, delayMs: number = 200) => {
     return defineAsyncComponent({
         loader: importStatement,
         delay: delayMs,
@@ -31,9 +28,7 @@ export const lazyComponent = (
  * Create multiple lazy-loaded components at once
  * Useful for component registrations
  */
-export const createLazyComponents = (
-    components: Record<string, () => Promise<any>>
-) => {
+export const createLazyComponents = (components: Record<string, () => Promise<any>>) => {
     const lazyComponents: Record<string, any> = {};
 
     for (const [name, loader] of Object.entries(components)) {
