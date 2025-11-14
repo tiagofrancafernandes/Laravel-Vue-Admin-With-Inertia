@@ -46,6 +46,7 @@ class StoreSaleRequest extends FormRequest
         $validator->after(function ($validator) {
             // Validar soma dos pagamentos
             $totalPayments = collect($this->payments)->sum('amount');
+
             if (abs($totalPayments - $this->total_amount) > 0.01) {
                 $validator->errors()->add(
                     'payments',
@@ -56,6 +57,7 @@ class StoreSaleRequest extends FormRequest
             // Validar soma dos itens se informados
             if ($this->items && count($this->items) > 0) {
                 $totalItems = collect($this->items)->sum('subtotal');
+
                 if (abs($totalItems - $this->total_amount) > 0.01) {
                     $validator->errors()->add(
                         'items',
