@@ -1,0 +1,8 @@
+# PHP
+/vendor
+
+# NPM/Node
+/node_modules
+
+# Vercel
+.vercel

@@ -36,3 +36,6 @@ database.sqlite
 *.out
 *.zip
 _ide_helper*
+
+# Vercel
+.vercel
