@@ -23,18 +23,35 @@ class SaleController extends Controller
      */
     public function index(Request $request): Response
     {
-        $sales = Sale::with(['client:id,name,email', 'user:id,name', 'payments.paymentMethod:id,name'])
-            ->select('id', 'sale_number', 'client_id', 'user_id', 'total', 'status', 'created_at')
-            ->when($request->search, function ($query, $search) {
-                $query->where('sale_number', 'like', "%{$search}%")
-                    ->orWhereHas('client', fn ($q) => $q->where('name', 'like', "%{$search}%"));
-            })
-            ->latest()
-            ->paginate(15);
+        $this->authorize('viewAny', Sale::class);
+
+        $query = Sale::with([
+            'client:id,name,email',
+            'user:id,name',
+            'payments.paymentMethod:id,name',
+        ])
+            ->select('id', 'code', 'client_id', 'user_id', 'total_amount', 'status', 'created_at');
+
+        // Cliente vê apenas suas vendas
+        if ($request->user()->isClient() && $request->user()->client) {
+            $query->where('client_id', $request->user()->client->id);
+        }
+
+        // Filtros
+        $query->when($request->search, function ($query, $search) {
+            $query->where('code', 'like', "%{$search}%")
+                ->orWhereHas('client', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+        });
+
+        $query->when($request->date_from, fn ($q, $date) => $q->whereDate('created_at', '>=', $date));
+        $query->when($request->date_to, fn ($q, $date) => $q->whereDate('created_at', '<=', $date));
+        $query->when($request->status, fn ($q, $status) => $q->where('status', $status));
+
+        $sales = $query->latest()->paginate(15);
 
         return Inertia::render('Sales/Index', [
             'sales' => $sales,
-            'filters' => $request->only(['search']),
+            'filters' => $request->only(['search', 'date_from', 'date_to', 'status']),
         ]);
     }
 
@@ -43,14 +60,16 @@ class SaleController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create', Sale::class);
+
         // Cache payment methods for 1 hour
         $paymentMethods = Cache::remember('payment_methods_active', 3600, fn () => PaymentMethod::where('is_active', true)
-                ->select('id', 'name', 'code', 'description', 'is_active')
+                ->select('id', 'name', 'code', 'requires_client_balance', 'is_credit')
                 ->orderBy('display_order')
                 ->get());
 
         // Cache anonymous client for 24 hours
-        $anonymousClientId = Cache::remember('anonymous_client_id', 86400, fn () => Client::where('name', 'Anônimo')->value('id'));
+        $anonymousClientId = Cache::remember('anonymous_client_id', 86400, fn () => Client::where('is_anonymous', true)->value('id'));
 
         return Inertia::render('Sales/Create', [
             'paymentMethods' => $paymentMethods,
@@ -77,11 +96,13 @@ class SaleController extends Controller
      */
     public function show(Sale $sale): Response
     {
+        $this->authorize('view', $sale);
+
         // Load relationships with specific columns to optimize query size
         $sale->load([
-            'client:id,name,email,phone,cpf_cnpj',
+            'client:id,name,email,phone,document',
             'user:id,name,email',
-            'payments:id,sale_id,payment_method_id,amount',
+            'payments:id,sale_id,payment_method_id,amount,metadata',
             'payments.paymentMethod:id,name,code',
         ]);
 
@@ -95,10 +116,12 @@ class SaleController extends Controller
      */
     public function cancel(Sale $sale)
     {
+        $this->authorize('cancel', $sale);
+
         try {
             $this->saleService->cancelSale($sale);
 
-            return back()->with('success', 'Venda cancelada com sucesso!');
+            return redirect()->route('sales.index')->with('success', 'Venda cancelada com sucesso!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }
