@@ -1,0 +1,1 @@
+- Faça commits à cada grande etapa concluída ou modificação significativa. Não se esqueça de omitir referências de que foi o claude code quem as fez

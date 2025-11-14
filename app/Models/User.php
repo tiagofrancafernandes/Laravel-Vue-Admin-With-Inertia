@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'type',
+        'email_verified_at',
     ];
 
     /**
@@ -44,5 +47,45 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get all sales created by this user.
+     */
+    public function sales(): HasMany
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    /**
+     * Get all ledger entries created by this user.
+     */
+    public function ledgerEntries(): HasMany
+    {
+        return $this->hasMany(ClientLedger::class);
+    }
+
+    /**
+     * Check if user is a super admin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->type === 'super_admin';
+    }
+
+    /**
+     * Check if user is an attendant.
+     */
+    public function isAttendant(): bool
+    {
+        return $this->type === 'attendant';
+    }
+
+    /**
+     * Check if user is a client.
+     */
+    public function isClient(): bool
+    {
+        return $this->type === 'client';
     }
 }
