@@ -44,17 +44,13 @@ class SaleController extends Controller
     public function create(): Response
     {
         // Cache payment methods for 1 hour
-        $paymentMethods = Cache::remember('payment_methods_active', 3600, function () {
-            return PaymentMethod::where('is_active', true)
+        $paymentMethods = Cache::remember('payment_methods_active', 3600, fn () => PaymentMethod::where('is_active', true)
                 ->select('id', 'name', 'code', 'description', 'is_active')
                 ->orderBy('display_order')
-                ->get();
-        });
+                ->get());
 
         // Cache anonymous client for 24 hours
-        $anonymousClientId = Cache::remember('anonymous_client_id', 86400, function () {
-            return Client::where('name', 'Anônimo')->value('id');
-        });
+        $anonymousClientId = Cache::remember('anonymous_client_id', 86400, fn () => Client::where('name', 'Anônimo')->value('id'));
 
         return Inertia::render('Sales/Create', [
             'paymentMethods' => $paymentMethods,

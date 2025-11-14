@@ -158,12 +158,10 @@ class ClientController extends Controller
 
         // Don't cache search results (only cache full list)
         if (! $search) {
-            $clients = Cache::remember('clients_list_active', 3600, function () {
-                return Client::select('id', 'name', 'email', 'phone')
+            $clients = Cache::remember('clients_list_active', 3600, fn () => Client::select('id', 'name', 'email', 'phone')
                     ->orderBy('name')
                     ->limit(50)
-                    ->get();
-            });
+                    ->get());
         } else {
             $clients = Client::when($search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")

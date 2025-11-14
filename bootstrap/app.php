@@ -18,8 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Register middleware aliases
         $middleware->alias([
-            'super_admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
-            'attendant' => \App\Http\Middleware\EnsureAttendant::class,
+            'super_admin' => App\Http\Middleware\EnsureSuperAdmin::class,
+            'attendant' => App\Http\Middleware\EnsureAttendant::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
