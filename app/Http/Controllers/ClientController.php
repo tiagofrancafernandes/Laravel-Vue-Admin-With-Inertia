@@ -5,24 +5,34 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreClientRequest;
 use App\Models\Client;
 use App\Models\ClientBalance;
-use App\Models\ClientLedger;
+use App\Services\BalanceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ClientController extends Controller
 {
+    public function __construct(protected BalanceService $balanceService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
-        $clients = Client::when($request->search, function ($query, $search) {
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%")
-                ->orWhere('phone', 'like', "%{$search}%");
-        })
+        $this->authorize('viewAny', Client::class);
+
+        $clients = Client::with('balance:client_id,balance_amount,tab_amount')
+            ->where('is_anonymous', false)
+            ->when($request->search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('document', 'like', "%{$search}%");
+            })
             ->latest()
             ->paginate(15);
 
@@ -37,6 +47,8 @@ class ClientController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create', Client::class);
+
         return Inertia::render('Clients/Create');
     }
 
@@ -46,34 +58,18 @@ class ClientController extends Controller
     public function store(StoreClientRequest $request)
     {
         try {
-            $client = Client::create($request->validated());
+            $client = DB::transaction(function () use ($request) {
+                $client = Client::create($request->validated());
 
-            // Create initial balance if provided
-            if ($request->input('initial_balance', 0) > 0) {
+                // Criar saldo inicial (sempre zero)
                 ClientBalance::create([
                     'client_id' => $client->id,
-                    'balance' => $request->input('initial_balance'),
-                    'credit_limit' => 0,
+                    'balance_amount' => 0,
+                    'tab_amount' => 0,
                 ]);
 
-                // Record in ledger
-                ClientLedger::create([
-                    'client_id' => $client->id,
-                    'user_id' => auth()->id(),
-                    'type' => 'credit',
-                    'amount' => $request->input('initial_balance'),
-                    'balance_before' => 0,
-                    'balance_after' => $request->input('initial_balance'),
-                    'description' => 'Saldo inicial',
-                ]);
-            } else {
-                // Create zero balance
-                ClientBalance::create([
-                    'client_id' => $client->id,
-                    'balance' => 0,
-                    'credit_limit' => 0,
-                ]);
-            }
+                return $client;
+            });
 
             // Invalidate cache when a new client is created
             Cache::forget('clients_list_active');
@@ -89,64 +85,49 @@ class ClientController extends Controller
      */
     public function show(Client $client): Response
     {
+        $this->authorize('view', $client);
+
+        $client->load('balance');
+
+        $recentSales = $client->sales()
+            ->with('payments.paymentMethod')
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(fn ($sale) => [
+                'id' => $sale->id,
+                'code' => $sale->code,
+                'total_amount' => $sale->total_amount,
+                'status' => $sale->status,
+                'created_at' => $sale->created_at,
+            ]);
+
+        $recentTransactions = $client->ledger()
+            ->latest()
+            ->take(20)
+            ->get()
+            ->map(fn ($transaction) => [
+                'id' => $transaction->id,
+                'type' => $transaction->type,
+                'amount' => $transaction->amount,
+                'balance_after' => $transaction->balance_after,
+                'tab_after' => $transaction->tab_after,
+                'description' => $transaction->description,
+                'created_at' => $transaction->created_at,
+            ]);
+
+        $stats = [
+            'sales_count' => $client->sales()->count(),
+            'total_spent' => $client->sales()->where('status', 'completed')->sum('total_amount'),
+            'last_sale' => $client->sales()->latest()->first()?->created_at,
+        ];
+
         return Inertia::render('Clients/Show', [
             'client' => $client,
-            'balance' => $client->balance,
-            'recentSales' => $client->sales()
-                ->with('payments')
-                ->latest()
-                ->take(10)
-                ->get()
-                ->map(fn ($sale) => [
-                    'id' => $sale->id,
-                    'sale_number' => $sale->sale_number,
-                    'total' => $sale->total,
-                    'status' => $sale->status,
-                    'created_at' => $sale->created_at,
-                ]),
-            'recentTransactions' => $client->ledger()
-                ->latest()
-                ->take(20)
-                ->get()
-                ->map(fn ($transaction) => [
-                    'id' => $transaction->id,
-                    'type' => $transaction->type,
-                    'amount' => $transaction->amount,
-                    'balance_before' => $transaction->balance_before,
-                    'balance_after' => $transaction->balance_after,
-                    'description' => $transaction->description,
-                    'created_at' => $transaction->created_at,
-                ]),
-            'stats' => [
-                'sales_count' => $client->sales()->count(),
-                'total_spent' => $client->sales()->where('status', 'completed')->sum('total'),
-                'last_sale' => $client->sales()->latest()->first()?->only('created_at'),
-            ],
+            'recentSales' => $recentSales,
+            'recentTransactions' => $recentTransactions,
+            'stats' => $stats,
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        return back()->withErrors(['error' => 'Clientes não podem ser editados']);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        return back()->withErrors(['error' => 'Clientes não podem ser editados']);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        return back()->withErrors(['error' => 'Clientes não podem ser deletados']);
     }
 
     /**
@@ -154,25 +135,97 @@ class ClientController extends Controller
      */
     public function selectList(Request $request)
     {
+        $this->authorize('viewAny', Client::class);
+
         $search = $request->input('search', '');
 
-        // Don't cache search results (only cache full list)
-        if (! $search) {
-            $clients = Cache::remember('clients_list_active', 3600, fn () => Client::select('id', 'name', 'email', 'phone')
-                    ->orderBy('name')
-                    ->limit(50)
-                    ->get());
-        } else {
-            $clients = Client::when($search, function ($query, $search) {
+        $clients = Client::with('balance:client_id,balance_amount,tab_amount')
+            ->where('is_anonymous', false)
+            ->when($search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%");
             })
-                ->select('id', 'name', 'email', 'phone')
-                ->limit(10)
-                ->get();
-        }
+            ->select('id', 'name', 'email', 'phone')
+            ->limit(20)
+            ->get();
 
-        return response()->json($clients);
+        return response()->json([
+            'data' => $clients,
+        ]);
+    }
+
+    /**
+     * Get client balance.
+     */
+    public function balance(Client $client)
+    {
+        $this->authorize('view', $client);
+
+        $balance = $client->balance()->first();
+
+        return response()->json([
+            'client_id' => $client->id,
+            'balance_amount' => $balance?->balance_amount ?? 0,
+            'tab_amount' => $balance?->tab_amount ?? 0,
+            'updated_at' => $balance?->updated_at,
+        ]);
+    }
+
+    /**
+     * Add balance to client.
+     */
+    public function addBalance(Request $request, Client $client)
+    {
+        $this->authorize('addBalance', $client);
+
+        $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $this->balanceService->addBalance(
+                $client->id,
+                $request->input('amount'),
+                $request->input('description', 'Adição de saldo')
+            );
+
+            return back()->with('success', 'Saldo adicionado com sucesso!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Pay client tab (caderneta).
+     */
+    public function payTab(Request $request, Client $client)
+    {
+        $this->authorize('payTab', $client);
+
+        $balance = $client->balance()->first();
+
+        $request->validate([
+            'amount' => [
+                'required',
+                'numeric',
+                'min:0.01',
+                'max:' . ($balance?->tab_amount ?? 0),
+            ],
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $this->balanceService->payTab(
+                $client->id,
+                $request->input('amount'),
+                $request->input('description', 'Pagamento de dívida')
+            );
+
+            return back()->with('success', 'Pagamento registrado com sucesso!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 }

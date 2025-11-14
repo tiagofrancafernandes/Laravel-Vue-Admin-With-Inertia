@@ -27,11 +27,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Clients routes
     Route::resource('clients', ClientController::class)->only(['index', 'create', 'store', 'show']);
+    Route::post('clients/{client}/add-balance', [ClientController::class, 'addBalance'])->name('clients.add-balance');
+    Route::post('clients/{client}/pay-tab', [ClientController::class, 'payTab'])->name('clients.pay-tab');
 });
 
 // API routes
 Route::middleware('auth')->group(function () {
     Route::get('/api/clients/select', [ClientController::class, 'selectList'])->name('api.clients.select');
+    Route::get('/api/clients/{client}/balance', [ClientController::class, 'balance'])->name('api.clients.balance');
 });
 
 require __DIR__ . '/auth.php';
