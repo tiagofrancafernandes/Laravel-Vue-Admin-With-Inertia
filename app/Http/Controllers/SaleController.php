@@ -22,7 +22,8 @@ class SaleController extends Controller
      */
     public function index(Request $request): Response
     {
-        $sales = Sale::with(['client', 'user', 'payments'])
+        $sales = Sale::with(['client:id,name,email', 'user:id,name', 'payments.paymentMethod:id,name'])
+            ->select('id', 'sale_number', 'client_id', 'user_id', 'total', 'status', 'created_at')
             ->when($request->search, function ($query, $search) {
                 $query->where('sale_number', 'like', "%{$search}%")
                     ->orWhereHas('client', fn ($q) => $q->where('name', 'like', "%{$search}%"));
@@ -43,6 +44,7 @@ class SaleController extends Controller
     {
         return Inertia::render('Sales/Create', [
             'paymentMethods' => PaymentMethod::where('is_active', true)
+                ->select('id', 'name', 'code', 'description', 'is_active')
                 ->orderBy('display_order')
                 ->get(),
             'anonymousClientId' => Client::where('name', 'Anônimo')->value('id'),
@@ -68,8 +70,16 @@ class SaleController extends Controller
      */
     public function show(Sale $sale): Response
     {
+        // Load relationships with specific columns to optimize query size
+        $sale->load([
+            'client:id,name,email,phone,cpf_cnpj',
+            'user:id,name,email',
+            'payments:id,sale_id,payment_method_id,amount',
+            'payments.paymentMethod:id,name,code',
+        ]);
+
         return Inertia::render('Sales/Show', [
-            'sale' => $sale->load(['client', 'user', 'payments.paymentMethod']),
+            'sale' => $sale,
         ]);
     }
 
