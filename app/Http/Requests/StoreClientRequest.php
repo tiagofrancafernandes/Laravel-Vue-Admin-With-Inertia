@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Client;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreClientRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreClientRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create', Client::class);
     }
 
     /**
@@ -21,8 +22,29 @@ class StoreClientRequest extends FormRequest
      */
     public function rules(): array
     {
+        $clientId = $this->route('client')?->id;
+
         return [
-            //
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'nullable|email|unique:clients,email,' . $clientId,
+            'phone' => 'nullable|string|max:20',
+            'document' => 'nullable|string|max:20|unique:clients,document,' . $clientId,
+            'notes' => 'nullable|string|max:1000',
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'O nome é obrigatório.',
+            'name.min' => 'O nome deve ter no mínimo 3 caracteres.',
+            'name.max' => 'O nome deve ter no máximo 255 caracteres.',
+            'email.email' => 'O email deve ser um endereço válido.',
+            'email.unique' => 'Este email já está cadastrado.',
+            'document.unique' => 'Este documento já está cadastrado.',
         ];
     }
 }
