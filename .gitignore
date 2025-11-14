@@ -1,0 +1,25 @@
+# Laravel
+/bootstrap/cache/
+/storage/
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build
+/public/build/
+/public/hot
+
+# Local files
+database.sqlite
