@@ -5,8 +5,12 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { setupDarkMode } from './composables/useDarkMode';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+// Inicializa dark mode antes de criar a aplicação Vue
+setupDarkMode();
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
