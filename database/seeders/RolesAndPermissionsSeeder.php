@@ -17,9 +17,14 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * @suppress PHP0419
      */
     public function run(): void
     {
+        if (!class_exists(Role::class)) {
+            return;
+        }
+
         return; // Adiar enquanto não implementado
 
         // Reset cached roles and permissions

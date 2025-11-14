@@ -23,3 +23,16 @@ yarn-error.log
 
 # Local files
 database.sqlite
+
+*.cache
+
+*no*commit*
+*No*Commit*
+*NO*COMMIT*
+*.bkp.*
+*.bkp
+*.log
+*.swp
+*.out
+*.zip
+_ide_helper*

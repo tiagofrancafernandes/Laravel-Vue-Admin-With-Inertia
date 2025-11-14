@@ -1,89 +1,90 @@
 <template>
-  <div class="mb-6">
-    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-      Selecione o(s) Método(s) de Pagamento
-      <span class="text-red-500">*</span>
-    </label>
-
-    <div class="space-y-3">
-      <div v-for="method in paymentMethods" :key="method.id" class="flex items-start">
-        <input
-          :id="`method-${method.id}`"
-          type="checkbox"
-          :value="method.id"
-          :checked="isSelected(method.id)"
-          @change="toggleMethod(method.id)"
-          class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-        />
-        <label :for="`method-${method.id}`" class="ml-3 flex-1 cursor-pointer">
-          <div class="font-medium text-gray-900 dark:text-gray-100">
-            {{ method.name }}
-          </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">
-            {{ method.description }}
-          </div>
+    <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            Selecione o(s) Método(s) de Pagamento
+            <span class="text-red-500">*</span>
         </label>
 
-        <!-- Payment input for selected methods -->
-        <div v-if="isSelected(method.id)" class="ml-4 w-32">
-          <input
-            :value="getPaymentAmount(method.id)"
-            @input="setPaymentAmount(method.id, $event.target.value)"
-            type="number"
-            placeholder="0.00"
-            step="0.01"
-            min="0"
-            :class="[
-              'w-full px-2 py-1 border rounded text-right',
-              'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100',
-              'border-gray-300 dark:border-gray-600 focus:ring-blue-500',
-            ]"
-          />
+        <div class="space-y-3">
+            <div v-for="method in paymentMethods" :key="method.id" class="flex items-start">
+                <input
+                    :id="`method-${method.id}`"
+                    type="checkbox"
+                    :value="method.id"
+                    :checked="isSelected(method.id)"
+                    @change="toggleMethod(method.id)"
+                    class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <label :for="`method-${method.id}`" class="ml-3 flex-1 cursor-pointer">
+                    <div class="font-medium text-gray-900 dark:text-gray-100">
+                        {{ method.name }}
+                    </div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ method.description }}
+                    </div>
+                </label>
+
+                <!-- Payment input for selected methods -->
+                <div v-if="isSelected(method.id)" class="ml-4 w-32">
+                    <input
+                        :value="getPaymentAmount(method.id)"
+                        @input="setPaymentAmount(method.id, $event.target.value)"
+                        type="number"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0"
+                        :class="[
+                            'w-full px-2 py-1 border rounded text-right',
+                            'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100',
+                            'border-gray-300 dark:border-gray-600 focus:ring-blue-500',
+                        ]"
+                    />
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Special handling for cash method -->
-    <div v-if="selectedMethods.has(getCashMethodId())" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-      <label class="flex items-center space-x-2">
-        <input
-          v-model="addChangeAsBalance"
-          type="checkbox"
-          class="rounded border-gray-300 text-green-600 focus:ring-green-500"
-        />
-        <span class="text-sm text-gray-700 dark:text-gray-300">
-          Adicionar troco como saldo do cliente
-        </span>
-      </label>
-    </div>
+        <!-- Special handling for cash method -->
+        <div
+            v-if="selectedMethods.has(getCashMethodId())"
+            class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700"
+        >
+            <label class="flex items-center space-x-2">
+                <input
+                    v-model="addChangeAsBalance"
+                    type="checkbox"
+                    class="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <span class="text-sm text-gray-700 dark:text-gray-300">Adicionar troco como saldo do cliente</span>
+            </label>
+        </div>
 
-    <div v-if="error" class="mt-2 text-sm text-red-500 dark:text-red-400">
-      {{ error }}
+        <div v-if="error" class="mt-2 text-sm text-red-500 dark:text-red-400">
+            {{ error }}
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue';
 
 interface PaymentMethod {
-  id: number;
-  name: string;
-  code: string;
-  description?: string;
+    id: number;
+    name: string;
+    code: string;
+    description?: string;
 }
 
 interface Props {
-  paymentMethods: PaymentMethod[];
-  modelValue: Array<{ method_id: number; amount: number }>;
-  error?: string;
+    paymentMethods: PaymentMethod[];
+    modelValue: Array<{ method_id: number; amount: number }>;
+    error?: string;
 }
 
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  "update:modelValue": [value: Array<{ method_id: number; amount: number }>];
-  "update:addChangeAsBalance": [value: boolean];
+    'update:modelValue': [value: Array<{ method_id: number; amount: number }>];
+    'update:addChangeAsBalance': [value: boolean];
 }>();
 
 const selectedMethods = ref(new Set<number>());
@@ -91,39 +92,39 @@ const paymentAmounts = ref(new Map<number, number>());
 const addChangeAsBalance = ref(false);
 
 const isSelected = (methodId: number): boolean => {
-  return selectedMethods.value.has(methodId);
+    return selectedMethods.value.has(methodId);
 };
 
 const toggleMethod = (methodId: number) => {
-  if (selectedMethods.value.has(methodId)) {
-    selectedMethods.value.delete(methodId);
-    paymentAmounts.value.delete(methodId);
-  } else {
-    selectedMethods.value.add(methodId);
-    paymentAmounts.value.set(methodId, 0);
-  }
-  emitUpdate();
+    if (selectedMethods.value.has(methodId)) {
+        selectedMethods.value.delete(methodId);
+        paymentAmounts.value.delete(methodId);
+    } else {
+        selectedMethods.value.add(methodId);
+        paymentAmounts.value.set(methodId, 0);
+    }
+    emitUpdate();
 };
 
 const getPaymentAmount = (methodId: number): number => {
-  return paymentAmounts.value.get(methodId) || 0;
+    return paymentAmounts.value.get(methodId) || 0;
 };
 
 const setPaymentAmount = (methodId: number, value: string) => {
-  const amount = parseFloat(value) || 0;
-  paymentAmounts.value.set(methodId, amount);
-  emitUpdate();
+    const amount = parseFloat(value) || 0;
+    paymentAmounts.value.set(methodId, amount);
+    emitUpdate();
 };
 
 const getCashMethodId = (): number => {
-  return props.paymentMethods.find((m) => m.code === "cash")?.id || 0;
+    return props.paymentMethods.find((m) => m.code === 'cash')?.id || 0;
 };
 
 const emitUpdate = () => {
-  const payments = Array.from(selectedMethods.value).map((methodId) => ({
-    method_id: methodId,
-    amount: paymentAmounts.value.get(methodId) || 0,
-  }));
-  emit("update:modelValue", payments);
+    const payments = Array.from(selectedMethods.value).map((methodId) => ({
+        method_id: methodId,
+        amount: paymentAmounts.value.get(methodId) || 0,
+    }));
+    emit('update:modelValue', payments);
 };
 </script>
