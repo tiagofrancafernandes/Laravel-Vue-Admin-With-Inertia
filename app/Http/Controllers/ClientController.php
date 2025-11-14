@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\ClientBalance;
 use App\Models\ClientLedger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -73,6 +74,9 @@ class ClientController extends Controller
                     'credit_limit' => 0,
                 ]);
             }
+
+            // Invalidate cache when a new client is created
+            Cache::forget('clients_list_active');
 
             return redirect()->route('clients.show', $client)->with('success', 'Cliente criado com sucesso!');
         } catch (\Exception $e) {
@@ -152,14 +156,24 @@ class ClientController extends Controller
     {
         $search = $request->input('search', '');
 
-        $clients = Client::when($search, function ($query, $search) {
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%")
-                ->orWhere('phone', 'like', "%{$search}%");
-        })
-            ->select('id', 'name', 'email', 'phone')
-            ->limit(10)
-            ->get();
+        // Don't cache search results (only cache full list)
+        if (! $search) {
+            $clients = Cache::remember('clients_list_active', 3600, function () {
+                return Client::select('id', 'name', 'email', 'phone')
+                    ->orderBy('name')
+                    ->limit(50)
+                    ->get();
+            });
+        } else {
+            $clients = Client::when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            })
+                ->select('id', 'name', 'email', 'phone')
+                ->limit(10)
+                ->get();
+        }
 
         return response()->json($clients);
     }
