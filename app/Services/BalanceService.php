@@ -66,6 +66,7 @@ class BalanceService
                 ->firstOrFail();
 
             $currentBalance = (float) $balance->balance;
+
             if ($currentBalance < $amount) {
                 throw new \Exception("Insufficient balance. Available: {$currentBalance}, Required: {$amount}");
             }
@@ -144,6 +145,7 @@ class BalanceService
                 ->firstOrFail();
 
             $currentTab = (float) $balance->credit_limit;
+
             if ($currentTab < $amount) {
                 throw new \Exception("Payment exceeds tab balance. Tab: {$currentTab}, Payment: {$amount}");
             }

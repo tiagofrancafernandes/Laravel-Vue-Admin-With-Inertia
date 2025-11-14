@@ -10,7 +10,8 @@ class PaymentService
 {
     public function __construct(
         protected BalanceService $balanceService
-    ) {}
+    ) {
+    }
 
     /**
      * Process a payment for a sale.

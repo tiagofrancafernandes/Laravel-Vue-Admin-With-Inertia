@@ -26,7 +26,6 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         return; // Adiar enquanto não implementado
-
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 

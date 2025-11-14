@@ -11,7 +11,8 @@ class SaleService
     public function __construct(
         protected PaymentService $paymentService,
         protected BalanceService $balanceService
-    ) {}
+    ) {
+    }
 
     /**
      * Create a new sale with payments.
@@ -40,6 +41,7 @@ class SaleService
 
             // Process payments
             $totalPaid = 0;
+
             foreach ($data['payments'] as $paymentData) {
                 $payment = $this->paymentService->processPayment($sale, $paymentData);
                 $totalPaid += (float) $payment->amount;

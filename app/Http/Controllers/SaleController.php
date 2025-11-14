@@ -13,7 +13,9 @@ use Inertia\Response;
 
 class SaleController extends Controller
 {
-    public function __construct(protected SaleService $saleService) {}
+    public function __construct(protected SaleService $saleService)
+    {
+    }
 
     /**
      * Display a listing of sales.
@@ -54,6 +56,7 @@ class SaleController extends Controller
     {
         try {
             $sale = $this->saleService->createSale($request->validated());
+
             return redirect()->route('sales.show', $sale)->with('success', 'Venda criada com sucesso!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
@@ -77,6 +80,7 @@ class SaleController extends Controller
     {
         try {
             $this->saleService->cancelSale($sale);
+
             return back()->with('success', 'Venda cancelada com sucesso!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
