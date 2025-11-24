@@ -1,4 +1,6 @@
 <template>
+    <Head :title="`Venda ${sale.sale_number}`" />
+
     <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
@@ -213,7 +215,7 @@ import { ref } from 'vue';
 import Button from '@/Components/Forms/Button.vue';
 import Card from '@/Components/UI/Card.vue';
 import Modal from '@/Components/UI/Modal.vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 interface SaleItem {
     description: string;

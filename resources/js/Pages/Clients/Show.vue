@@ -1,4 +1,6 @@
 <template>
+    <Head :title="`${client.name} - Cliente`" />
+
     <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
@@ -211,7 +213,7 @@
 import BalanceDisplay from '@/Components/Clients/BalanceDisplay.vue';
 import Button from '@/Components/Forms/Button.vue';
 import Card from '@/Components/UI/Card.vue';
-import { Link } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 interface Client {
     id: number;

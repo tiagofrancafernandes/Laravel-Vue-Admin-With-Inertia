@@ -1,4 +1,6 @@
 <template>
+    <Head title="Clientes" />
+
     <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
@@ -106,7 +108,7 @@ import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
 import Card from '@/Components/UI/Card.vue';
 import Table from '@/Components/UI/Table.vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 interface Client {
     id: number;

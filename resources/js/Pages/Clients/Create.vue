@@ -1,4 +1,6 @@
 <template>
+    <Head title="Novo Cliente" />
+
     <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
@@ -117,7 +119,7 @@ import { ref } from 'vue';
 import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
 import Card from '@/Components/UI/Card.vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 interface DocumentValidation {
     valid: boolean;

@@ -22,7 +22,7 @@ class StoreClientRequest extends FormRequest
      */
     public function rules(): array
     {
-        $clientId = $this->route('client')?->id;
+        $clientId = $this->route('client')?->id ?? 'null';
 
         return [
             'name' => 'required|string|min:3|max:255',

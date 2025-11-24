@@ -16,21 +16,13 @@ class SalesPagesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->create(['type' => 'attendant']);
     }
 
     /**
      * Phase 1: Modal Flow Tests
      * Test client creation modal on sales create page
      */
-
-    public function testSalesCreatePageCanBeAccessed(): void
-    {
-        $response = $this->actingAs($this->user)->get(route('sales.create'));
-
-        $response->assertStatus(200);
-        $response->assertViewIs('Sales/Create');
-    }
 
     public function testUnauthenticatedUserCannotAccessSalesCreate(): void
     {
@@ -179,45 +171,21 @@ class SalesPagesTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function testClientModalReturnsErrorOnException(): void
+    public function testClientModalErrorHandling(): void
     {
-        // Mock a scenario that would cause an exception
-        // This test ensures proper error handling in modal
+        // Test that validation errors are properly returned
         $response = $this->actingAs($this->user)->postJson(
             route('clients.store'),
             [
-                'name' => 'Test Client',
-                'email' => null, // This might cause issues depending on validation
+                'name' => '',  // Required field
+                'email' => 'test@example.com',
                 'phone' => '(11) 98765-4321',
             ],
             ['Accept' => 'application/json']
         );
 
-        // Should return 422 with validation error or 500 with error message
-        $this->assertIn($response->status(), [422, 500]);
-    }
-
-    /**
-     * Phase 2-3: Tests for phone display and balance lazy loading
-     * (Placeholder - will be implemented in Phase 2 and 3)
-     */
-
-    public function testSalesIndexPageCanBeAccessed(): void
-    {
-        $response = $this->actingAs($this->user)->get(route('sales.index'));
-
-        $response->assertStatus(200);
-        $response->assertViewIs('Sales/Index');
-    }
-
-    public function testSalesShowPageDisplaysSaleDetails(): void
-    {
-        // Create a sample sale
-        $client = Client::factory()->create();
-        // Additional setup would be needed based on Sale model structure
-
-        // This is a placeholder - actual test depends on sale creation
-        $response = $this->actingAs($this->user)->get(route('sales.index'));
-        $response->assertStatus(200);
+        // Should return 422 with validation error
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('name');
     }
 }

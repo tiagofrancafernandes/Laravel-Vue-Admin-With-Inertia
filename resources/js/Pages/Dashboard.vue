@@ -2,7 +2,7 @@
 import Card from '@/Components/UI/Card.vue';
 import StatsCard from '@/Components/UI/StatsCard.vue';
 import Table from '@/Components/UI/Table.vue';
-import { Link } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 interface Props {
     todayStats: {
@@ -56,6 +56,8 @@ const formatDate = (date: string): string => {
 </script>
 
 <template>
+    <Head title="Dashboard" />
+
     <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->

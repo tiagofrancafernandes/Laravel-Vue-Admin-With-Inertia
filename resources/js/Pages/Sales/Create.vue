@@ -1,4 +1,6 @@
 <template>
+    <Head title="Nova Venda" />
+
     <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
@@ -164,7 +166,7 @@ import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
 import Card from '@/Components/UI/Card.vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 interface PaymentMethod {
     id: number;
