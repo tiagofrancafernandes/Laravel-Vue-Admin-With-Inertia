@@ -33,10 +33,10 @@
                         </div>
                         <div v-if="client.balance" class="text-xs text-gray-400 mt-1 flex gap-4">
                             <span class="text-green-600">
-                                Saldo: {{ formatCurrency(client.balance.balance_amount) }}
+                                Saldo: {{ formatCurrency(client.balance.balance) }}
                             </span>
-                            <span v-if="client.balance.tab_amount > 0" class="text-red-600">
-                                Deve: {{ formatCurrency(client.balance.tab_amount) }}
+                            <span v-if="client.balance.credit_limit > 0" class="text-red-600">
+                                Limite: {{ formatCurrency(client.balance.credit_limit) }}
                             </span>
                         </div>
                     </button>
@@ -74,6 +74,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import { useDebounce } from '@/Composables/useDebounce';
+import { useClientBalance } from '@/Composables/useClientBalance';
 import { formatCurrency, formatPhone } from '@/Utils/helpers';
 import Input from '@/Components/Common/Input.vue';
 import Button from '@/Components/Common/Button.vue';
@@ -88,13 +89,15 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'balance-loaded']);
 
 const search = ref('');
 const clients = ref([]);
 const selectedClient = ref(null);
 const showDropdown = ref(false);
 const showModal = ref(false);
+
+const { balance, loading: balanceLoading, fetchBalance } = useClientBalance();
 
 const onSearch = useDebounce(async () => {
     if (search.value.length < 2) {
@@ -113,16 +116,22 @@ const onSearch = useDebounce(async () => {
     }
 }, 300);
 
-const selectClient = (client) => {
+const selectClient = async (client) => {
     selectedClient.value = client;
     emit('update:modelValue', client.id);
     showDropdown.value = false;
     search.value = '';
+
+    // Load client balance in the background
+    await fetchBalance(client.id);
+    emit('balance-loaded', balance.value);
 };
 
 const clearSelection = () => {
     selectedClient.value = null;
     emit('update:modelValue', props.defaultValue);
+    // Reset balance when clearing selection
+    balance.value = null;
 };
 
 const openNewClientModal = () => {
