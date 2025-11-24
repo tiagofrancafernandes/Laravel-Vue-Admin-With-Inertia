@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSaleRequest;
+use App\Http\Requests\SaleFilterRequest;
 use App\Models\Sale;
 use App\Models\Client;
 use App\Models\PaymentMethod;
 use App\Services\SaleService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Str;
 
 class SaleController extends Controller
 {
@@ -21,7 +22,7 @@ class SaleController extends Controller
     /**
      * Display a listing of sales.
      */
-    public function index(Request $request): Response
+    public function index(SaleFilterRequest $request): Response
     {
         $this->authorize('viewAny', Sale::class);
 
@@ -38,20 +39,25 @@ class SaleController extends Controller
         }
 
         // Filtros
-        $query->when($request->search, function ($query, $search) {
+        $search = $request->input('search');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+        $status = $request->input('status');
+
+        $query->when($search, function ($query, $search) {
             $query->where('code', 'like', "%{$search}%")
                 ->orWhereHas('client', fn ($q) => $q->where('name', 'like', "%{$search}%"));
-        });
+        }, $search);
 
-        $query->when($request->date_from, fn ($q, $date) => $q->whereDate('created_at', '>=', $date));
-        $query->when($request->date_to, fn ($q, $date) => $q->whereDate('created_at', '<=', $date));
-        $query->when($request->status, fn ($q, $status) => $q->where('status', $status));
+        $query->when($dateFrom, fn ($q, $date) => $q->whereDate('created_at', '>=', $date), $dateFrom);
+        $query->when($dateTo, fn ($q, $date) => $q->whereDate('created_at', '<=', $date), $dateTo);
+        $query->when($status, fn ($q, $status) => $q->where('status', $status), $status);
 
         $sales = $query->latest()->paginate(15);
 
         return Inertia::render('Sales/Index', [
             'sales' => $sales,
-            'filters' => $request->only(['search', 'date_from', 'date_to', 'status']),
+            'filters' => $request->getFilters(),
         ]);
     }
 
@@ -64,9 +70,9 @@ class SaleController extends Controller
 
         // Cache payment methods for 1 hour
         $paymentMethods = Cache::remember('payment_methods_active', 3600, fn () => PaymentMethod::where('is_active', true)
-                ->select('id', 'name', 'code', 'requires_client_balance', 'is_credit')
-                ->orderBy('display_order')
-                ->get());
+            ->select('id', 'name', 'code', 'requires_client_balance', 'is_credit')
+            ->orderBy('display_order')
+            ->get());
 
         // Cache anonymous client for 24 hours
         $anonymousClientId = Cache::remember('anonymous_client_id', 86400, fn () => Client::where('is_anonymous', true)->value('id'));
@@ -83,7 +89,9 @@ class SaleController extends Controller
     public function store(StoreSaleRequest $request)
     {
         try {
-            $sale = $this->saleService->createSale($request->validated());
+            $sale = $this->saleService->createSale(array_merge([
+                'code' => 'S' . Str::upper(Str::random(6)),
+            ], $request->validated()));
 
             return redirect()->route('sales.show', $sale)->with('success', 'Venda criada com sucesso!');
         } catch (\Exception $e) {

@@ -2,11 +2,38 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property bool $is_active
+ * @property int $display_order
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, SalePayment> $payments
+ * @property-read int|null $payments_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereDisplayOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class PaymentMethod extends Model
 {
+    use HasFactory;
+
     protected $table = 'payment_methods';
 
     protected $fillable = [

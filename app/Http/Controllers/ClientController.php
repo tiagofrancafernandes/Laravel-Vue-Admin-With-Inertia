@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreClientRequest;
+use App\Http\Requests\AddClientBalanceRequest;
+use App\Http\Requests\PayClientTabRequest;
+use App\Http\Requests\ClientFilterRequest;
+use App\Http\Requests\ClientSelectRequest;
 use App\Models\Client;
 use App\Models\ClientBalance;
 use App\Services\BalanceService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Str;
 
 class ClientController extends Controller
 {
@@ -21,13 +25,15 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(ClientFilterRequest $request): Response
     {
         $this->authorize('viewAny', Client::class);
 
-        $clients = Client::with('balance:client_id,balance_amount,tab_amount')
+        $search = $request->input('search');
+
+        $clients = Client::with('balance:client_id,balance,credit_limit')
             ->where('is_anonymous', false)
-            ->when($request->search, function ($query, $search) {
+            ->when($search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%")
@@ -38,7 +44,7 @@ class ClientController extends Controller
 
         return Inertia::render('Clients/Index', [
             'clients' => $clients,
-            'filters' => $request->only(['search']),
+            'filters' => $request->getFilters(),
         ]);
     }
 
@@ -59,7 +65,12 @@ class ClientController extends Controller
     {
         try {
             $client = DB::transaction(function () use ($request) {
-                $client = Client::create($request->validated());
+                $client = Client::create(array_merge(
+                    [
+                        'code' => 'C' . Str::upper(Str::random(6)),
+                    ],
+                    $request->validated(),
+                ));
 
                 // Criar saldo inicial (sempre zero)
                 ClientBalance::create([
@@ -133,13 +144,13 @@ class ClientController extends Controller
     /**
      * Get clients list for select/autocomplete.
      */
-    public function selectList(Request $request)
+    public function selectList(ClientSelectRequest $request)
     {
         $this->authorize('viewAny', Client::class);
 
-        $search = $request->input('search', '');
+        $search = $request->getSearch();
 
-        $clients = Client::with('balance:client_id,balance_amount,tab_amount')
+        $clients = Client::with('balance:client_id,balance,credit_limit')
             ->where('is_anonymous', false)
             ->when($search, function ($query, $search) {
                 $query->where('name', 'ilike', "%{$search}%")
@@ -166,8 +177,8 @@ class ClientController extends Controller
 
         return response()->json([
             'client_id' => $client->id,
-            'balance_amount' => $balance?->balance_amount ?? 0,
-            'tab_amount' => $balance?->tab_amount ?? 0,
+            'balance' => $balance?->balance ?? 0,
+            'credit_limit' => $balance?->credit_limit ?? 0,
             'updated_at' => $balance?->updated_at,
         ]);
     }
@@ -175,14 +186,9 @@ class ClientController extends Controller
     /**
      * Add balance to client.
      */
-    public function addBalance(Request $request, Client $client)
+    public function addBalance(AddClientBalanceRequest $request, Client $client)
     {
         $this->authorize('addBalance', $client);
-
-        $request->validate([
-            'amount' => 'required|numeric|min:0.01',
-            'description' => 'nullable|string|max:500',
-        ]);
 
         try {
             $this->balanceService->addBalance(
@@ -200,21 +206,9 @@ class ClientController extends Controller
     /**
      * Pay client tab (caderneta).
      */
-    public function payTab(Request $request, Client $client)
+    public function payTab(PayClientTabRequest $request, Client $client)
     {
         $this->authorize('payTab', $client);
-
-        $balance = $client->balance()->first();
-
-        $request->validate([
-            'amount' => [
-                'required',
-                'numeric',
-                'min:0.01',
-                'max:' . ($balance?->tab_amount ?? 0),
-            ],
-            'description' => 'nullable|string|max:500',
-        ]);
 
         try {
             $this->balanceService->payTab(

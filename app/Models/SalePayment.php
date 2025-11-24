@@ -5,6 +5,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $sale_id
+ * @property int $payment_method_id
+ * @property numeric $amount
+ * @property numeric|null $received_amount
+ * @property numeric|null $change_amount
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read PaymentMethod $paymentMethod
+ * @property-read Sale $sale
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment whereChangeAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment whereMetadata($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment wherePaymentMethodId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment whereReceivedAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment whereSaleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SalePayment whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class SalePayment extends Model
 {
     protected $table = 'sale_payments';

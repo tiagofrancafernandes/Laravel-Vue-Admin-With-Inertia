@@ -14,10 +14,12 @@ class DefaultClientSeeder extends Seeder
     public function run(): void
     {
         // Create anonymous client for one-time purchases
+        $anonymousClientCode = 'CANON00';
         $anonymousClient = Client::firstOrCreate(
             ['email' => 'anonimo@system.local'],
             [
                 'name' => 'Anônimo',
+                'code' => $anonymousClientCode,
                 'phone' => null,
                 'cpf_cnpj' => null,
             ]

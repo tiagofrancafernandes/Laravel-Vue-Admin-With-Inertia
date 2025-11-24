@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\Feature\LocalOnly;
+namespace Tests\Feature\Pages;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CodeDemoTest extends TestCase
+class AdminPagesTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCodeDemoTestAccessToDashboard(): void
+    public function testIfCanAccesAdminDashboardPageTest(): void
     {
         $user = User::factory()->create();
 

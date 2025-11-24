@@ -2,12 +2,55 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $code
+ * @property string $sale_number
+ * @property int $client_id
+ * @property int $user_id
+ * @property array<array-key, mixed> $items
+ * @property numeric $subtotal
+ * @property numeric $discount
+ * @property string $total_amount
+ * @property string $status
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read Client $client
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ClientLedger> $ledgerEntries
+ * @property-read int|null $ledger_entries_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, SalePayment> $payments
+ * @property-read int|null $payments_count
+ * @property-read User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale cancelled()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale completed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereClientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereDiscount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereItems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereSaleNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereSubtotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereTotalAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereUserId($value)
+ * @mixin \Eloquent
+ */
 class Sale extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'sale_number',
         'client_id',

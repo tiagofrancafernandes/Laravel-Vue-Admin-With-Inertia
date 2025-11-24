@@ -12,6 +12,7 @@ return new class() extends Migration {
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
             $table->string('sale_number')->unique();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
@@ -23,6 +24,7 @@ return new class() extends Migration {
             $table->text('notes')->nullable();
             $table->timestamps();
 
+            $table->index(['code']);
             $table->index(['sale_number']);
             $table->index(['client_id']);
             $table->index(['status', 'created_at']);

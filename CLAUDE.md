@@ -46,6 +46,101 @@ php artisan test tests/Feature/SaleControllerTest.php
 php artisan test tests/Feature/SaleControllerTest.php --filter=testStoreCreatesNewSale
 ```
 
+### Testing Strategy for New Features
+
+**Every new page/feature MUST include tests**. Tests go in `tests/Feature/Pages/` for page access tests.
+
+#### Page Access Test Pattern
+All pages must have at least one test file with pattern: `{FeatureName}PagesTest.php`
+
+**Example from AdminPagesTest.php:**
+```php
+<?php
+
+namespace Tests\Feature\Pages;
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class AdminPagesTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function testIfCanAccesAdminDashboardPageTest(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('dashboard', absolute: false));
+
+        $response = $this->get('/dashboard');
+        $response->assertStatus(200);
+    }
+}
+```
+
+#### Testing Checklist for Each Feature Phase
+
+**Basic Access Tests (Required):**
+- ✅ Unauthenticated user redirected to login
+- ✅ Authenticated user can access page (HTTP 200)
+- ✅ Correct view is returned
+- ✅ Required data is present in response
+
+**Functionality Tests (Recommended where applicable):**
+- ✅ Form submissions work correctly
+- ✅ Search/filter parameters work
+- ✅ Pagination works
+- ✅ User cannot access other users' data (authorization)
+- ✅ Validation messages appear for invalid input
+
+**Example with Functionality:**
+```php
+public function testClientSelectSearchFunctionality(): void
+{
+    $user = User::factory()->create();
+    $clients = Client::factory(5)->create();
+
+    $response = $this->actingAs($user)->get(route('api.clients.select', [
+        'search' => $clients[0]->name
+    ]));
+
+    $response->assertStatus(200);
+    $response->assertJsonCount(1); // Only matching client
+    $response->assertJsonFragment(['name' => $clients[0]->name]);
+}
+```
+
+#### Test File Organization
+```
+tests/Feature/
+├── Pages/
+│   ├── AdminPagesTest.php          ✅ Existing
+│   ├── SalesPagesTest.php          (Phase 1-3)
+│   ├── ClientsPagesTest.php        (Phase 1-3)
+│   └── ClientPortalPagesTest.php   (Phase 4.3-4.4)
+├── Auth/                           ✅ Existing
+└── ...
+```
+
+#### Running Tests by Category
+```bash
+# All page tests
+php artisan test tests/Feature/Pages/
+
+# Specific page tests
+php artisan test tests/Feature/Pages/ClientPortalPagesTest.php
+
+# Single test method
+php artisan test tests/Feature/Pages/ClientPortalPagesTest.php --filter=testClientCanAccessDashboard
+```
+
 ## High-Level Architecture
 
 ### Backend Stack
@@ -462,28 +557,83 @@ Use o arquivo @tests/Feature/LocalOnly/CodeDemoTest.php como modelo para criar o
 4. **Alta**: Portal de acesso do cliente - novo fluxo de negócio importante
 
 ### Cronograma de Implementação Sugerido
+
+**IMPORTANTE: Cada fase DEVE incluir testes de acesso básico e funcionalidades**
+
 ```
 Fase 1 (Etapa 2): Fluxo Modal
   → Modifica apenas ClientController e components existentes
   → Impacto baixo, valor alto
+  → Testes: tests/Feature/Pages/SalesPagesTest.php
+    - testClientModalSubmitsCorrectly()
+    - testClientCreatedCorrectlyAndSelected()
+    - testModalClosesAfterCreation()
 
 Fase 2 (Etapa 1): Listagem com Telefone
   → Melhorias no ClientSelect.vue e API
   → Impacto baixo, valor médio
+  → Testes: tests/Feature/Pages/ClientsPagesTest.php
+    - testClientSelectDisplaysPhoneNumber()
+    - testClientSearchByPhoneWorks()
+    - testClientListFormatCorrect()
 
 Fase 3 (Etapa 3): Lazy Loading de Saldo
   → Usa composable existente
   → Impacto médio, valor médio
+  → Testes: tests/Feature/Pages/SalesPagesTest.php
+    - testClientBalanceLoadsOnSelection()
+    - testBalanceNotVisibleBeforePaymentStep()
+    - testBalanceDisplaysOnPaymentStep()
 
 Fase 4 (Etapa 4): Portal do Cliente
   → Nova estrutura grande
   → Impacto alto, valor muito alto
   → Recomenda-se fazer por partes:
-    - 4.1: Banco de dados + Models (migrations, models)
-    - 4.2: Backend (controllers, requests, policies)
-    - 4.3: Frontend Dashboard (visualização)
-    - 4.4: Frontend Upload (formulário)
-    - 4.5: Admin Dashboard para revisar proofs
+
+    4.1: Banco de dados + Models (migrations, models)
+      - Criar migration e model ClientProof
+      - Testes: tests/Unit/Models/ClientProofTest.php
+        - testClientProofRelationsWork()
+        - testProofStatusScopesWork()
+
+    4.2: Backend (controllers, requests, policies)
+      - Controllers, Requests, Policies, Middleware
+      - Testes: tests/Feature/Pages/ClientPortalPagesTest.php
+        - testClientCannotAccessOthersProofs()
+        - testProofSubmissionValidation()
+
+    4.3: Frontend Dashboard (visualização)
+      - Dashboard, Statement pages
+      - Testes: tests/Feature/Pages/ClientPortalPagesTest.php
+        - testClientCanAccessPortalDashboard()
+        - testDashboardShowsBalanceAndDue()
+        - testStatementDisplaysTransactions()
+
+    4.4: Frontend Upload (formulário)
+      - SubmitProof page, file upload
+      - Testes: tests/Feature/Pages/ClientPortalPagesTest.php
+        - testClientCanAccessProofSubmissionForm()
+        - testProofFileUploadWorks()
+        - testProofFileValidation()
+
+    4.5: Admin Dashboard para revisar proofs
+      - Admin proof review interface
+      - Testes: tests/Feature/Pages/AdminProofsTest.php
+        - testAdminCanAccessProofsList()
+        - testAdminCanApproveProof()
+        - testAdminCanRejectProofWithNote()
+```
+
+**Teste cada fase com:**
+```bash
+# Rodar testes da fase específica
+php artisan test tests/Feature/Pages/ClientPortalPagesTest.php --filter="testClientCanAccessPortalDashboard"
+
+# Rodar todos os testes de páginas
+php artisan test tests/Feature/Pages/
+
+# Rodar com output verbose
+php artisan test tests/Feature/Pages/ClientPortalPagesTest.php --verbose
 ```
 
 ### Notas de Implementação
@@ -497,3 +647,4 @@ Fase 4 (Etapa 4): Portal do Cliente
   - Limitar a 20 uploads por cliente por mês
   - Manter histórico completo de todas as actions
   - Implementar soft delete para proofs (audit trail)
+- ao usar um valor enviado em uma requsição não use o campo diretamente (ex: $request->search) use via métodos das requests do laravel exemplo: $request->input('search') ou $request->boolean('active'), $request->query('search') etc
