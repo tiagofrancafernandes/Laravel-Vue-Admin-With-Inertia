@@ -34,7 +34,7 @@ class SaleService
                 'items' => $data['items'] ?? [],
                 'subtotal' => $data['subtotal'] ?? 0,
                 'discount' => $data['discount'] ?? 0,
-                'total' => $data['total'],
+                'total_amount' => $data['total_amount'] ?? $data['total'] ?? 0,
                 'status' => 'completed',
                 'notes' => $data['notes'] ?? null,
             ]);
@@ -48,7 +48,7 @@ class SaleService
             }
 
             // Validate total paid
-            if (abs($totalPaid - (float) $sale->total) > 0.01) {
+            if (abs($totalPaid - (float) $sale->total_amount) > 0.01) {
                 throw new \Exception('Total paid does not match sale total');
             }
 

@@ -46,11 +46,11 @@ class SaleController extends Controller
         $query->when($search, function ($query, $search) {
             $query->where('code', 'like', "%{$search}%")
                 ->orWhereHas('client', fn ($q) => $q->where('name', 'like', "%{$search}%"));
-        }, $search);
+        });
 
-        $query->when($dateFrom, fn ($q, $date) => $q->whereDate('created_at', '>=', $date), $dateFrom);
-        $query->when($dateTo, fn ($q, $date) => $q->whereDate('created_at', '<=', $date), $dateTo);
-        $query->when($status, fn ($q, $status) => $q->where('status', $status), $status);
+        $query->when($dateFrom, fn ($q, $date) => $q->whereDate('created_at', '>=', $date));
+        $query->when($dateTo, fn ($q, $date) => $q->whereDate('created_at', '<=', $date));
+        $query->when($status, fn ($q, $status) => $q->where('status', $status));
 
         $sales = $query->latest()->paginate(15);
 
@@ -69,7 +69,7 @@ class SaleController extends Controller
 
         // Cache payment methods for 1 hour
         $paymentMethods = Cache::remember('payment_methods_active', 3600, fn () => PaymentMethod::where('is_active', true)
-            ->select('id', 'name', 'code', 'requires_client_balance', 'is_credit')
+            ->select('id', 'name', 'code', 'description')
             ->orderBy('display_order')
             ->get());
 
@@ -105,7 +105,7 @@ class SaleController extends Controller
 
         // Load relationships with specific columns to optimize query size
         $sale->load([
-            'client:id,name,email,phone,document',
+            'client:id,name,email,phone,cpf_cnpj',
             'user:id,name,email',
             'payments:id,sale_id,payment_method_id,amount,metadata',
             'payments.paymentMethod:id,name,code',

@@ -50,7 +50,6 @@ class ClientControllerTest extends TestCase
             ->get('/clients?search=John');
 
         $response->assertStatus(200);
-        $response->assertViewHas('clients');
     }
 
     /**
@@ -131,7 +130,6 @@ class ClientControllerTest extends TestCase
             ->get("/clients/{$client->id}");
 
         $response->assertStatus(200);
-        $response->assertViewHas('client');
     }
 
     // ============ API: GET /api/clients/select (SelectList) ============

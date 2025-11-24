@@ -10,7 +10,7 @@
                         id="name"
                         v-model="form.name"
                         required
-                        :error="form.errors.name"
+                        :error="errors.name"
                         placeholder="Nome do cliente"
                     />
                 </div>
@@ -21,19 +21,19 @@
                         id="email"
                         v-model="form.email"
                         type="email"
-                        :error="form.errors.email"
+                        :error="errors.email"
                         placeholder="email@exemplo.com"
                     />
                 </div>
 
                 <div>
                     <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                    <Input id="phone" v-model="form.phone" :error="form.errors.phone" placeholder="(11) 98765-4321" />
+                    <Input id="phone" v-model="form.phone" :error="errors.phone" placeholder="(11) 98765-4321" />
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4">
                     <Button type="button" variant="secondary" @click="close">Cancelar</Button>
-                    <Button type="submit" :disabled="form.processing" :loading="form.processing">Salvar</Button>
+                    <Button type="submit" :disabled="loading" :loading="loading">Salvar</Button>
                 </div>
             </form>
         </div>
