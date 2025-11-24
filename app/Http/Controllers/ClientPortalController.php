@@ -78,14 +78,29 @@ class ClientPortalController extends Controller
     public function statement(): Response
     {
         $user = auth()->user();
-        $client = Client::with(['ledger'])->first();
+        $client = Client::findOrFail($user->id);
+        $client->load('balance');
 
         // Get all ledger entries paginated
-        $transactions = $client?->ledger()
-            ->orderBy('created_at', 'desc')
-            ->paginate(20) ?? [];
+        $transactions = $client->ledger()
+            ->latest()
+            ->paginate(20)
+            ->through(fn ($tx) => [
+                'id' => $tx->id,
+                'type' => $tx->type,
+                'amount' => $tx->amount,
+                'balance_after' => $tx->balance_after,
+                'tab_after' => $tx->tab_after,
+                'description' => $tx->description,
+                'created_at' => $tx->created_at->format('d/m/Y H:i'),
+            ]);
 
         return Inertia::render('ClientPortal/Statement', [
+            'client' => [
+                'name' => $client->name,
+                'balance' => $client->balance?->balance ?? 0,
+                'credit_limit' => $client->balance?->credit_limit ?? 0,
+            ],
             'transactions' => $transactions,
         ]);
     }
@@ -93,9 +108,27 @@ class ClientPortalController extends Controller
     /**
      * Show the proof submission form.
      */
-    public function showProofForm(): Response
+    public function proofSubmitForm(): Response
     {
-        return Inertia::render('ClientPortal/SubmitProof');
+        $user = auth()->user();
+
+        // Get client's recent sales for reference
+        $recentSales = Client::findOrFail($user->id)
+            ->sales()
+            ->where('status', 'completed')
+            ->latest()
+            ->limit(10)
+            ->select('id', 'code', 'total_amount')
+            ->get()
+            ->map(fn ($sale) => [
+                'id' => $sale->id,
+                'code' => $sale->code,
+                'display' => "{$sale->code} - R$ " . number_format($sale->total_amount, 2, ',', '.'),
+            ]);
+
+        return Inertia::render('ClientPortal/SubmitProof', [
+            'recentSales' => $recentSales,
+        ]);
     }
 
     /**
@@ -103,29 +136,31 @@ class ClientPortalController extends Controller
      */
     public function submitProof(SubmitClientProofRequest $request)
     {
+        $user = auth()->user();
         $validated = $request->validated();
 
-        // Store file
-        $filePath = $request->file('file')->store(
-            'client-proofs',
-            'private'
-        );
+        try {
+            // Store file in secure location
+            $filePath = $request->file('file')->store(
+                "client-proofs/{$user->id}",
+                'private'
+            );
 
-        // Create proof record
-        $proof = ClientProof::create([
-            'client_id' => auth()->user()->client->id ?? null,
-            'sale_id' => $validated['sale_id'] ?? null,
-            'type' => $validated['type'],
-            'amount' => $validated['amount'],
-            'file_path' => $filePath,
-            'status' => 'pending',
-        ]);
+            // Create proof record
+            $proof = ClientProof::create([
+                'client_id' => $user->id,
+                'sale_id' => $validated['sale_id'] ?? null,
+                'type' => $validated['type'],
+                'amount' => $validated['amount'],
+                'file_path' => $filePath,
+                'status' => 'pending',
+                'notes' => $validated['description'] ?? null,
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Comprovante enviado com sucesso! Aguarde a análise do administrador.',
-            'proof' => $proof,
-        ]);
+            return back()->with('success', 'Comprovante enviado com sucesso! Aguardando análise da administração.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Erro ao enviar comprovante: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -134,12 +169,26 @@ class ClientPortalController extends Controller
     public function proofHistory(): Response
     {
         $user = auth()->user();
-        $client = Client::with(['proofs' => function ($query) {
-            $query->orderBy('created_at', 'desc')->paginate(20);
-        }])->first();
+        $client = Client::findOrFail($user->id);
+
+        // Get all proofs with pagination
+        $proofs = $client->proofs()
+            ->with('admin:id,name')
+            ->latest()
+            ->paginate(10)
+            ->through(fn ($proof) => [
+                'id' => $proof->id,
+                'type' => $proof->type,
+                'amount' => $proof->amount,
+                'status' => $proof->status,
+                'created_at' => $proof->created_at->format('d/m/Y H:i'),
+                'admin_notes' => $proof->notes,
+                'admin_name' => $proof->admin?->name,
+                'file_available' => Storage::disk('private')->exists($proof->file_path),
+            ]);
 
         return Inertia::render('ClientPortal/ProofHistory', [
-            'proofs' => $client?->proofs ?? [],
+            'proofs' => $proofs,
         ]);
     }
 
@@ -150,10 +199,13 @@ class ClientPortalController extends Controller
     {
         $this->authorize('view', $proof);
 
+        // Verify user can only download their own proofs
+        if ($proof->client_id !== auth()->user()->id) {
+            abort(403, 'Não autorizado');
+        }
+
         if (!Storage::disk('private')->exists($proof->file_path)) {
-            return response()->json([
-                'error' => 'Arquivo não encontrado',
-            ], 404);
+            abort(404, 'Arquivo não encontrado');
         }
 
         return Storage::disk('private')->download($proof->file_path);

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('clients', ClientController::class)->only(['index', 'create', 'store', 'show']);
     Route::post('clients/{client}/add-balance', [ClientController::class, 'addBalance'])->name('clients.add-balance');
     Route::post('clients/{client}/pay-tab', [ClientController::class, 'payTab'])->name('clients.pay-tab');
+});
+
+// Client Portal Routes
+Route::middleware(['auth', 'verified', 'client_portal'])->prefix('client-portal')->group(function () {
+    Route::get('/', [ClientPortalController::class, 'dashboard'])->name('client.portal.dashboard');
+    Route::get('/statement', [ClientPortalController::class, 'statement'])->name('client.portal.statement');
+    Route::get('/proof/submit', [ClientPortalController::class, 'proofSubmitForm'])->name('client.portal.proof.form');
+    Route::post('/proof', [ClientPortalController::class, 'submitProof'])->name('client.portal.proof.store');
+    Route::get('/proofs', [ClientPortalController::class, 'proofHistory'])->name('client.portal.proofs');
+    Route::get('/proof/{proof}/download', [ClientPortalController::class, 'downloadProof'])->name('client.portal.proof.download');
 });
 
 // API routes
