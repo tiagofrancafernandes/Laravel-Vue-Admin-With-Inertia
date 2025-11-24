@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'super_admin' => App\Http\Middleware\EnsureSuperAdmin::class,
             'attendant' => App\Http\Middleware\EnsureAttendant::class,
+            'client_portal' => App\Http\Middleware\ClientPortalAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

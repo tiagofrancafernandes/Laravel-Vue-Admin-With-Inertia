@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Models\Sale;
 use App\Models\Client;
 use App\Models\User;
+use App\Models\ClientProof;
 use App\Policies\SalePolicy;
 use App\Policies\ClientPolicy;
 use App\Policies\UserPolicy;
+use App\Policies\ClientProofPolicy;
 use App\Policies\DashboardPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Sale::class, SalePolicy::class);
         Gate::policy(Client::class, ClientPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(ClientProof::class, ClientProofPolicy::class);
 
         // Register dashboard authorization
         Gate::define('viewDashboard', [DashboardPolicy::class, 'viewDashboard']);
