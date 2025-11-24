@@ -1,18 +1,11 @@
 <template>
     <Modal :show="modelValue" @close="close" max-width="md">
         <div class="p-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">
-                Novo Cliente
-            </h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Novo Cliente</h3>
 
             <form @submit.prevent="submit" class="space-y-4">
                 <div>
-                    <label
-                        for="name"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Nome *
-                    </label>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
                     <Input
                         id="name"
                         v-model="form.name"
@@ -23,12 +16,7 @@
                 </div>
 
                 <div>
-                    <label
-                        for="email"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Email
-                    </label>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                     <Input
                         id="email"
                         v-model="form.email"
@@ -39,35 +27,13 @@
                 </div>
 
                 <div>
-                    <label
-                        for="phone"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Telefone
-                    </label>
-                    <Input
-                        id="phone"
-                        v-model="form.phone"
-                        :error="form.errors.phone"
-                        placeholder="(11) 98765-4321"
-                    />
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                    <Input id="phone" v-model="form.phone" :error="form.errors.phone" placeholder="(11) 98765-4321" />
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4">
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        @click="close"
-                    >
-                        Cancelar
-                    </Button>
-                    <Button
-                        type="submit"
-                        :disabled="form.processing"
-                        :loading="form.processing"
-                    >
-                        Salvar
-                    </Button>
+                    <Button type="button" variant="secondary" @click="close">Cancelar</Button>
+                    <Button type="submit" :disabled="form.processing" :loading="form.processing">Salvar</Button>
                 </div>
             </form>
         </div>

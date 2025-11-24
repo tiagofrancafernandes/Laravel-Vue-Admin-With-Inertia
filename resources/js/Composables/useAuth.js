@@ -10,9 +10,7 @@ export function useAuth() {
         return user.value?.can?.[permission] || false;
     };
 
-    const isSuperAdmin = computed(
-        () => user.value?.type === 'super_admin'
-    );
+    const isSuperAdmin = computed(() => user.value?.type === 'super_admin');
 
     const isAttendant = computed(() => user.value?.type === 'attendant');
 
@@ -20,13 +18,9 @@ export function useAuth() {
 
     const canManageUsers = computed(() => isSuperAdmin.value);
 
-    const canManageSales = computed(
-        () => isSuperAdmin.value || isAttendant.value
-    );
+    const canManageSales = computed(() => isSuperAdmin.value || isAttendant.value);
 
-    const canManageClients = computed(
-        () => isSuperAdmin.value || isAttendant.value
-    );
+    const canManageClients = computed(() => isSuperAdmin.value || isAttendant.value);
 
     const canCancelSales = computed(() => isSuperAdmin.value);
 

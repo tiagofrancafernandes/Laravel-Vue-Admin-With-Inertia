@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
             <div class="flex items-center justify-between">
@@ -98,16 +98,15 @@
                 <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">Nenhum cliente encontrado</div>
             </Card>
         </div>
-    </AppLayout>
+    </AdminAppLayout>
 </template>
 
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3';
-import AppLayout from '@/Components/Layouts/AppLayout.vue';
-import Card from '@/Components/UI/Card.vue';
-import Table from '@/Components/UI/Table.vue';
 import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
+import Card from '@/Components/UI/Card.vue';
+import Table from '@/Components/UI/Table.vue';
+import { Link, useForm } from '@inertiajs/vue3';
 
 interface Client {
     id: number;

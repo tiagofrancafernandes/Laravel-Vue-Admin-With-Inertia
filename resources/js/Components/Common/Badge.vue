@@ -11,15 +11,7 @@ const props = defineProps({
     variant: {
         type: String,
         default: 'default',
-        validator: (value) =>
-            [
-                'default',
-                'primary',
-                'success',
-                'warning',
-                'danger',
-                'info',
-            ].includes(value),
+        validator: (value) => ['default', 'primary', 'success', 'warning', 'danger', 'info'].includes(value),
     },
     size: {
         type: String,
@@ -29,8 +21,7 @@ const props = defineProps({
 });
 
 const classes = computed(() => {
-    const base =
-        'inline-flex items-center font-medium rounded-full px-2.5 py-0.5';
+    const base = 'inline-flex items-center font-medium rounded-full px-2.5 py-0.5';
 
     const variants = {
         default: 'bg-gray-100 text-gray-800',

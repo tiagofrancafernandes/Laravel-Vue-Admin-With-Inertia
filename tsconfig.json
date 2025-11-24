@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "lib": ["ESNext", "DOM"],
+        "allowJs": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "jsx": "preserve",
+        "strict": true,
+        "isolatedModules": true,
+        "target": "ESNext",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "skipLibCheck": true,
+        "types": ["@inertiajs/core"],
+        "paths": {
+            "@/*": ["./resources/js/*"],
+            "ziggy-js": ["./vendor/tightenco/ziggy"],
+            "vendor/*": ["./vendor/*"],
+            "@root/*": ["./*"],
+            "@components/*": ["./resources/js/Components/*"],
+            "@vendor/*": ["./vendor/*"],
+            "@nm/*": ["./node_modules/*"]
+        }
+    },
+    "include": [
+        "resources/js/**/*.ts",
+        "resources/js/**/*.vue",
+        "resources/js/**/*",
+        "resources/js/types/inertia.d.ts",
+        "node_modules/@inertiajs/core/types/types.d.ts"
+    ]
+}

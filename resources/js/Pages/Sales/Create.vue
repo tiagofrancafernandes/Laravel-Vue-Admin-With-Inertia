@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
             <div class="flex items-center justify-between">
@@ -153,18 +153,18 @@
                 </div>
             </form>
         </div>
-    </AppLayout>
+    </AdminAppLayout>
 </template>
 
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import AppLayout from '@/Components/Layouts/AppLayout.vue';
-import Card from '@/Components/UI/Card.vue';
+
+import ClientSelect from '@/Components/Clients/ClientSelect.vue';
 import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
-import ClientSelect from '@/Components/Clients/ClientSelect.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
+import Card from '@/Components/UI/Card.vue';
+import { Link, useForm } from '@inertiajs/vue3';
 
 interface PaymentMethod {
     id: number;

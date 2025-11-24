@@ -1,11 +1,14 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { createInertiaApp } from '@inertiajs/vue3';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-import { setupDarkMode } from './composables/useDarkMode';
+
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+
+import { setupDarkMode } from '@/composables/useDarkMode';
+import AdminAppLayout from '@/Layouts/AppLayout.vue';
+import { createInertiaApp } from '@inertiajs/vue3';
+import { ZiggyVue } from '@vendor/tightenco/ziggy';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -19,6 +22,9 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .component('AdminAppLayout', AdminAppLayout)
+            .component('AppLayout', AdminAppLayout)
+            .component('AuthenticatedLayout', AdminAppLayout)
             .mount(el);
     },
     progress: {

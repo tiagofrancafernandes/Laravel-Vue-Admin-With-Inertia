@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from 'vue';
+
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
 import { useDarkMode } from '@/composables/useDarkMode';
+import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
 const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -69,7 +70,7 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
                                                 type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium leading-4 text-gray-500 dark:text-gray-400 transition duration-150 ease-in-out hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none"
                                             >
-                                                {{ $page.props.auth.user.name }}
+                                                {{ $page.props.auth.user?.name }}
 
                                                 <svg
                                                     class="-me-0.5 ms-2 h-4 w-4"
@@ -148,10 +149,10 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
                     <div class="border-t border-gray-200 dark:border-gray-700 pb-1 pt-4">
                         <div class="px-4">
                             <div class="text-base font-medium text-gray-800 dark:text-gray-200">
-                                {{ $page.props.auth.user.name }}
+                                {{ $page.props.auth.user?.name }}
                             </div>
                             <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                                {{ $page.props.auth.user.email }}
+                                {{ $page.props.auth.user?.email }}
                             </div>
                         </div>
 
@@ -190,8 +191,18 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
                 </div>
             </header>
 
-            <!-- Page Content -->
-            <main>
+            <!-- Main Content -->
+            <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <!-- Flash Messages -->
+                <div v-if="flashMessages?.success" class="mb-4">
+                    <Alert type="success" :message="flashMessages.success" />
+                </div>
+
+                <div v-if="flashMessages?.error" class="mb-4">
+                    <Alert type="error" :message="flashMessages.error" />
+                </div>
+
+                <!-- Page Content -->
                 <slot />
             </main>
         </div>

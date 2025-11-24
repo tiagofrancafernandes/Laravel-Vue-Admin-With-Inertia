@@ -8,20 +8,12 @@
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
         >
-            <div
-                v-if="show"
-                class="fixed inset-0 z-50 overflow-y-auto"
-                @click="closeOnBackdrop && close()"
-            >
+            <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto" @click="closeOnBackdrop && close()">
                 <!-- Backdrop -->
-                <div
-                    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-                ></div>
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
                 <!-- Modal Container -->
-                <div
-                    class="flex min-h-full items-center justify-center p-4 text-center sm:p-0"
-                >
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
                     <Transition
                         enter-active-class="transition ease-out duration-300"
                         enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -52,11 +44,7 @@
                                         stroke-width="1.5"
                                         stroke="currentColor"
                                     >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
 
@@ -82,10 +70,7 @@ const props = defineProps({
     maxWidth: {
         type: String,
         default: '2xl',
-        validator: (value) =>
-            ['sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'].includes(
-                value
-            ),
+        validator: (value) => ['sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'].includes(value),
     },
     closeable: {
         type: Boolean,

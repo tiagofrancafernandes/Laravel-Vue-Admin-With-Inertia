@@ -1,4 +1,6 @@
 <script setup>
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import { useDarkMode } from '@/composables/useDarkMode';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({
@@ -24,6 +26,8 @@ function handleImageError() {
     document.getElementById('docs-card-content')?.classList.add('!flex-row');
     document.getElementById('background')?.classList.add('!hidden');
 }
+
+const { isDarkMode, toggleDarkMode } = useDarkMode();
 </script>
 
 <template>
@@ -40,42 +44,57 @@ function handleImageError() {
             <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
                 <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
                     <div class="flex lg:col-start-2 lg:justify-center">
-                        <svg
-                            class="h-12 w-auto text-white lg:h-16 lg:text-[#FF2D20]"
-                            viewBox="0 0 62 65"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M61.8548 14.6253C61.8778 14.7102 61.8895 14.7978 61.8897 14.8858V28.5615C61.8898 28.737 61.8434 28.9095 61.7554 29.0614C61.6675 29.2132 61.5409 29.3392 61.3887 29.4265L49.9104 36.0351V49.1337C49.9104 49.4902 49.7209 49.8192 49.4118 49.9987L25.4519 63.7916C25.3971 63.8227 25.3372 63.8427 25.2774 63.8639C25.255 63.8714 25.2338 63.8851 25.2101 63.8913C25.0426 63.9354 24.8666 63.9354 24.6991 63.8913C24.6716 63.8838 24.6467 63.8689 24.6205 63.8589C24.5657 63.8389 24.5084 63.8215 24.456 63.7916L0.501061 49.9987C0.348882 49.9113 0.222437 49.7853 0.134469 49.6334C0.0465019 49.4816 0.000120578 49.3092 0 49.1337L0 8.10652C0 8.01678 0.0124642 7.92953 0.0348998 7.84477C0.0423783 7.8161 0.0598282 7.78993 0.0697995 7.76126C0.0884958 7.70891 0.105946 7.65531 0.133367 7.6067C0.152063 7.5743 0.179485 7.54812 0.20192 7.51821C0.230588 7.47832 0.256763 7.43719 0.290416 7.40229C0.319084 7.37362 0.356476 7.35243 0.388883 7.32751C0.425029 7.29759 0.457436 7.26518 0.498568 7.2415L12.4779 0.345059C12.6296 0.257786 12.8015 0.211853 12.9765 0.211853C13.1515 0.211853 13.3234 0.257786 13.475 0.345059L25.4531 7.2415H25.4556C25.4955 7.26643 25.5292 7.29759 25.5653 7.32626C25.5977 7.35119 25.6339 7.37362 25.6625 7.40104C25.6974 7.43719 25.7224 7.47832 25.7523 7.51821C25.7735 7.54812 25.8021 7.5743 25.8196 7.6067C25.8483 7.65656 25.8645 7.70891 25.8844 7.76126C25.8944 7.78993 25.9118 7.8161 25.9193 7.84602C25.9423 7.93096 25.954 8.01853 25.9542 8.10652V33.7317L35.9355 27.9844V14.8846C35.9355 14.7973 35.948 14.7088 35.9704 14.6253C35.9792 14.5954 35.9954 14.5692 36.0053 14.5405C36.0253 14.4882 36.0427 14.4346 36.0702 14.386C36.0888 14.3536 36.1163 14.3274 36.1375 14.2975C36.1674 14.2576 36.1923 14.2165 36.2272 14.1816C36.2559 14.1529 36.292 14.1317 36.3244 14.1068C36.3618 14.0769 36.3942 14.0445 36.4341 14.0208L48.4147 7.12434C48.5663 7.03694 48.7383 6.99094 48.9133 6.99094C49.0883 6.99094 49.2602 7.03694 49.4118 7.12434L61.3899 14.0208C61.4323 14.0457 61.4647 14.0769 61.5021 14.1055C61.5333 14.1305 61.5694 14.1529 61.5981 14.1803C61.633 14.2165 61.6579 14.2576 61.6878 14.2975C61.7103 14.3274 61.7377 14.3536 61.7551 14.386C61.7838 14.4346 61.8 14.4882 61.8199 14.5405C61.8312 14.5692 61.8474 14.5954 61.8548 14.6253ZM59.893 27.9844V16.6121L55.7013 19.0252L49.9104 22.3593V33.7317L59.8942 27.9844H59.893ZM47.9149 48.5566V37.1768L42.2187 40.4299L25.953 49.7133V61.2003L47.9149 48.5566ZM1.99677 9.83281V48.5566L23.9562 61.199V49.7145L12.4841 43.2219L12.4804 43.2194L12.4754 43.2169C12.4368 43.1945 12.4044 43.1621 12.3682 43.1347C12.3371 43.1097 12.3009 43.0898 12.2735 43.0624L12.271 43.0586C12.2386 43.0275 12.2162 42.9888 12.1887 42.9539C12.1638 42.9203 12.1339 42.8916 12.114 42.8567L12.1127 42.853C12.0903 42.8156 12.0766 42.7707 12.0604 42.7283C12.0442 42.6909 12.023 42.656 12.013 42.6161C12.0005 42.5688 11.998 42.5177 11.9931 42.4691C11.9881 42.4317 11.9781 42.3943 11.9781 42.3569V15.5801L6.18848 12.2446L1.99677 9.83281ZM12.9777 2.36177L2.99764 8.10652L12.9752 13.8513L22.9541 8.10527L12.9752 2.36177H12.9777ZM18.1678 38.2138L23.9574 34.8809V9.83281L19.7657 12.2459L13.9749 15.5801V40.6281L18.1678 38.2138ZM48.9133 9.14105L38.9344 14.8858L48.9133 20.6305L58.8909 14.8846L48.9133 9.14105ZM47.9149 22.3593L42.124 19.0252L37.9323 16.6121V27.9844L43.7219 31.3174L47.9149 33.7317V22.3593ZM24.9533 47.987L39.59 39.631L46.9065 35.4555L36.9352 29.7145L25.4544 36.3242L14.9907 42.3482L24.9533 47.987Z"
-                                fill="currentColor"
-                            />
-                        </svg>
+                        <ApplicationLogo class="h-12 w-auto" />
                     </div>
-                    <nav v-if="canLogin" class="-mx-3 flex flex-1 justify-end">
-                        <Link
-                            v-if="$page.props.auth.user"
-                            :href="route('dashboard')"
-                            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+
+                    <nav class="-mx-3 flex flex-1 justify-end">
+                        <!-- Dark Mode Toggle -->
+                        <button
+                            @click="toggleDarkMode"
+                            :title="`Alternar para ${isDarkMode ? 'modo claro' : 'modo escuro'}`"
+                            class="p-2 rounded-lg bg-gray-100 dark:bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800/50 transition-colors"
+                            aria-label="Toggle dark mode"
                         >
-                            Dashboard
-                        </Link>
+                            <!-- Sun Icon (Light Mode) -->
+                            <svg v-if="isDarkMode" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
 
-                        <template v-else>
+                            <!-- Moon Icon (Dark Mode) -->
+                            <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                            </svg>
+                        </button>
+
+                        <template v-if="canLogin">
                             <Link
-                                :href="route('login')"
-                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                v-if="$page.props.auth.user"
+                                :href="route('dashboard')"
+                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white hover:bg-gray-200 dark:hover:bg-gray-800/50 transition-colors"
                             >
-                                Log in
+                                Dashboard
                             </Link>
 
-                            <Link
-                                v-if="canRegister"
-                                :href="route('register')"
-                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                            >
-                                Register
-                            </Link>
+                            <template v-else>
+                                <Link
+                                    :href="route('login')"
+                                    class="rounded-md px-3 py-2 text-black ring-1 ring-transparent hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white hover:bg-gray-200 dark:hover:bg-gray-800/50 transition-colors"
+                                >
+                                    Log in
+                                </Link>
+
+                                <Link
+                                    v-if="canRegister"
+                                    :href="route('register')"
+                                    class="rounded-md px-3 py-2 text-black ring-1 ring-transparent hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white hover:bg-gray-200 dark:hover:bg-gray-800/50 transition-colors"
+                                >
+                                    Register
+                                </Link>
+                            </template>
                         </template>
                     </nav>
                 </header>
@@ -89,14 +108,14 @@ function handleImageError() {
                         >
                             <div id="screenshot-container" class="relative flex w-full flex-1 items-stretch">
                                 <img
-                                    src="https://laravel.com/assets/img/welcome/docs-light.svg"
-                                    alt="Laravel documentation screenshot"
+                                    src="@root/public/dash-screen-light.png"
+                                    alt="Dashboard screenshot"
                                     class="aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
                                     @error="handleImageError"
                                 />
                                 <img
-                                    src="https://laravel.com/assets/img/welcome/docs-dark.svg"
-                                    alt="Laravel documentation screenshot"
+                                    src="@root/public/dash-screen.png"
+                                    alt="Dashboard screenshot"
                                     class="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
                                 />
                                 <div
@@ -153,8 +172,8 @@ function handleImageError() {
                             </div>
                         </a>
 
-                        <a
-                            href="https://laracasts.com"
+                        <Link
+                            href="/dashboard"
                             class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
                         >
                             <div
@@ -163,25 +182,64 @@ function handleImageError() {
                                 <svg
                                     class="size-5 sm:size-6"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
+                                    width="32"
+                                    height="32"
                                     viewBox="0 0 24 24"
                                 >
-                                    <g fill="#FF2D20">
+                                    <!-- Icon from Ultimate color icons by Streamline - https://creativecommons.org/licenses/by/4.0/ -->
+                                    <g fill="none">
                                         <path
-                                            d="M24 8.25a.5.5 0 0 0-.5-.5H.5a.5.5 0 0 0-.5.5v12a2.5 2.5 0 0 0 2.5 2.5h19a2.5 2.5 0 0 0 2.5-2.5v-12Zm-7.765 5.868a1.221 1.221 0 0 1 0 2.264l-6.626 2.776A1.153 1.153 0 0 1 8 18.123v-5.746a1.151 1.151 0 0 1 1.609-1.035l6.626 2.776ZM19.564 1.677a.25.25 0 0 0-.177-.427H15.6a.106.106 0 0 0-.072.03l-4.54 4.543a.25.25 0 0 0 .177.427h3.783c.027 0 .054-.01.073-.03l4.543-4.543ZM22.071 1.318a.047.047 0 0 0-.045.013l-4.492 4.492a.249.249 0 0 0 .038.385.25.25 0 0 0 .14.042h5.784a.5.5 0 0 0 .5-.5v-2a2.5 2.5 0 0 0-1.925-2.432ZM13.014 1.677a.25.25 0 0 0-.178-.427H9.101a.106.106 0 0 0-.073.03l-4.54 4.543a.25.25 0 0 0 .177.427H8.4a.106.106 0 0 0 .073-.03l4.54-4.543ZM6.513 1.677a.25.25 0 0 0-.177-.427H2.5A2.5 2.5 0 0 0 0 3.75v2a.5.5 0 0 0 .5.5h1.4a.106.106 0 0 0 .073-.03l4.54-4.543Z"
+                                            fill="#66e1ff"
+                                            d="M18.216 8.174c-1.333 2.254-4.47 2.563-6.217.613c-1.747 1.948-4.883 1.639-6.216-.613a2.71 2.71 0 0 1-2.87.802v12.582c0 .528.429.956.957.956h16.258a.956.956 0 0 0 .957-.956V8.98a2.71 2.71 0 0 1-2.87-.806"
+                                        />
+                                        <path
+                                            fill="#c2f3ff"
+                                            d="M12 8.787c-1.748 1.948-4.884 1.639-6.217-.613a2.71 2.71 0 0 1-2.87.802v12.582a.94.94 0 0 0 .409.765l12.33-12.331A3.74 3.74 0 0 1 12 8.787"
+                                        />
+                                        <path
+                                            stroke="#191919"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M21.085 21.086v.478a.956.956 0 0 1-.957.956H3.87a.957.957 0 0 1-.956-.956v-.478M2.91 8.975v2.069m18.17-2.062v2.062"
+                                        />
+                                        <path
+                                            fill="#fff"
+                                            d="M6.74 1.48H3.506a.96.96 0 0 0-.855.529L1.002 5.305h4.782z"
+                                        />
+                                        <path fill="#ffbfc5" d="M12 5.305V1.48H6.74l-.956 3.825z" />
+                                        <path fill="#fff" d="M18.216 5.305L17.26 1.48H12v3.825z" />
+                                        <path
+                                            fill="#ffbfc5"
+                                            d="m22.998 5.305l-1.65-3.296a.96.96 0 0 0-.854-.53h-3.235l.957 3.826z"
+                                        />
+                                        <path
+                                            fill="#ff808c"
+                                            d="M5.784 5.305v2.87c1.333 2.252 4.47 2.56 6.216.611v-3.48zm12.432 0v2.87c1.397 1.576 3.977 1.048 4.643-.95c.103-.31.15-.637.139-.963v-.957z"
+                                        />
+                                        <path
+                                            fill="#e3e3e3"
+                                            d="M12 5.305v3.481c1.746 1.95 4.884 1.642 6.216-.612V5.305zm-10.998 0v.957C.93 8.368 3.167 9.762 5.026 8.77a2.7 2.7 0 0 0 .758-.596V5.305z"
+                                        />
+                                        <path
+                                            stroke="#191919"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M21.35 2.009a.96.96 0 0 0-.855-.53H3.505a.96.96 0 0 0-.854.53L1.002 5.305h21.997zm1.648 4.253c.073 2.105-2.16 3.5-4.02 2.511a2.7 2.7 0 0 1-.762-.599c-1.332 2.254-4.47 2.563-6.216.612c-1.746 1.95-4.884 1.642-6.217-.612c-1.4 1.575-3.981 1.042-4.644-.959a2.7 2.7 0 0 1-.137-.953v-.957h21.996z"
+                                        />
+                                        <path
+                                            stroke="#191919"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M5.784 8.174V5.305L6.74 1.48M12 8.791V1.48m6.216 6.694V5.305l-.957-3.825M7.696 18.695V14.39a1.435 1.435 0 0 1 2.869 0v4.304m-2.874-2.869h2.87m9.567 2.87h-1.912a.956.956 0 0 1-.957-.957v-3.825c0-.528.428-.957.957-.957h1.912m-2.873 2.869h1.913m-6.69-2.869v4.782c0 .528.428.957.956.957h1.913m-9.564-5.739H4.157a1.243 1.243 0 0 0-.691 2.283l1.76 1.173a1.243 1.243 0 0 1-.694 2.283H2.914"
                                         />
                                     </g>
                                 </svg>
                             </div>
 
                             <div class="pt-3 sm:pt-5">
-                                <h2 class="text-xl font-semibold text-black dark:text-white">Laracasts</h2>
+                                <h2 class="text-xl font-semibold text-black dark:text-white">Sale dashboard</h2>
 
-                                <p class="mt-4 text-sm/relaxed">
-                                    Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript
-                                    development. Check them out, see for yourself, and massively level up your
-                                    development skills in the process.
-                                </p>
+                                <p class="mt-4 text-sm/relaxed">Show sale dashboard.</p>
                             </div>
 
                             <svg
@@ -197,10 +255,10 @@ function handleImageError() {
                                     d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
                                 />
                             </svg>
-                        </a>
+                        </Link>
 
-                        <a
-                            href="https://laravel-news.com"
+                        <Link
+                            href="/customer/dashboard"
                             class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
                         >
                             <div
@@ -209,31 +267,69 @@ function handleImageError() {
                                 <svg
                                     class="size-5 sm:size-6"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
+                                    width="32"
+                                    height="32"
                                     viewBox="0 0 24 24"
                                 >
-                                    <g fill="#FF2D20">
+                                    <!-- Icon from Ultimate color icons by Streamline - https://creativecommons.org/licenses/by/4.0/ -->
+                                    <g fill="none">
                                         <path
-                                            d="M8.75 4.5H5.5c-.69 0-1.25.56-1.25 1.25v4.75c0 .69.56 1.25 1.25 1.25h3.25c.69 0 1.25-.56 1.25-1.25V5.75c0-.69-.56-1.25-1.25-1.25Z"
+                                            fill="#c77f67"
+                                            d="M1.12 22.522A.48.48 0 0 0 1.6 23h20.8a.48.48 0 0 0 .479-.478v-9.087H1.599a.48.48 0 0 0-.478.478z"
                                         />
                                         <path
-                                            d="M24 10a3 3 0 0 0-3-3h-2V2.5a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2V20a3.5 3.5 0 0 0 3.5 3.5h17A3.5 3.5 0 0 0 24 20V10ZM3.5 21.5A1.5 1.5 0 0 1 2 20V3a.5.5 0 0 1 .5-.5h14a.5.5 0 0 1 .5.5v17c0 .295.037.588.11.874a.5.5 0 0 1-.484.625L3.5 21.5ZM22 20a1.5 1.5 0 1 1-3 0V9.5a.5.5 0 0 1 .5-.5H21a1 1 0 0 1 1 1v10Z"
+                                            fill="#e3bfb3"
+                                            d="M22.88 16.304v-2.87H1.599a.48.48 0 0 0-.478.479v2.391z"
                                         />
                                         <path
-                                            d="M12.751 6.047h2a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-2A.75.75 0 0 1 12 7.3v-.5a.75.75 0 0 1 .751-.753ZM12.751 10.047h2a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-2A.75.75 0 0 1 12 11.3v-.5a.75.75 0 0 1 .751-.753ZM4.751 14.047h10a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-10A.75.75 0 0 1 4 15.3v-.5a.75.75 0 0 1 .751-.753ZM4.75 18.047h7.5a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-7.5A.75.75 0 0 1 4 19.3v-.5a.75.75 0 0 1 .75-.753Z"
+                                            stroke="#191919"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M11.396 13.435H22.88"
+                                        />
+                                        <path
+                                            fill="#e3e3e3"
+                                            d="m8.535 23l.478-5.74h2.392v-3.347a4.783 4.783 0 0 0-9.566 0v3.348h2.392L4.709 23z"
+                                        />
+                                        <path
+                                            fill="#fff"
+                                            d="M6.622 9.13a4.783 4.783 0 0 0-4.783 4.783v2.633a4.783 4.783 0 0 1 9.566 0v-2.633A4.783 4.783 0 0 0 6.622 9.13"
+                                        />
+                                        <path
+                                            stroke="#191919"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="m8.535 23l.478-5.74h2.392v-3.347a4.783 4.783 0 0 0-9.566 0v3.348h2.392L4.709 23z"
+                                        />
+                                        <path
+                                            fill="#e3e3e3"
+                                            stroke="#191919"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6.622 7.696a3.348 3.348 0 1 0 0-6.696a3.348 3.348 0 0 0 0 6.696"
+                                        />
+                                        <path
+                                            fill="#ffdda1"
+                                            stroke="#191919"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M17.622 9.13a2.152 2.152 0 1 0 0-4.304a2.152 2.152 0 0 0 0 4.304"
+                                        />
+                                        <path
+                                            fill="#ff808c"
+                                            stroke="#191919"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M21.927 13.435a4.443 4.443 0 0 0-8.61 0z"
                                         />
                                     </g>
                                 </svg>
                             </div>
 
                             <div class="pt-3 sm:pt-5">
-                                <h2 class="text-xl font-semibold text-black dark:text-white">Laravel News</h2>
+                                <h2 class="text-xl font-semibold text-black dark:text-white">Customer</h2>
 
-                                <p class="mt-4 text-sm/relaxed">
-                                    Laravel News is a community driven portal and newsletter aggregating all of the
-                                    latest and most important news in the Laravel ecosystem, including new package
-                                    releases and tutorials.
-                                </p>
+                                <p class="mt-4 text-sm/relaxed">Customer painel.</p>
                             </div>
 
                             <svg
@@ -249,7 +345,7 @@ function handleImageError() {
                                     d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
                                 />
                             </svg>
-                        </a>
+                        </Link>
 
                         <div
                             class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800"
@@ -272,88 +368,10 @@ function handleImageError() {
                             </div>
 
                             <div class="pt-3 sm:pt-5">
-                                <h2 class="text-xl font-semibold text-black dark:text-white">Vibrant Ecosystem</h2>
+                                <h2 class="text-xl font-semibold text-black dark:text-white">App Ecosystem</h2>
 
                                 <p class="mt-4 text-sm/relaxed">
-                                    Laravel's robust library of first-party tools and libraries, such as
-                                    <a
-                                        href="https://forge.laravel.com"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white dark:focus-visible:ring-[#FF2D20]"
-                                    >
-                                        Forge
-                                    </a>
-                                    ,
-                                    <a
-                                        href="https://vapor.laravel.com"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Vapor
-                                    </a>
-                                    ,
-                                    <a
-                                        href="https://nova.laravel.com"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Nova
-                                    </a>
-                                    ,
-                                    <a
-                                        href="https://envoyer.io"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Envoyer
-                                    </a>
-                                    , and
-                                    <a
-                                        href="https://herd.laravel.com"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Herd
-                                    </a>
-                                    help you take your projects to the next level. Pair them with powerful open source
-                                    libraries like
-                                    <a
-                                        href="https://laravel.com/docs/billing"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Cashier
-                                    </a>
-                                    ,
-                                    <a
-                                        href="https://laravel.com/docs/dusk"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Dusk
-                                    </a>
-                                    ,
-                                    <a
-                                        href="https://laravel.com/docs/broadcasting"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Echo
-                                    </a>
-                                    ,
-                                    <a
-                                        href="https://laravel.com/docs/horizon"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Horizon
-                                    </a>
-                                    ,
-                                    <a
-                                        href="https://laravel.com/docs/sanctum"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Sanctum
-                                    </a>
-                                    ,
-                                    <a
-                                        href="https://laravel.com/docs/telescope"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                    >
-                                        Telescope
-                                    </a>
-                                    , and more.
+                                    <!--  -->
                                 </p>
                             </div>
                         </div>
@@ -361,7 +379,7 @@ function handleImageError() {
                 </main>
 
                 <footer class="py-16 text-center text-sm text-black dark:text-white/70">
-                    Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
+                    App v{{ laravelVersion }}-{{ phpVersion }}
                 </footer>
             </div>
         </div>

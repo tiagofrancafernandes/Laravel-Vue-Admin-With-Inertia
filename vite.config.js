@@ -1,6 +1,9 @@
-import { defineConfig } from 'vite';
+import { fileURLToPath, URL } from 'node:url'; // Use 'node:url' for Node.js built-in module
+
 import laravel from 'laravel-vite-plugin';
-import vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite';
+
+import vue from '@vitejs/plugin-vue'; // Example plugin
 
 export default defineConfig({
     plugins: [
@@ -67,5 +70,14 @@ export default defineConfig({
     // Optimize dependencies
     optimizeDeps: {
         include: ['@inertiajs/vue3', '@headlessui/vue'],
+    },
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
+            '@root': fileURLToPath(new URL('./', import.meta.url)),
+            '@components': fileURLToPath(new URL('./resources/js/Components', import.meta.url)),
+            '@vendor': fileURLToPath(new URL('./vendor', import.meta.url)),
+            '@nm': fileURLToPath(new URL('./node_modules', import.meta.url)),
+        },
     },
 });

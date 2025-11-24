@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
             <div class="flex items-center justify-between">
@@ -114,9 +114,12 @@
                                     <span
                                         :class="[
                                             'px-2 py-1 rounded text-xs font-medium',
-                                            sale.status === 'completed'
-                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                                            {
+                                                'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
+                                                    sale.status === 'completed',
+                                                'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
+                                                    sale.status !== 'completed',
+                                            },
                                         ]"
                                     >
                                         {{ sale.status === 'completed' ? 'OK' : 'Cancelada' }}
@@ -201,15 +204,14 @@
                 <div v-else class="text-center py-8 text-gray-500">Nenhuma movimentação registrada</div>
             </Card>
         </div>
-    </AppLayout>
+    </AdminAppLayout>
 </template>
 
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import AppLayout from '@/Components/Layouts/AppLayout.vue';
-import Card from '@/Components/UI/Card.vue';
-import Button from '@/Components/Forms/Button.vue';
 import BalanceDisplay from '@/Components/Clients/BalanceDisplay.vue';
+import Button from '@/Components/Forms/Button.vue';
+import Card from '@/Components/UI/Card.vue';
+import { Link } from '@inertiajs/vue3';
 
 interface Client {
     id: number;
@@ -221,8 +223,8 @@ interface Client {
 }
 
 interface ClientBalance {
-    balance: string;
-    credit_limit: string;
+    balance: number;
+    credit_limit: number;
 }
 
 interface Sale {

@@ -194,7 +194,7 @@ optimizeDeps: {
 }
 ```
 
-#### Lazy Loading Utilities (`resources/js/utils/lazyLoad.ts`)
+#### Lazy Loading Utilities (`resources/js/Utils/lazyLoad.ts`)
 
 ```typescript
 export const lazyComponent = (importStatement, delayMs = 200) => {
@@ -236,7 +236,7 @@ export const usePreloadComponentSet = (sets: Record<string, Array<() => Promise<
 - Request idle callback com fallback
 - Batch preload com staggered timing
 
-#### Performance Monitoring (`resources/js/utils/performance.ts`)
+#### Performance Monitoring (`resources/js/Utils/performance.ts`)
 
 **ComponentLoadTimer:**
 ```typescript
@@ -415,9 +415,9 @@ markPerformance.end('operation'); // Logs duration
 
 ### Frontend
 1. `vite.config.js` - Otimizado para code splitting
-2. `resources/js/utils/lazyLoad.ts` - Lazy loading utilities
+2. `resources/js/Utils/lazyLoad.ts` - Lazy loading utilities
 3. `resources/js/composables/usePreloadComponents.ts` - Preload composable
-4. `resources/js/utils/performance.ts` - Performance monitoring
+4. `resources/js/Utils/performance.ts` - Performance monitoring
 
 ### Rotas
 1. `routes/web.php` - Rotas adicionadas

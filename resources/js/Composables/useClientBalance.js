@@ -16,9 +16,7 @@ export function useClientBalance() {
         error.value = null;
 
         try {
-            const response = await axios.get(
-                route('api.clients.balance', clientId)
-            );
+            const response = await axios.get(route('api.clients.balance', clientId));
             balance.value = response.data;
         } catch (err) {
             error.value = err.message;

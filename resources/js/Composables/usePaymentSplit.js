@@ -4,10 +4,7 @@ export function usePaymentSplit(totalAmount) {
     const payments = ref([]);
 
     const totalPaid = computed(() => {
-        return payments.value.reduce(
-            (sum, p) => sum + (parseFloat(p.amount) || 0),
-            0
-        );
+        return payments.value.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
     });
 
     const remaining = computed(() => {
@@ -15,9 +12,7 @@ export function usePaymentSplit(totalAmount) {
     });
 
     const isValid = computed(() => {
-        return (
-            Math.abs(remaining.value) < 0.01 && payments.value.length > 0
-        );
+        return Math.abs(remaining.value) < 0.01 && payments.value.length > 0;
     });
 
     const addPayment = (paymentMethodId = '', amount = 0) => {
@@ -37,15 +32,16 @@ export function usePaymentSplit(totalAmount) {
     };
 
     const initialize = (initialPayments = []) => {
-        payments.value = initialPayments.length > 0
-            ? [...initialPayments]
-            : [
-                  {
-                      payment_method_id: '',
-                      amount: totalAmount.value,
-                      metadata: {},
-                  },
-              ];
+        payments.value =
+            initialPayments.length > 0
+                ? [...initialPayments]
+                : [
+                      {
+                          payment_method_id: '',
+                          amount: totalAmount.value,
+                          metadata: {},
+                      },
+                  ];
     };
 
     return {

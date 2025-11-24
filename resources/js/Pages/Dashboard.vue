@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import AppLayout from '@/Components/Layouts/AppLayout.vue';
-import StatsCard from '@/Components/UI/StatsCard.vue';
 import Card from '@/Components/UI/Card.vue';
+import StatsCard from '@/Components/UI/StatsCard.vue';
 import Table from '@/Components/UI/Table.vue';
+import { Link } from '@inertiajs/vue3';
 
 interface Props {
     todayStats: {
@@ -57,13 +56,13 @@ const formatDate = (date: string): string => {
 </script>
 
 <template>
-    <AppLayout>
+    <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
             <div>
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-1">
-                    Bem-vindo de volta, {{ $page.props.auth.user.name }}!
+                    Bem-vindo de volta, {{ $page.props.auth.user?.name }}!
                 </p>
             </div>
 
@@ -156,5 +155,5 @@ const formatDate = (date: string): string => {
                 <div v-else class="text-center py-8 text-gray-500">Nenhum cliente ainda</div>
             </Card>
         </div>
-    </AppLayout>
+    </AdminAppLayout>
 </template>
