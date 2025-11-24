@@ -208,12 +208,16 @@
 </template>
 
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+
+import Button from '@/Components/Forms/Button.vue';
 import AppLayout from '@/Components/Layouts/AppLayout.vue';
 import Card from '@/Components/UI/Card.vue';
-import Button from '@/Components/Forms/Button.vue';
 import Modal from '@/Components/UI/Modal.vue';
+import {
+    Link,
+    useForm,
+} from '@inertiajs/vue3';
 
 interface SaleItem {
     description: string;
@@ -268,7 +272,7 @@ interface Props {
     sale: Sale;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const showCancelModal = ref(false);
 const cancelLoading = ref(false);
@@ -309,6 +313,4 @@ const formatDateTime = (date: string): string => {
         minute: '2-digit',
     });
 };
-
-const props = defineProps<Props>();
 </script>

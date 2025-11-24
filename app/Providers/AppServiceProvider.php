@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Policies\SalePolicy;
 use App\Policies\ClientPolicy;
 use App\Policies\UserPolicy;
+use App\Policies\DashboardPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -33,5 +34,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Sale::class, SalePolicy::class);
         Gate::policy(Client::class, ClientPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
+
+        // Register dashboard authorization
+        Gate::define('viewDashboard', [DashboardPolicy::class, 'viewDashboard']);
     }
 }
