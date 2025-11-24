@@ -142,9 +142,9 @@ class ClientController extends Controller
         $clients = Client::with('balance:client_id,balance_amount,tab_amount')
             ->where('is_anonymous', false)
             ->when($search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
+                $query->where('name', 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "%{$search}%")
+                    ->orWhere('phone', 'ilike', "%{$search}%");
             })
             ->select('id', 'name', 'email', 'phone')
             ->limit(20)

@@ -84,9 +84,7 @@ class DashboardController extends Controller
 
         // Clientes com débito na caderneta
         $withDebt = Client::where('is_anonymous', false)
-            ->whereHas('balance', function ($query) {
-                $query->where('tab_amount', '>', 0);
-            })
+            ->whereHas('balance', fn ($query) => $query->where('balance', '>', 0))
             ->count();
 
         return [
@@ -134,13 +132,13 @@ class DashboardController extends Controller
             'user:id,name',
             'payments.paymentMethod:id,name'
         ])
-        ->select('id', 'code', 'client_id', 'user_id', 'total_amount', 'status', 'created_at')
+        ->select('id', 'sale_number', 'client_id', 'user_id', 'total_amount', 'status', 'created_at')
         ->latest()
         ->take(10)
         ->get()
         ->map(fn ($sale) => [
             'id' => $sale->id,
-            'sale_number' => $sale->code,
+            'sale_number' => $sale->sale_number,
             'client' => $sale->client ? [
                 'id' => $sale->client->id,
                 'name' => $sale->client->name,
@@ -170,11 +168,11 @@ class DashboardController extends Controller
             ->sortByDesc('sales_sum_total_amount')
             ->take(5)
             ->map(fn ($client) => [
-                    'id' => $client->id,
-                    'name' => $client->name,
-                    'email' => $client->email,
-                    'total_spent' => number_format($client->sales_sum_total_amount ?? 0, 2, '.', ''),
-                ])
+                'id' => $client->id,
+                'name' => $client->name,
+                'email' => $client->email,
+                'total_spent' => number_format($client->sales_sum_total_amount ?? 0, 2, '.', ''),
+            ])
             ->values()
             ->toArray();
     }
