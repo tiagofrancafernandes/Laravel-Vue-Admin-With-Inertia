@@ -98,6 +98,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all client proofs reviewed by this user (as admin).
+     */
+    public function reviewedProofs(): HasMany
+    {
+        return $this->hasMany(ClientProof::class, 'admin_id');
+    }
+
+    /**
      * Check if user is a super admin.
      */
     public function isSuperAdmin(): bool

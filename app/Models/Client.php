@@ -111,6 +111,14 @@ class Client extends Model
     }
 
     /**
+     * Get all proofs (comprovantes) submitted by this client.
+     */
+    public function proofs(): HasMany
+    {
+        return $this->hasMany(ClientProof::class);
+    }
+
+    /**
      * Get current balance (saldo).
      */
     public function getCurrentBalance(): float
