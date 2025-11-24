@@ -346,13 +346,154 @@ Use o arquivo @tests/Feature/LocalOnly/CodeDemoTest.php como modelo para criar o
 - `resources/js/Pages/Sales/Create.vue` - acessa saldo na etapa de pagamento
 - `app/Http/Controllers/ClientController.php` - endpoint `balance()`
 
+### 4. Portal de Acesso do Cliente (Cliente Portal/Dashboard)
+
+**Objetivo**: Criar área restrita onde clientes podem acessar suas informações financeiras, visualizar saldo e débitos, e enviar comprovantes de pagamento para análise pelos administradores.
+
+**Implementação**:
+
+#### Backend:
+- Criar migration: `CreateClientProofsTable` (tabela para armazenar comprovantes)
+  - Campos: id, client_id, sale_id (nullable), type (deposit/payment), amount, file_path, status (pending/approved/rejected), notes, admin_id (quem revisou), created_at, updated_at
+
+- Criar Model: `ClientProof`
+  - Relações: belongsTo(Client), belongsTo(Admin/User), belongsTo(Sale)
+  - Scopes: pending(), approved(), rejected()
+
+- Criar Controller: `ClientPortalController`
+  - `dashboard()` - exibe resumo financeiro do cliente
+  - `statement()` - lista histórico de transações e saldos
+  - `submitProof()` - processa upload de comprovante
+  - `proofHistory()` - lista comprovantes enviados com status
+
+- Criar Form Request: `SubmitClientProofRequest`
+  - Valida: file (imagem/PDF, max 5MB), amount, type, description
+
+- Adicionar rotas autenticadas para cliente:
+  ```php
+  Route::middleware(['auth', 'verified'])->group(function () {
+      Route::get('/client-portal', [ClientPortalController::class, 'dashboard'])->name('client.dashboard');
+      Route::get('/client-portal/statement', [ClientPortalController::class, 'statement'])->name('client.statement');
+      Route::post('/client-portal/proof', [ClientPortalController::class, 'submitProof'])->name('client.proof.store');
+      Route::get('/client-portal/proofs', [ClientPortalController::class, 'proofHistory'])->name('client.proofs');
+  });
+  ```
+
+#### Frontend:
+- Criar layout: `ClientPortalLayout.vue` (parecido com AuthenticatedLayout mas para clientes)
+
+- Criar páginas em `resources/js/Pages/ClientPortal/`:
+  - `Dashboard.vue` - resumo com cards de:
+    - Saldo disponível (se houver)
+    - Total devido
+    - Últimas transações (3-5 últimas)
+    - CTA para enviar comprovante
+
+  - `Statement.vue` - tabela com histórico completo:
+    - Data, descrição, valor, saldo anterior, saldo atual
+    - Filtros por período, tipo (venda, pagamento, ajuste)
+    - Paginação
+
+  - `SubmitProof.vue` - formulário para upload:
+    - Upload de arquivo (imagem/PDF)
+    - Tipo de comprovante (Depósito/Pagamento)
+    - Valor do comprovante
+    - Descrição (opcional)
+    - Referência de venda (opcional, autocomplete)
+    - Preview de arquivo antes de enviar
+
+  - `ProofHistory.vue` - lista de comprovantes enviados:
+    - Cards com status (Pendente, Aprovado, Rejeitado)
+    - Data de submissão
+    - Valor e tipo
+    - Notas do admin
+    - Download do arquivo
+    - Badge de status com cores diferentes
+
+#### Autenticação/Autorização:
+- Middleware: `ClientPortalAccess` - garante que cliente só acesse seus próprios dados
+- Policy: `ClientProofPolicy` - controla ações em proofs (criar, visualizar)
+- Cada cliente só vê seus próprios dados/proofs
+
+**Fluxo de Uso**:
+1. Cliente faz login com suas credenciais
+2. Acessa `/client-portal`
+3. Vê resumo com saldo e débitos atuais
+4. Clica em "Enviar Comprovante"
+5. Faz upload de comprovante (imagem/PDF)
+6. Preenche valor e descrição
+7. Sistema salva com status "Pendente"
+8. Admin recebe notificação/vê na área de admin
+9. Admin aprova/rejeita com nota
+10. Cliente vê atualização no status e na tabela de proofs
+11. Se aprovado, saldo é atualizado automaticamente
+
+**Arquivos a Criar**:
+- Database: `database/migrations/XXXX_create_client_proofs_table.php`
+- Models: `app/Models/ClientProof.php`
+- Controllers: `app/Http/Controllers/ClientPortalController.php`
+- Requests: `app/Http/Requests/SubmitClientProofRequest.php`
+- Policies: `app/Policies/ClientProofPolicy.php`
+- Middleware: `app/Http/Middleware/ClientPortalAccess.php`
+- Composables: `resources/js/Composables/useClientPortal.js`
+- Layouts: `resources/js/Layouts/ClientPortalLayout.vue`
+- Pages: `resources/js/Pages/ClientPortal/{Dashboard,Statement,SubmitProof,ProofHistory}.vue`
+
+**Arquivos a Modificar**:
+- `routes/web.php` - adicionar rotas do cliente
+- `app/Http/Kernel.php` - registrar middleware
+- `app/Models/Client.php` - adicionar relação com proofs
+- `app/Models/User.php` - adicionar relação com proofs revisados
+- `app/Providers/AuthServiceProvider.php` - registrar policies
+
+**Considerações**:
+- Verificar se cliente já tem email verificado (segurança)
+- Armazenar arquivos em disco seguro (`storage/app/client-proofs/`)
+- Gerar URL assinada/temporária para download de arquivos
+- Auditar todas as ações (criação, aprovação de proofs)
+- Notificar cliente quando proof for aprovado/rejeitado
+- Email para admin quando novo proof for enviado (opcional)
+- Validar que arquivo é realmente imagem/PDF (não executável)
+
 ### Ordem de Prioridade
-1. **Alta**: Melhorar seleção de cliente (listagem com telefone) - melhora UX
+1. **Alta**: Melhorar seleção de cliente (listagem com telefone) - melhora UX imediata
 2. **Alta**: Fluxo de modal para novo cliente - evita redirect desnecessário
 3. **Média**: Lazy loading de saldo - otimização de performance
+4. **Alta**: Portal de acesso do cliente - novo fluxo de negócio importante
+
+### Cronograma de Implementação Sugerido
+```
+Fase 1 (Etapa 2): Fluxo Modal
+  → Modifica apenas ClientController e components existentes
+  → Impacto baixo, valor alto
+
+Fase 2 (Etapa 1): Listagem com Telefone
+  → Melhorias no ClientSelect.vue e API
+  → Impacto baixo, valor médio
+
+Fase 3 (Etapa 3): Lazy Loading de Saldo
+  → Usa composable existente
+  → Impacto médio, valor médio
+
+Fase 4 (Etapa 4): Portal do Cliente
+  → Nova estrutura grande
+  → Impacto alto, valor muito alto
+  → Recomenda-se fazer por partes:
+    - 4.1: Banco de dados + Models (migrations, models)
+    - 4.2: Backend (controllers, requests, policies)
+    - 4.3: Frontend Dashboard (visualização)
+    - 4.4: Frontend Upload (formulário)
+    - 4.5: Admin Dashboard para revisar proofs
+```
 
 ### Notas de Implementação
 - Manter compatibilidade com fluxo de vendas existente
 - Garantir que saldo carregado seja sempre atualizado (evitar cache stale)
 - Testar com clientes que não têm saldo/telefone vazio
 - Adicionar testes em `tests/Feature/LocalOnly/CodeDemoTest.php` para validar comportamentos
+- Para portal do cliente:
+  - Validar tamanho máximo de arquivo (5MB)
+  - Aceitar apenas imagens (JPG, PNG) e PDF
+  - Limitar a 20 uploads por cliente por mês
+  - Manter histórico completo de todas as actions
+  - Implementar soft delete para proofs (audit trail)
