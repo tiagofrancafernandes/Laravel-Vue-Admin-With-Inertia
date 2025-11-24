@@ -1,7 +1,7 @@
 <template>
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 pt-12">
         <!-- Navigation -->
-        <nav class="bg-white dark:bg-gray-800 shadow-sm">
+        <nav class="bg-white dark:bg-gray-800 shadow-sm fixed top-0 w-full">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <!-- Logo -->
@@ -315,7 +315,7 @@
         </nav>
 
         <!-- Main Content -->
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 pb-12">
             <!-- Flash Messages -->
             <div v-if="flashMessages?.success" class="mb-4">
                 <Alert type="success" :message="flashMessages.success" />
@@ -332,7 +332,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import {
+    computed,
+    ref,
+} from 'vue';
 
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -342,9 +345,18 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import Alert from '@/Components/UI/Alert.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
 import { User } from '@/types/app-types.d';
-import { route, strEndsWith } from '@/Utils/helpers';
-import { PageProps, router } from '@inertiajs/core';
-import { Link, usePage } from '@inertiajs/vue3';
+import {
+    route,
+    strEndsWith,
+} from '@/Utils/helpers';
+import {
+    PageProps,
+    router,
+} from '@inertiajs/core';
+import {
+    Link,
+    usePage,
+} from '@inertiajs/vue3';
 
 interface FlashMessages {
     danger?: string;

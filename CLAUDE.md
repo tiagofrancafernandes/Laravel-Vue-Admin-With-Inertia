@@ -291,3 +291,68 @@ Significant actions are logged automatically. Check `spatie/laravel-activitylog`
 quando precisar testar acesso à aplicação principalmente no tocante ao navegador, crie um teste para tal funcionalidade e coloque ações como dd, dump, vardump etc para que possa coletar saídas. Use o arquivo @tests/Feature/LocalOnly/CodeDemoTest.php como modelo de teste. Para esse teste por exemplo, se quiser testar o teste por completo execute : `artisan test --stop-on-error --filter=CodeDemoTest` se quiser testar apenas um método: `artisan test --stop-on-error --filter=testCodeDemoTestAccessToDashboard`
 
 Use o arquivo @tests/Feature/LocalOnly/CodeDemoTest.php como modelo para criar outros arquivos de teste
+
+## Fluxo de Ações para Próximas Atividades
+
+### 1. Melhorar Fluxo de Cadastro de Cliente na Tela de Vendas
+
+**Objetivo**: Quando um novo cliente for criado diretamente da tela de vendas (Sales/Create), a aplicação não deve redirecionar para a página do cliente, mas sim exibir uma modal de sucesso/confirmação e manter o usuário na tela de vendas.
+
+**Implementação**:
+- Modificar `ClientController.store()` para detectar se a requisição vem de um contexto de vendas
+- Retornar resposta JSON com o novo cliente ao invés de redirecionamento
+- No frontend (ClientModal.vue), após criação bem-sucedida, fechar a modal e atualizar a lista de clientes
+- Exemplo: Após cadastrar cliente "João Silva", a modal fecha automaticamente e "João Silva" aparece selecionado no campo de cliente
+
+**Arquivos Afetados**:
+- `app/Http/Controllers/ClientController.php` - método `store()`
+- `resources/js/Components/Clients/ClientModal.vue` - tratamento de resposta
+- `resources/js/Pages/Sales/Create.vue` - integração com modal
+
+### 2. Melhorar Seleção e Listagem de Clientes
+
+**Objetivo**: Quando pesquisar/selecionar um cliente, listar no formato `{nome} - {telefone}` para melhor identificação.
+
+**Implementação**:
+- Modificar `api.clients.select` endpoint para retornar campo de telefone
+- No `ClientSelect.vue`, formatear a exibição como `nome - telefone` tanto na lista de seleção quanto no campo selecionado
+- Exemplo: "João Silva - (11) 9999-8888" ao invés de apenas "João Silva"
+
+**Arquivos Afetados**:
+- `app/Http/Controllers/ClientController.php` - método `select()` (API endpoint)
+- `resources/js/Components/Clients/ClientSelect.vue` - formatação da exibição
+- `app/Models/Client.php` - adicionar acessor se necessário
+
+### 3. Carregamento de Saldo do Cliente (Lazy Loading)
+
+**Objetivo**: Quando um cliente é selecionado, seu saldo deve ser carregado em background, mas só exibido na tela de pagamento da venda (não na tela inicial de seleção).
+
+**Implementação**:
+- Ao selecionar cliente em ClientSelect, fazer requisição à `api.clients.{id}.balance`
+- Armazenar saldo em estado local/contexto
+- Exibir saldo APENAS no componente de pagamento (SalePayment ou equivalente)
+- Usar composable `useClientBalance()` para gerenciar este estado
+
+**Fluxo**:
+1. Usuário seleciona cliente "João Silva"
+2. Background: requisição GET `/api/clients/{id}/balance` é feita
+3. Saldo fica disponível mas invisível na tela de criação
+4. Ao chegar na etapa de pagamento: saldo é exibido (ex: "Saldo disponível: R$ 150,00")
+5. Usuário pode usar saldo como forma de pagamento
+
+**Arquivos Afetados**:
+- `resources/js/Components/Clients/ClientSelect.vue` - dispara carregamento de saldo
+- `resources/js/Composables/useClientBalance.js` - gerencia estado do saldo
+- `resources/js/Pages/Sales/Create.vue` - acessa saldo na etapa de pagamento
+- `app/Http/Controllers/ClientController.php` - endpoint `balance()`
+
+### Ordem de Prioridade
+1. **Alta**: Melhorar seleção de cliente (listagem com telefone) - melhora UX
+2. **Alta**: Fluxo de modal para novo cliente - evita redirect desnecessário
+3. **Média**: Lazy loading de saldo - otimização de performance
+
+### Notas de Implementação
+- Manter compatibilidade com fluxo de vendas existente
+- Garantir que saldo carregado seja sempre atualizado (evitar cache stale)
+- Testar com clientes que não têm saldo/telefone vazio
+- Adicionar testes em `tests/Feature/LocalOnly/CodeDemoTest.php` para validar comportamentos
