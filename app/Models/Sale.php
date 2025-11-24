@@ -51,6 +51,32 @@ class Sale extends Model
 {
     use HasFactory;
 
+    /**
+     * Boot the model.
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->code)) {
+                $model->code = self::generateUniqueCode();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique code for the sale.
+     */
+    private static function generateUniqueCode(): string
+    {
+        do {
+            $code = 'S' . strtoupper(\Illuminate\Support\Str::random(6));
+        } while (self::where('code', $code)->exists());
+
+        return $code;
+    }
+
     protected $fillable = [
         'sale_number',
         'client_id',

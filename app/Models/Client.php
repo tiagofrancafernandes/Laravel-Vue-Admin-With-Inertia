@@ -47,6 +47,32 @@ class Client extends Model
     use HasFactory;
     use SoftDeletes;
 
+    /**
+     * Boot the model.
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->code)) {
+                $model->code = self::generateUniqueCode();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique code for the client.
+     */
+    private static function generateUniqueCode(): string
+    {
+        do {
+            $code = 'C' . strtoupper(\Illuminate\Support\Str::random(6));
+        } while (self::where('code', $code)->exists());
+
+        return $code;
+    }
+
     protected $fillable = [
         'name',
         'email',

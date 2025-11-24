@@ -36,6 +36,32 @@ class PaymentMethod extends Model
 
     protected $table = 'payment_methods';
 
+    /**
+     * Boot the model.
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->code)) {
+                $model->code = self::generateUniqueCode();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique code for the payment method.
+     */
+    private static function generateUniqueCode(): string
+    {
+        do {
+            $code = strtoupper(\Illuminate\Support\Str::random(3));
+        } while (self::where('code', $code)->exists());
+
+        return $code;
+    }
+
     protected $fillable = [
         'name',
         'code',

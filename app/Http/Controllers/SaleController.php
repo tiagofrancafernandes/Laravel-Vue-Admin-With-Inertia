@@ -11,7 +11,6 @@ use App\Services\SaleService;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Str;
 
 class SaleController extends Controller
 {
@@ -89,9 +88,7 @@ class SaleController extends Controller
     public function store(StoreSaleRequest $request)
     {
         try {
-            $sale = $this->saleService->createSale(array_merge([
-                'code' => 'S' . Str::upper(Str::random(6)),
-            ], $request->validated()));
+            $sale = $this->saleService->createSale($request->validated());
 
             return redirect()->route('sales.show', $sale)->with('success', 'Venda criada com sucesso!');
         } catch (\Exception $e) {

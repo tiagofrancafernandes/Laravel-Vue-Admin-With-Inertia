@@ -21,7 +21,6 @@ class PaymentMethodFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->randomElement(['Cash', 'Credit Card', 'Debit Card', 'Bank Transfer']),
-            'code' => strtoupper($this->faker->unique()->bothify('???')),
             'display_order' => $this->faker->numberBetween(1, 10),
             'is_active' => true,
             'description' => $this->faker->optional()->sentence(),

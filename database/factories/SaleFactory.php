@@ -25,7 +25,6 @@ class SaleFactory extends Factory
         $total = $this->faker->randomFloat(2, 10, 1000);
 
         return [
-            'code' => 'S' . strtoupper(Str::random(6)),
             'sale_number' => strtoupper(Str::random(12)),
             'client_id' => Client::factory(),
             'user_id' => User::factory(),
@@ -38,7 +37,7 @@ class SaleFactory extends Factory
             ]),
             'subtotal' => $total,
             'discount' => 0,
-            'total' => $total,
+            'total_amount' => $total,
             'status' => $this->faker->randomElement(['completed', 'cancelled']),
             'notes' => $this->faker->optional()->text(),
         ];

@@ -41,7 +41,8 @@
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import axios from 'axios';
 import Modal from '@/Components/Common/Modal.vue';
 import Input from '@/Components/Common/Input.vue';
 import Button from '@/Components/Common/Button.vue';
@@ -52,29 +53,55 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'created']);
 
-const form = useForm({
+const form = ref({
     name: '',
     email: '',
     phone: '',
 });
 
-const submit = () => {
-    form.post(route('clients.store'), {
-        preserveScroll: true,
-        onSuccess: (page) => {
+const errors = ref({});
+const loading = ref(false);
+
+const submit = async () => {
+    errors.value = {};
+    loading.value = true;
+
+    try {
+        const response = await axios.post(route('clients.store'), form.value, {
+            headers: {
+                'Accept': 'application/json',
+            },
+        });
+
+        if (response.data.success) {
             // Emite o cliente criado
-            const client = page.props.flash?.client || null;
-            if (client) {
-                emit('created', client);
-            }
-            form.reset();
+            emit('created', response.data.client);
+            resetForm();
             close();
-        },
-    });
+        }
+    } catch (error) {
+        if (error.response?.status === 422) {
+            // Validation errors
+            errors.value = error.response.data.errors || {};
+        } else {
+            errors.value.general = error.response?.data?.message || 'Erro ao criar cliente';
+        }
+    } finally {
+        loading.value = false;
+    }
+};
+
+const resetForm = () => {
+    form.value = {
+        name: '',
+        email: '',
+        phone: '',
+    };
+    errors.value = {};
 };
 
 const close = () => {
-    form.reset();
+    resetForm();
     emit('update:modelValue', false);
 };
 </script>

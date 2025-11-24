@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Str;
 
 class ClientController extends Controller
 {
@@ -37,7 +36,7 @@ class ClientController extends Controller
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%")
-                    ->orWhere('document', 'like', "%{$search}%");
+                    ->orWhere('cpf_cnpj', 'like', "%{$search}%");
             })
             ->latest()
             ->paginate(15);
@@ -65,18 +64,13 @@ class ClientController extends Controller
     {
         try {
             $client = DB::transaction(function () use ($request) {
-                $client = Client::create(array_merge(
-                    [
-                        'code' => 'C' . Str::upper(Str::random(6)),
-                    ],
-                    $request->validated(),
-                ));
+                $client = Client::create($request->validated());
 
                 // Criar saldo inicial (sempre zero)
                 ClientBalance::create([
                     'client_id' => $client->id,
-                    'balance_amount' => 0,
-                    'tab_amount' => 0,
+                    'balance' => 0,
+                    'credit_limit' => 0,
                 ]);
 
                 return $client;
@@ -85,8 +79,29 @@ class ClientController extends Controller
             // Invalidate cache when a new client is created
             Cache::forget('clients_list_active');
 
+            // If request is AJAX/modal, return JSON response
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Cliente criado com sucesso!',
+                    'client' => [
+                        'id' => $client->id,
+                        'name' => $client->name,
+                        'email' => $client->email,
+                        'phone' => $client->phone,
+                    ],
+                ]);
+            }
+
             return redirect()->route('clients.show', $client)->with('success', 'Cliente criado com sucesso!');
         } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
+
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }

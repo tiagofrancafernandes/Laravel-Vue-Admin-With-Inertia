@@ -28,7 +28,7 @@ class StoreClientRequest extends FormRequest
             'name' => 'required|string|min:3|max:255',
             'email' => 'nullable|email|unique:clients,email,' . $clientId,
             'phone' => 'nullable|string|max:20',
-            'document' => 'nullable|string|max:20|unique:clients,document,' . $clientId,
+            'cpf_cnpj' => 'nullable|string|max:20|unique:clients,cpf_cnpj,' . $clientId,
             'notes' => 'nullable|string|max:1000',
         ];
     }
@@ -44,7 +44,7 @@ class StoreClientRequest extends FormRequest
             'name.max' => 'O nome deve ter no máximo 255 caracteres.',
             'email.email' => 'O email deve ser um endereço válido.',
             'email.unique' => 'Este email já está cadastrado.',
-            'document.unique' => 'Este documento já está cadastrado.',
+            'cpf_cnpj.unique' => 'Este documento já está cadastrado.',
         ];
     }
 }

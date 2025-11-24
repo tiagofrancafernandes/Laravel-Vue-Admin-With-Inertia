@@ -20,7 +20,6 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => 'C' . strtoupper($this->faker->unique()->bothify('?????')),
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
@@ -34,11 +33,10 @@ class ClientFactory extends Factory
     public function anonymous(): static
     {
         return $this->state(fn (array $attributes) => [
-            'is_anonymous' => true,
             'name' => 'Anônimo',
             'email' => null,
             'phone' => null,
-            'document' => null,
+            'cpf_cnpj' => null,
         ]);
     }
 }

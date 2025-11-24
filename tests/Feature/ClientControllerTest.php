@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
+use App\Models\ClientBalance;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -280,8 +281,8 @@ class ClientControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'client_id',
-            'balance_amount',
-            'tab_amount',
+            'balance',
+            'credit_limit',
             'updated_at',
         ]);
     }
@@ -331,6 +332,7 @@ class ClientControllerTest extends TestCase
     public function testAddBalanceAddsClientBalance(): void
     {
         $client = Client::factory()->create();
+        ClientBalance::create(['client_id' => $client->id, 'balance' => 0, 'credit_limit' => 0]);
 
         $response = $this->actingAs($this->user)
             ->post("/clients/{$client->id}/add-balance", [
@@ -376,6 +378,7 @@ class ClientControllerTest extends TestCase
     public function testAddBalanceWithDecimalAmount(): void
     {
         $client = Client::factory()->create();
+        ClientBalance::create(['client_id' => $client->id, 'balance' => 0, 'credit_limit' => 0]);
 
         $response = $this->actingAs($this->user)
             ->post("/clients/{$client->id}/add-balance", [
@@ -424,12 +427,7 @@ class ClientControllerTest extends TestCase
     public function testPayTabPaysClientDebt(): void
     {
         $client = Client::factory()->create();
-
-        // First add balance (tab)
-        $this->actingAs($this->user)
-            ->post("/clients/{$client->id}/add-balance", [
-                'amount' => 100,
-            ]);
+        ClientBalance::create(['client_id' => $client->id, 'balance' => 0, 'credit_limit' => 100]);
 
         $response = $this->actingAs($this->user)
             ->post("/clients/{$client->id}/pay-tab", [
@@ -475,12 +473,7 @@ class ClientControllerTest extends TestCase
     public function testPayTabWithDecimalAmount(): void
     {
         $client = Client::factory()->create();
-
-        // Add balance first
-        $this->actingAs($this->user)
-            ->post("/clients/{$client->id}/add-balance", [
-                'amount' => 100,
-            ]);
+        ClientBalance::create(['client_id' => $client->id, 'balance' => 0, 'credit_limit' => 100]);
 
         $response = $this->actingAs($this->user)
             ->post("/clients/{$client->id}/pay-tab", [
