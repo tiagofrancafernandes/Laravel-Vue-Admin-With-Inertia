@@ -3,7 +3,11 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import {
+    Link,
+    useForm,
+    usePage,
+} from '@inertiajs/vue3';
 
 defineProps({
     mustVerifyEmail: {
@@ -53,6 +57,7 @@ const form = useForm({
                 <InputLabel for="email" value="Email" />
 
                 <TextInput
+                    v-if="false"
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
@@ -60,6 +65,10 @@ const form = useForm({
                     required
                     autocomplete="username"
                 />
+
+                <span v-else class="py-2 px-2 border rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 mt-1 block w-full">
+                    {{ form.email }}
+                </span>
 
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>

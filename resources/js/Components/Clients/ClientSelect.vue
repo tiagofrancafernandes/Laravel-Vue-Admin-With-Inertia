@@ -53,6 +53,9 @@
                 <div>
                     <div class="font-medium text-gray-900">
                         {{ selectedClient.name }}
+                        <span v-if="selectedClient.phone" class="text-gray-600 font-normal">
+                            - {{ formatPhone(selectedClient.phone) }}
+                        </span>
                     </div>
                     <div v-if="selectedClient.email" class="text-sm text-gray-600">
                         {{ selectedClient.email }}
