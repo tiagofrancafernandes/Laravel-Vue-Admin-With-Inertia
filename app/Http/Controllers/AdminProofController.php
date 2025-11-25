@@ -130,14 +130,16 @@ class AdminProofController extends Controller
 
         // If proof is a deposit, add balance to client
         if ($proof->type === 'deposit') {
+            $currentBalance = $proof->client->balance?->balance ?? 0;
             $proof->client->balance()->increment('balance', $proof->amount);
 
             // Log the transaction in ledger
             $proof->client->ledger()->create([
+                'user_id' => auth()->id(),
                 'type' => 'credit',
                 'amount' => $proof->amount,
-                'balance_after' => $proof->client->balance?->balance ?? 0,
-                'tab_after' => 0,
+                'balance_before' => $currentBalance,
+                'balance_after' => $currentBalance + $proof->amount,
                 'description' => "Depósito aprovado - Comprovante #{$proof->id}",
             ]);
         }
