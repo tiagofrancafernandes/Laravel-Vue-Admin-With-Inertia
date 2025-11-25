@@ -17,8 +17,8 @@ class ClientBalanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'balance' => $this->faker->randomFloat(2, 0, 10000),
-            'credit_limit' => $this->faker->randomFloat(2, 0, 50000),
+            'balance' => fake()->randomFloat(2, 0, 10000),
+            'credit_limit' => fake()->randomFloat(2, 0, 50000),
             'last_transaction_at' => null,
         ];
     }

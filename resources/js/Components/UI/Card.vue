@@ -5,12 +5,23 @@
             noBorder ? '' : 'border border-gray-200 dark:border-gray-700',
         ]"
     >
-        <div v-if="title" class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div :class="['px-6 py-2 border-gray-200 dark:border-gray-700', { 'border-b': !hideBody }]">
+            <h3 v-if="title" class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {{ title }}
             </h3>
+            <template v-else-if="$slots.title">
+                <slot name="title"/>
+            </template>
         </div>
-        <div :class="['px-6 py-4', noPadding && 'p-0']">
+        <div
+            :class="[
+                'px-6',
+                {
+                    'py-4': !(noPadding || hideBody),
+                    'p-0': (noPadding || hideBody),
+                },
+            ]"
+        >
             <slot />
         </div>
         <div
@@ -27,6 +38,7 @@ interface Props {
     title?: string;
     noBorder?: boolean;
     noPadding?: boolean;
+    hideBody?: boolean;
 }
 
 defineProps<Props>();

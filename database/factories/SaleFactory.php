@@ -22,7 +22,7 @@ class SaleFactory extends Factory
      */
     public function definition(): array
     {
-        $total = $this->faker->randomFloat(2, 10, 1000);
+        $total = fake()->randomFloat(2, 10, 1000);
 
         return [
             'sale_number' => strtoupper(Str::random(12)),
@@ -38,8 +38,8 @@ class SaleFactory extends Factory
             'subtotal' => $total,
             'discount' => 0,
             'total_amount' => $total,
-            'status' => $this->faker->randomElement(['completed', 'cancelled']),
-            'notes' => $this->faker->optional()->text(),
+            'status' => fake()->randomElement(['completed', 'cancelled']),
+            'notes' => fake()->optional()->text(),
         ];
     }
 

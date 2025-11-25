@@ -29,15 +29,58 @@ export const isNumeric = function (value: unknown) {
     return !isNaN(Number(value));
 };
 
+export const ifNumeric = function (value: unknown) {
+    return isNumeric(value) ? Number(value) : null;
+};
+
 export const isFilledString = function (value: unknown) {
     return isString(value) && value.trim()?.length > 0;
 };
+
+export function isValidDate(value: unknown): boolean {
+    try {
+        value = ['string', 'number'].includes(typeof value) || value instanceof Date ? value : null;
+
+        if (value === null || !value || typeof value === 'object') {
+            return false;
+        }
+
+        const d = new Date(value as string | number | Date);
+
+        // Data inválida não lança exceção, mas gera NaN
+        if (isNaN(d.getTime())) {
+            return false;
+        }
+
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
+export function ifValidDate(value: unknown): null | Date {
+    try {
+        if (isValidDate(value)) {
+            return null;
+        }
+
+        const d = new Date(value as string | number | Date);
+
+        if (isNaN(d.getTime())) {
+            return null;
+        }
+
+        return d;
+    } catch (_) {
+        return null;
+    }
+}
 
 /**
  * Format number as Brazilian currency
  */
 export function formatCurrency(value: string | number) {
-    value = isNumeric(value) ? value : 0;
+    value = isNumeric(value) ? Number(value) : 0;
 
     if (typeof value !== 'number') {
         value = 0;
@@ -52,12 +95,34 @@ export function formatCurrency(value: string | number) {
 /**
  * Format date as Brazilian format
  */
-export function formatDate(date: string | number | Date) {
+export function formatDate(date: any): string {
+    return (
+        ifValidDate(date)?.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        }) || ''
+    );
+}
+
+export function formatDateFull(date: any): string {
+    return (
+        ifValidDate(date)?.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        }) || ''
+    );
+}
+
+export function formatPtBrDate(date: any) {
+    date = ifValidDate(date);
+
     if (!date) {
         return '';
     }
-
-    date = date instanceof Date ? date : new Date(date);
 
     return new Intl.DateTimeFormat('pt-BR').format(date);
 }
@@ -246,11 +311,20 @@ export const strEndsWith = function (value: any, toCheck: any): boolean {
     return value.endsWith(toCheck);
 };
 
+/**
+ * @param {string} name
+ * @param {?(unknown | undefined)} [params]
+ * @param {?boolean} [absolute]
+ * @param {?AnyObject} [config]
+ *
+ * @returns {string}
+ */
 export const route = function (
     name: string,
     params?: unknown | undefined,
     absolute?: boolean,
     config?: AnyObject
 ): string {
+    // @ts-ignore
     return _route(name, params, absolute, config);
 };

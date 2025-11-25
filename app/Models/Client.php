@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasEvents;
 
 /**
  * @property int $id
@@ -46,6 +47,7 @@ class Client extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasEvents;
 
     /**
      * Boot the model.
@@ -53,22 +55,34 @@ class Client extends Model
     protected static function boot(): void
     {
         parent::boot();
+        // saving -> creating
 
         static::creating(function ($model) {
             if (empty($model->code)) {
-                $model->code = self::generateUniqueCode();
+                $model->code = static::generateUniqueCode();
             }
         });
+
+        static::saving(function ($model) {
+            if (empty($model->code)) {
+                $model->code = static::generateUniqueCode();
+            }
+        });
+    }
+
+    public static function generateUniqueClientCode(): string
+    {
+        return static::generateUniqueCode();
     }
 
     /**
      * Generate a unique code for the client.
      */
-    private static function generateUniqueCode(): string
+    protected static function generateUniqueCode(): string
     {
         do {
             $code = 'C' . strtoupper(\Illuminate\Support\Str::random(6));
-        } while (self::where('code', $code)->exists());
+        } while (static::where('code', $code)->exists());
 
         return $code;
     }

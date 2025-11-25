@@ -2,7 +2,15 @@
 import Card from '@/Components/UI/Card.vue';
 import StatsCard from '@/Components/UI/StatsCard.vue';
 import Table from '@/Components/UI/Table.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import {
+    formatCurrency,
+    formatDate,
+    formatDateFull,
+} from '@/Utils/helpers';
+import {
+    Head,
+    Link,
+} from '@inertiajs/vue3';
 
 interface Props {
     todayStats: {
@@ -38,21 +46,6 @@ const clientColumns = [
     { key: 'email', label: 'E-mail' },
     { key: 'total_spent', label: 'Gasto Total' },
 ];
-
-const formatCurrency = (value: string | number): string => {
-    const num = typeof value === 'string' ? parseFloat(value) : value;
-    return num.toFixed(2).replace('.', ',');
-};
-
-const formatDate = (date: string): string => {
-    return new Date(date).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
 </script>
 
 <template>
@@ -122,7 +115,7 @@ const formatDate = (date: string): string => {
                         </Link>
                     </template>
 
-                    <template #column-total="{ row }">R$ {{ formatCurrency(row.total) }}</template>
+                    <template #column-total="{ row }"> {{ formatCurrency(row.total) }}</template>
 
                     <template #column-created_at="{ row }">
                         {{ formatDate(row.created_at) }}
@@ -143,7 +136,7 @@ const formatDate = (date: string): string => {
             <!-- Top Clients -->
             <Card title="Clientes Principais">
                 <Table v-if="topClients.length > 0" :columns="clientColumns" :rows="topClients">
-                    <template #column-total_spent="{ row }">R$ {{ formatCurrency(row.total_spent) }}</template>
+                    <template #column-total_spent="{ row }"> {{ formatCurrency(row.total_spent) }}</template>
 
                     <template #actions="{ row }">
                         <Link

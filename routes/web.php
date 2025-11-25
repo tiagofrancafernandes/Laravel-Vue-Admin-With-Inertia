@@ -30,9 +30,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
 
     // Clients routes
-    Route::resource('clients', ClientController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('clients', ClientController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
     Route::post('clients/{client}/add-balance', [ClientController::class, 'addBalance'])->name('clients.add-balance');
     Route::post('clients/{client}/pay-tab', [ClientController::class, 'payTab'])->name('clients.pay-tab');
+    Route::put('clients/{client}/credit-limit', [ClientController::class, 'updateCreditLimit'])->name('clients.update-credit-limit');
 });
 
 // Client Portal Routes

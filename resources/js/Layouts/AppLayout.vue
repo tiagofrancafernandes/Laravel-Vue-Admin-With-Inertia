@@ -40,236 +40,15 @@
                                 class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                                 aria-label="Toggle dark mode"
                             >
-                                <!-- Sun Icon (Light Mode) -->
-                                <svg
-                                    v-if="isDarkMode"
-                                    class="w-5 h-5"
-                                    fill="currentColor"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="32"
-                                    height="32"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <!-- Icon from Material Line Icons by Vjacheslav Trushkin - https://github.com/cyberalien/line-md/blob/master/license.txt -->
-                                    <g
-                                        fill="none"
-                                        stroke="#888888"
-                                        stroke-dasharray="4"
-                                        stroke-dashoffset="4"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    >
-                                        <path d="M13 4h1.5M13 4h-1.5M13 4v1.5M13 4v-1.5">
-                                            <animate
-                                                id="SVGjUNXVaqx"
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="0.7s;SVGjUNXVaqx.begin+6s"
-                                                dur="0.4s"
-                                                values="4;0"
-                                            />
-                                            <animate
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="SVGjUNXVaqx.begin+2s;SVGjUNXVaqx.begin+4s"
-                                                dur="0.4s"
-                                                values="4;0"
-                                            />
-                                            <animate
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="SVGjUNXVaqx.begin+1.2s;SVGjUNXVaqx.begin+3.2s;SVGjUNXVaqx.begin+5.2s"
-                                                dur="0.4s"
-                                                values="0;4"
-                                            />
-                                            <set
-                                                fill="freeze"
-                                                attributeName="d"
-                                                begin="SVGjUNXVaqx.begin+1.8s"
-                                                to="M12 5h1.5M12 5h-1.5M12 5v1.5M12 5v-1.5"
-                                            />
-                                            <set
-                                                fill="freeze"
-                                                attributeName="d"
-                                                begin="SVGjUNXVaqx.begin+3.8s"
-                                                to="M12 4h1.5M12 4h-1.5M12 4v1.5M12 4v-1.5"
-                                            />
-                                            <set
-                                                fill="freeze"
-                                                attributeName="d"
-                                                begin="SVGjUNXVaqx.begin+5.8s"
-                                                to="M13 4h1.5M13 4h-1.5M13 4v1.5M13 4v-1.5"
-                                            />
-                                        </path>
-                                        <path d="M19 11h1.5M19 11h-1.5M19 11v1.5M19 11v-1.5">
-                                            <animate
-                                                id="SVGO88gQckN"
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="1.1s;SVGO88gQckN.begin+6s"
-                                                dur="0.4s"
-                                                values="4;0"
-                                            />
-                                            <animate
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="SVGO88gQckN.begin+2s;SVGO88gQckN.begin+4s"
-                                                dur="0.4s"
-                                                values="4;0"
-                                            />
-                                            <animate
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="SVGO88gQckN.begin+1.2s;SVGO88gQckN.begin+3.2s;SVGO88gQckN.begin+5.2s"
-                                                dur="0.4s"
-                                                values="0;4"
-                                            />
-                                            <set
-                                                fill="freeze"
-                                                attributeName="d"
-                                                begin="SVGO88gQckN.begin+1.8s"
-                                                to="M17 11h1.5M17 11h-1.5M17 11v1.5M17 11v-1.5"
-                                            />
-                                            <set
-                                                fill="freeze"
-                                                attributeName="d"
-                                                begin="SVGO88gQckN.begin+3.8s"
-                                                to="M18 12h1.5M18 12h-1.5M18 12v1.5M18 12v-1.5"
-                                            />
-                                            <set
-                                                fill="freeze"
-                                                attributeName="d"
-                                                begin="SVGO88gQckN.begin+5.8s"
-                                                to="M19 11h1.5M19 11h-1.5M19 11v1.5M19 11v-1.5"
-                                            />
-                                        </path>
-                                        <path d="M19 4h1.5M19 4h-1.5M19 4v1.5M19 4v-1.5">
-                                            <animate
-                                                id="SVGPXuakc7A"
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="2s;SVGPXuakc7A.begin+6s"
-                                                dur="0.4s"
-                                                values="4;0"
-                                            />
-                                            <animate
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="SVGPXuakc7A.begin+2s"
-                                                dur="0.4s"
-                                                values="4;0"
-                                            />
-                                            <animate
-                                                fill="freeze"
-                                                attributeName="stroke-dashoffset"
-                                                begin="SVGPXuakc7A.begin+1.2s;SVGPXuakc7A.begin+3.2s"
-                                                dur="0.4s"
-                                                values="0;4"
-                                            />
-                                            <set
-                                                fill="freeze"
-                                                attributeName="d"
-                                                begin="SVGPXuakc7A.begin+1.8s"
-                                                to="M20 5h1.5M20 5h-1.5M20 5v1.5M20 5v-1.5"
-                                            />
-                                            <set
-                                                fill="freeze"
-                                                attributeName="d"
-                                                begin="SVGPXuakc7A.begin+5.8s"
-                                                to="M19 4h1.5M19 4h-1.5M19 4v1.5M19 4v-1.5"
-                                            />
-                                        </path>
-                                    </g>
+                                <svg v-if="isDarkMode" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path
-                                        fill="none"
-                                        stroke="#888888"
-                                        stroke-dasharray="56"
-                                        stroke-dashoffset="56"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M7 6 C7 12.08 11.92 17 18 17 C18.53 17 19.05 16.96 19.56 16.89 C17.95 19.36 15.17 21 12 21 C7.03 21 3 16.97 3 12 C3 8.83 4.64 6.05 7.11 4.44 C7.04 4.95 7 5.47 7 6 Z"
-                                    >
-                                        <animate
-                                            fill="freeze"
-                                            attributeName="stroke-dashoffset"
-                                            dur="0.6s"
-                                            values="56;0"
-                                        />
-                                    </path>
+                                        fill-rule="evenodd"
+                                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                        clip-rule="evenodd"
+                                    />
                                 </svg>
-
-                                <!-- Moon Icon (Dark Mode) -->
-                                <svg
-                                    v-else
-                                    class="w-5 h-5"
-                                    fill="currentColor"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="32"
-                                    height="32"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <!-- Icon from Material Line Icons by Vjacheslav Trushkin - https://github.com/cyberalien/line-md/blob/master/license.txt -->
-                                    <g
-                                        fill="none"
-                                        stroke="#888888"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                    >
-                                        <circle cx="12" cy="32" r="6" fill="#888888">
-                                            <animate fill="freeze" attributeName="cy" dur="0.6s" values="32;12" />
-                                        </circle>
-                                        <g>
-                                            <path
-                                                stroke-dasharray="2"
-                                                stroke-dashoffset="2"
-                                                d="M12 19v1M19 12h1M12 5v-1M5 12h-1"
-                                            >
-                                                <animate
-                                                    fill="freeze"
-                                                    attributeName="d"
-                                                    begin="0.7s"
-                                                    dur="0.2s"
-                                                    values="M12 19v1M19 12h1M12 5v-1M5 12h-1;M12 21v1M21 12h1M12 3v-1M3 12h-1"
-                                                />
-                                                <animate
-                                                    fill="freeze"
-                                                    attributeName="stroke-dashoffset"
-                                                    begin="0.7s"
-                                                    dur="0.2s"
-                                                    values="2;0"
-                                                />
-                                            </path>
-                                            <path
-                                                stroke-dasharray="2"
-                                                stroke-dashoffset="2"
-                                                d="M17 17l0.5 0.5M17 7l0.5 -0.5M7 7l-0.5 -0.5M7 17l-0.5 0.5"
-                                            >
-                                                <animate
-                                                    fill="freeze"
-                                                    attributeName="d"
-                                                    begin="0.9s"
-                                                    dur="0.2s"
-                                                    values="M17 17l0.5 0.5M17 7l0.5 -0.5M7 7l-0.5 -0.5M7 17l-0.5 0.5;M18.5 18.5l0.5 0.5M18.5 5.5l0.5 -0.5M5.5 5.5l-0.5 -0.5M5.5 18.5l-0.5 0.5"
-                                                />
-                                                <animate
-                                                    fill="freeze"
-                                                    attributeName="stroke-dashoffset"
-                                                    begin="0.9s"
-                                                    dur="0.2s"
-                                                    values="2;0"
-                                                />
-                                            </path>
-                                            <animateTransform
-                                                attributeName="transform"
-                                                dur="30s"
-                                                repeatCount="indefinite"
-                                                type="rotate"
-                                                values="0 12 12;360 12 12"
-                                            />
-                                        </g>
-                                    </g>
+                                <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                                 </svg>
                             </button>
 
@@ -319,26 +98,16 @@
                             class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                             aria-label="Toggle dark mode"
                         >
-                            <svg
-                                v-if="isDarkMode"
-                                class="w-5 h-5"
-                                fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                                />
-                            </svg>
-                            <svg
-                                v-else
-                                class="w-5 h-5"
-                                fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                            </svg>
+                            <svg v-if="isDarkMode" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                                </svg>
                         </button>
                         <button
                             @click="showingNavigationDropdown = !showingNavigationDropdown"
@@ -502,4 +271,5 @@ const showingNavigationDropdown = ref(false);
 console.log('page', page);
 console.log('pageProps', pageProps);
 console.log('flashMessages', flashMessages);
+console.log('errors', errors.value);
 </script>

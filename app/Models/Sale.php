@@ -60,7 +60,7 @@ class Sale extends Model
 
         static::creating(function ($model) {
             if (empty($model->code)) {
-                $model->code = self::generateUniqueCode();
+                $model->code = static::generateUniqueCode();
             }
         });
     }
@@ -72,7 +72,7 @@ class Sale extends Model
     {
         do {
             $code = 'S' . strtoupper(\Illuminate\Support\Str::random(6));
-        } while (self::where('code', $code)->exists());
+        } while (static::where('code', $code)->exists());
 
         return $code;
     }
@@ -87,6 +87,7 @@ class Sale extends Model
         'total',
         'status',
         'notes',
+        'total_amount',
     ];
 
     protected $casts = [

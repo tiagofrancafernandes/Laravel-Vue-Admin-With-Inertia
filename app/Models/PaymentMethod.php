@@ -47,7 +47,7 @@ class PaymentMethod extends Model
 
         static::creating(function ($model) {
             if (empty($model->code)) {
-                $model->code = self::generateUniqueCode();
+                $model->code = static::generateUniqueCode();
             }
         });
     }
@@ -59,7 +59,7 @@ class PaymentMethod extends Model
     {
         do {
             $code = strtoupper(\Illuminate\Support\Str::random(3));
-        } while (self::where('code', $code)->exists());
+        } while (static::where('code', $code)->exists());
 
         return $code;
     }

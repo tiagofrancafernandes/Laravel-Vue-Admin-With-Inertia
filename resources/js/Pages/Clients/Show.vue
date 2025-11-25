@@ -9,9 +9,14 @@
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ client.name }}</h1>
                     <p class="text-gray-600 dark:text-gray-400 mt-1">Perfil do cliente</p>
                 </div>
-                <Link href="/clients" class="inline-block">
-                    <Button variant="secondary">← Voltar</Button>
-                </Link>
+                <div class="flex gap-2">
+                    <Link :href="`/clients/${client.id}/edit`" class="inline-block">
+                        <Button variant="primary">✎ Editar</Button>
+                    </Link>
+                    <Link href="/clients" class="inline-block">
+                        <Button variant="secondary">← Voltar</Button>
+                    </Link>
+                </div>
             </div>
 
             <!-- Contact Information -->
@@ -61,7 +66,7 @@
                     <div class="space-y-2">
                         <p class="text-sm text-gray-600 dark:text-gray-400">Total Gasto</p>
                         <p class="text-3xl font-bold text-green-600 dark:text-green-400">
-                            R$ {{ formatCurrency(stats?.total_spent || 0) }}
+                             {{ formatCurrency(stats?.total_spent || 0) }}
                         </p>
                         <p v-if="stats?.last_sale" class="text-sm text-gray-600 dark:text-gray-400 mt-3">
                             Última compra: {{ formatDate(stats.last_sale.created_at) }}
@@ -113,7 +118,7 @@
                                     {{ sale.sale_number }}
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm text-gray-900 dark:text-gray-100">
-                                    R$ {{ formatCurrency(sale.total) }}
+                                     {{ formatCurrency(sale.total) }}
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-400">
                                     {{ formatDate(sale.created_at) }}
@@ -191,13 +196,13 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    R$ {{ formatCurrency(transaction.amount) }}
+                                     {{ formatCurrency(transaction.amount) }}
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-400">
-                                    R$ {{ formatCurrency(transaction.balance_before) }}
+                                     {{ formatCurrency(transaction.balance_before) }}
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-400">
-                                    R$ {{ formatCurrency(transaction.balance_after) }}
+                                     {{ formatCurrency(transaction.balance_after) }}
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                                     {{ transaction.description }}
@@ -221,7 +226,14 @@ import AddCreditItemForm from '@/Components/Clients/AddCreditItemForm.vue';
 import BalanceDisplay from '@/Components/Clients/BalanceDisplay.vue';
 import Button from '@/Components/Forms/Button.vue';
 import Card from '@/Components/UI/Card.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import {
+    formatCurrency,
+    formatDate,
+} from '@/Utils/helpers';
+import {
+    Head,
+    Link,
+} from '@inertiajs/vue3';
 
 interface Client {
     id: number;
@@ -272,19 +284,6 @@ interface Props {
 }
 
 defineProps<Props>();
-
-const formatCurrency = (value: string | number): string => {
-    const num = typeof value === 'string' ? parseFloat(value) : value;
-    return num.toFixed(2).replace('.', ',');
-};
-
-const formatDate = (date: string): string => {
-    return new Date(date).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-    });
-};
 
 const formatCPFCNPJ = (value?: string): string => {
     if (!value) return '';

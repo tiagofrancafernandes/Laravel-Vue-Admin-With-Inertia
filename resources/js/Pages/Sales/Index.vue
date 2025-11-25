@@ -48,9 +48,9 @@
                             <span>{{ row.client?.name || 'Anônimo' }}</span>
                         </template>
 
-                        <template #column-total="{ row }">
+                        <template #column-total_amount="{ row }">
                             <span class="font-semibold text-gray-900 dark:text-gray-100">
-                                R$ {{ formatCurrency(row.total) }}
+                                 {{ formatCurrency(row.total_amount) }}
                             </span>
                         </template>
 
@@ -80,8 +80,8 @@
                                     Ver
                                 </Link>
                                 <button
-                                    v-if="row.status === 'completed'"
-                                    @click="openCancelModal(row)"
+                                    v-if="showCancelButton && row.status === 'completed'"
+                                    @click="openCancelModal(row as Sale)"
                                     class="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                                 >
                                     Cancelar
@@ -111,9 +111,8 @@
                                     !link.url && 'opacity-50 cursor-not-allowed',
                                 ]"
                                 :disabled="!link.url"
-                            >
-                                {{ link.label.replace('&laquo;', '«').replace('&raquo;', '»') }}
-                            </Link>
+                                v-html="(link?.label || '').replace('&laquo;', '«').replace('&raquo;', '»')"
+                            />
                         </div>
                     </div>
                 </div>
@@ -149,7 +148,16 @@ import Input from '@/Components/Forms/Input.vue';
 import Card from '@/Components/UI/Card.vue';
 import Modal from '@/Components/UI/Modal.vue';
 import Table from '@/Components/UI/Table.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {
+    formatCurrency,
+    formatDate,
+    formatDateFull,
+} from '@/Utils/helpers';
+import {
+    Head,
+    Link,
+    useForm,
+} from '@inertiajs/vue3';
 
 interface Sale {
     id: number;
@@ -159,7 +167,7 @@ interface Sale {
         id: number;
         name: string;
     };
-    total: string;
+    total_amount: string;
     status: 'completed' | 'cancelled';
     created_at: string;
     updated_at: string;
@@ -193,7 +201,7 @@ defineProps<Props>();
 const columns = [
     { key: 'sale_number', label: 'Venda' },
     { key: 'client.name', label: 'Cliente' },
-    { key: 'total', label: 'Total' },
+    { key: 'total_amount', label: 'Total' },
     { key: 'status', label: 'Status' },
     { key: 'created_at', label: 'Data' },
 ];
@@ -202,6 +210,7 @@ const form = useForm({
     search: '',
 });
 
+const showCancelButton = false; // Por hora não vamos mostrar até ter a lógica de adicionar como vaoucer/saldo para o cliente e se não for o anônimo
 const showCancelModal = ref(false);
 const selectedSale = ref<Sale | null>(null);
 const cancelLoading = ref(false);
@@ -235,21 +244,6 @@ const confirmCancel = async () => {
         onFinish: () => {
             cancelLoading.value = false;
         },
-    });
-};
-
-const formatCurrency = (value: string | number): string => {
-    const num = typeof value === 'string' ? parseFloat(value) : value;
-    return num.toFixed(2).replace('.', ',');
-};
-
-const formatDate = (date: string): string => {
-    return new Date(date).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
     });
 };
 </script>

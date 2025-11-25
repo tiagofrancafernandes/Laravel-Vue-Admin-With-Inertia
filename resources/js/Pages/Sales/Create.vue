@@ -34,13 +34,15 @@
                             <div>
                                 <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Saldo Disponível</p>
                                 <p class="text-lg font-semibold text-green-600 dark:text-green-400 mt-1">
-                                    R$ {{ formatCurrency(clientBalance.balance) }}
+                                     {{ formatCurrency(clientBalance.balance) }}
                                 </p>
                             </div>
                             <div v-if="clientBalance.credit_limit > 0">
-                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Limite de Crédito Total</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                                    Limite de Crédito Total
+                                </p>
                                 <p class="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-1">
-                                    R$ {{ formatCurrency(clientBalance.credit_limit) }}
+                                     {{ formatCurrency(clientBalance.credit_limit) }}
                                 </p>
                             </div>
                         </div>
@@ -48,12 +50,12 @@
                         <!-- Credit Availability for this Sale -->
                         <div v-if="paymentDeficit > 0" class="pt-4 border-t border-gray-200 dark:border-gray-700">
                             <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-3">
-                                Crédito Disponível para esta Venda (R$ {{ formatCurrency(paymentDeficit) }} a pagar)
+                                Crédito Disponível para esta Venda ( {{ formatCurrency(paymentDeficit) }} a pagar)
                             </p>
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-sm font-medium">
-                                        Crédito Disponível: R$ {{ formatCurrency(availableCreditForSale) }}
+                                        Crédito Disponível:  {{ formatCurrency(availableCreditForSale) }}
                                     </span>
                                     <span
                                         :class="[
@@ -92,20 +94,22 @@
                                         'text-xs mt-2',
                                         {
                                             'text-green-600 dark:text-green-400': creditPercentage >= 30,
-                                            'text-yellow-600 dark:text-yellow-400': creditPercentage >= 10 && creditPercentage < 30,
-                                            'text-orange-600 dark:text-orange-400': creditPercentage < 10 && creditPercentage > 0,
+                                            'text-yellow-600 dark:text-yellow-400':
+                                                creditPercentage >= 10 && creditPercentage < 30,
+                                            'text-orange-600 dark:text-orange-400':
+                                                creditPercentage < 10 && creditPercentage > 0,
                                             'text-red-600 dark:text-red-400': creditPercentage <= 0,
                                         },
                                     ]"
                                 >
-                                    <span v-if="creditPercentage >= 30"> ✓ Crédito suficiente</span>
+                                    <span v-if="creditPercentage >= 30">✓ Crédito suficiente</span>
                                     <span v-else-if="creditPercentage >= 10 && creditPercentage < 30">
                                         ⚠️ Crédito baixo
                                     </span>
                                     <span v-else-if="creditPercentage < 10 && creditPercentage > 0">
                                         ⚠️ Crédito quase acabando
                                     </span>
-                                    <span v-else> ✗ Crédito insuficiente</span>
+                                    <span v-else>✗ Crédito insuficiente</span>
                                 </p>
                             </div>
                         </div>
@@ -175,7 +179,7 @@
                                     <div
                                         class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-gray-100 font-medium"
                                     >
-                                        R$ {{ formatCurrency(item.quantity * item.price) }}
+                                         {{ formatCurrency(item.quantity * item.price) }}
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +195,7 @@
                         <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-400">Subtotal</span>
                             <span class="font-medium text-gray-900 dark:text-gray-100">
-                                R$ {{ formatCurrency(subtotal) }}
+                                 {{ formatCurrency(subtotal) }}
                             </span>
                         </div>
 
@@ -209,7 +213,7 @@
                         >
                             <span class="font-semibold text-gray-900 dark:text-gray-100">Total</span>
                             <span class="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                                R$ {{ formatCurrency(total) }}
+                                 {{ formatCurrency(total) }}
                             </span>
                         </div>
                     </div>
@@ -230,7 +234,7 @@
                         class="mt-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg"
                     >
                         <p class="text-red-800 dark:text-red-200 text-sm">
-                            ⚠️ Soma dos pagamentos (R$ {{ formatCurrency(paymentTotal) }}) não corresponde ao total (R$
+                            ⚠️ Soma dos pagamentos ( {{ formatCurrency(paymentTotal) }}) não corresponde ao total (R$
                             {{ formatCurrency(total) }})
                         </p>
                     </div>
@@ -239,14 +243,32 @@
                         class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg"
                     >
                         <p class="text-green-800 dark:text-green-200 text-sm">
-                            ✓ Pagamentos conferem: R$ {{ formatCurrency(paymentTotal) }}
+                            ✓ Pagamentos conferem:  {{ formatCurrency(paymentTotal) }}
                         </p>
                     </div>
                 </Card>
 
                 <!-- Sale Notes -->
-                <Card title="Observações da Venda">
+                <Card :hideBody="!showNotes">
+                    <template v-slot:title>
+                        <div class="w-full flex justify-between content-center items-center px-3">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 w-full">
+                                Observações
+                            </h3>
+                            <div class="w-4/12">
+                                <button
+                                    type="button"
+                                    @click.stop.prevent="showNotes = !showNotes"
+                                    class="w-full px-3 py-2 text-sm font-medium rounded border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                                >
+                                    {{ showNotes ? 'Ocultar' : 'Mostrar' }} observações
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+
                     <textarea
+                        v-show="showNotes"
                         v-model="form.notes"
                         placeholder="Adicione observações sobre esta venda (opcional)"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 resize-none"
@@ -259,14 +281,17 @@
                     <Link href="/sales" class="flex-1">
                         <Button type="button" variant="secondary" class="w-full">Cancelar</Button>
                     </Link>
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        class="flex-1"
-                        :disabled="form.processing || paymentTotal < total"
-                    >
-                        {{ form.processing ? 'Registrando...' : 'Registrar Venda' }}
-                    </Button>
+                    <div class="flex-1 w-6/12 min-h-12">
+                        <Button
+                            v-show="paymentTotal > 0"
+                            type="submit"
+                            variant="primary"
+                            class="flex-1 w-full"
+                            :disabled="form.processing || paymentTotal < total"
+                        >
+                            {{ form.processing ? 'Registrando...' : 'Registrar Venda' }}
+                        </Button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -286,6 +311,7 @@ import Input from '@/Components/Forms/Input.vue';
 import ProductSelect from '@/Components/Products/ProductSelect.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
 import Card from '@/Components/UI/Card.vue';
+import { formatCurrency } from '@/Utils/helpers';
 import {
     Head,
     Link,
@@ -336,6 +362,8 @@ const form = useForm({
     payments: [] as Payment[],
     notes: '',
 });
+
+const showNotes = ref<boolean>(Boolean((form.notes || '')?.trim()));
 
 // Reset client balance when client is deselected
 watch(
@@ -391,10 +419,6 @@ const onProductSelected = (product: Item) => {
 
 const removeItem = (index: number) => {
     form.items.splice(index, 1);
-};
-
-const formatCurrency = (value: number): string => {
-    return value.toFixed(2).replace('.', ',');
 };
 
 const submitForm = () => {

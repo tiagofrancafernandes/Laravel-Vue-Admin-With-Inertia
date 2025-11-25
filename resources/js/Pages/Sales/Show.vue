@@ -13,7 +13,7 @@
                     <Link href="/sales" class="inline-block">
                         <Button variant="secondary">← Voltar</Button>
                     </Link>
-                    <Button v-if="sale.status === 'completed'" variant="danger" @click="showCancelModal = true">
+                    <Button v-if="showCancelButton && sale.status === 'completed'" variant="danger" @click="showCancelModal = true">
                         Cancelar Venda
                     </Button>
                 </div>
@@ -86,19 +86,19 @@
                         <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-400">Subtotal</span>
                             <span class="font-medium text-gray-900 dark:text-gray-100">
-                                R$ {{ formatCurrency(sale.subtotal) }}
+                                {{ formatCurrency(sale.subtotal) }}
                             </span>
                         </div>
                         <div v-if="parseFloat(sale.discount) > 0" class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-400">Desconto</span>
                             <span class="font-medium text-red-600 dark:text-red-400">
-                                -R$ {{ formatCurrency(sale.discount) }}
+                                - {{ formatCurrency(sale.discount) }}
                             </span>
                         </div>
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-gray-100">Total</span>
                             <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                R$ {{ formatCurrency(sale.total) }}
+                                {{ formatCurrency(sale.total_amount) }}
                             </span>
                         </div>
                     </div>
@@ -138,10 +138,10 @@
                                     {{ item.quantity }}
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm text-gray-900 dark:text-gray-100">
-                                    R$ {{ formatCurrency(item.price) }}
+                                    {{ formatCurrency(item.price) }}
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    R$ {{ formatCurrency(item.quantity * item.price) }}
+                                    {{ formatCurrency(item.quantity * Number(item.price)) }}
                                 </td>
                             </tr>
                         </tbody>
@@ -160,7 +160,7 @@
                     >
                         <div class="flex-1">
                             <p class="font-medium text-gray-900 dark:text-gray-100">
-                                {{ payment.paymentMethod?.name }}
+                                {{ payment.payment_method?.name }}
                             </p>
                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                 {{ formatDate(payment.created_at) }}
@@ -168,13 +168,13 @@
                         </div>
                         <div class="text-right">
                             <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                                R$ {{ formatCurrency(payment.amount) }}
+                                {{ formatCurrency(payment.amount) }}
                             </p>
                             <p
                                 v-if="payment.change_amount && parseFloat(payment.change_amount) > 0"
                                 class="text-sm text-gray-600 dark:text-gray-400"
                             >
-                                Troco: R$ {{ formatCurrency(payment.change_amount) }}
+                                Troco: {{ formatCurrency(payment.change_amount) }}
                             </p>
                         </div>
                     </div>
@@ -215,50 +215,72 @@ import { ref } from 'vue';
 import Button from '@/Components/Forms/Button.vue';
 import Card from '@/Components/UI/Card.vue';
 import Modal from '@/Components/UI/Modal.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {
+    formatCurrency,
+    formatDate,
+    ifValidDate,
+} from '@/Utils/helpers';
+import {
+    Head,
+    Link,
+    useForm,
+} from '@inertiajs/vue3';
 
 interface SaleItem {
-    description: string;
+    name?: string;
+    description?: string;
     quantity: number;
+    unit_price?: number;
+    subtotal?: number;
     price: string | number;
 }
 
-interface PaymentMethod {
-    id: number;
+type AnyObject = Record<string, unknown>;
+
+interface PaymentMethod extends AnyObject {
+    id?: number|string;
     name: string;
     code: string;
 }
+
 
 interface Payment {
     id: number;
     amount: string;
     change_amount?: string;
     created_at: string;
-    paymentMethod?: PaymentMethod;
+    sale_id?: number|string;
+    payment_method_id?: number|string;
+    metadata?: Record<string, string>[];
+    payment_method?: Record<string, string|number|null>|PaymentMethod;
 }
 
 interface Client {
     id: number;
     name: string;
-    email?: string;
-    phone?: string;
+    email?: string | null;
+    phone?: string | null;
+    cpf_cnpj?: string | null;
 }
 
 interface User {
     id: number;
     name: string;
+    email: string|null;
 }
 
 interface Sale {
     id: number;
+    code: string;
     sale_number: string;
     client_id?: number;
+    user_id?: number;
     client?: Client;
     user?: User;
     items: SaleItem[];
     subtotal: string;
     discount: string;
-    total: string;
+    total_amount: string;
     status: 'completed' | 'cancelled';
     notes?: string;
     payments: Payment[];
@@ -272,10 +294,17 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const showCancelButton = false; // Por hora não vamos mostrar até ter a lógica de adicionar como vaoucer/saldo para o cliente e se não for o anônimo
 const showCancelModal = ref(false);
 const cancelLoading = ref(false);
 
 const confirmCancel = () => {
+    if (!showCancelButton) {
+        console.log('Cancelamento de venda inativado por hora');
+
+        return;
+    }
+
     cancelLoading.value = true;
 
     const form = useForm({});
@@ -286,19 +315,6 @@ const confirmCancel = () => {
         onFinish: () => {
             cancelLoading.value = false;
         },
-    });
-};
-
-const formatCurrency = (value: string | number): string => {
-    const num = typeof value === 'string' ? parseFloat(value) : value;
-    return num.toFixed(2).replace('.', ',');
-};
-
-const formatDate = (date: string): string => {
-    return new Date(date).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
     });
 };
 

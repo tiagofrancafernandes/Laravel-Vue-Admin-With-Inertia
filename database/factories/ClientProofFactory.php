@@ -27,11 +27,11 @@ class ClientProofFactory extends Factory
     {
         return [
             'client_id' => Client::factory(),
-            'type' => $this->faker->randomElement(['deposit', 'payment']),
-            'amount' => $this->faker->randomFloat(2, 10, 5000),
-            'file_path' => 'client-proofs/' . $this->faker->uuid . '.pdf',
+            'type' => fake()->randomElement(['deposit', 'payment']),
+            'amount' => fake()->randomFloat(2, 10, 5000),
+            'file_path' => 'client-proofs/' . fake()->uuid . '.pdf',
             'status' => 'pending',
-            'notes' => $this->faker->optional()->sentence(),
+            'notes' => fake()->optional()->sentence(),
         ];
     }
 

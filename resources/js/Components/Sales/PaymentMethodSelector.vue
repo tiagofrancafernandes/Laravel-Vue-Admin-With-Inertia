@@ -81,7 +81,7 @@
         </div>
 
         <!-- Special handling for change -->
-        <div v-if="shouldShowChangeOptions()" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+        <div v-if="shouldShowChangeOptions() && paymentTotalIsGtTotal" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
             <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Opções para troco:</p>
             <label class="flex items-center space-x-2">
                 <input
@@ -97,7 +97,7 @@
                     type="checkbox"
                     class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">Usar troco para quitar crédito do cliente</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">Usar troco para quitar crédito do cliente (se houver)</span>
             </label>
         </div>
 
@@ -220,8 +220,10 @@ const paymentTotal = computed(() => {
 // Calculate remaining amount to pay
 const remainingAmount = computed(() => {
     const remaining = props.total - paymentTotal.value;
-    return Math.max(0, remaining);
+    return Number(Math.max(0, remaining).toFixed(2));
 });
+
+const paymentTotalIsGtTotal = computed(() => paymentTotal.value > props.total);
 
 const formatCurrency = (value: number): string => {
     return value.toFixed(2).replace('.', ',');

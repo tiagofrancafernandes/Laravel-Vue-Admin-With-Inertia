@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreClientRequest;
+use App\Http\Requests\UpdateClientRequest;
+use App\Http\Requests\UpdateClientCreditLimitRequest;
 use App\Http\Requests\AddClientBalanceRequest;
 use App\Http\Requests\PayClientTabRequest;
 use App\Http\Requests\ClientFilterRequest;
@@ -233,6 +235,73 @@ class ClientController extends Controller
             );
 
             return back()->with('success', 'Pagamento registrado com sucesso!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Show the form for editing the client.
+     */
+    public function edit(Client $client): Response
+    {
+        $this->authorize('update', $client);
+
+        $client->load('balance');
+
+        return Inertia::render('Clients/Edit', [
+            'client' => $client,
+        ]);
+    }
+
+    /**
+     * Update the client information.
+     */
+    public function update(UpdateClientRequest $request, Client $client)
+    {
+        $this->authorize('update', $client);
+
+        try {
+            $client->update($request->validated());
+
+            // Invalidate cache when a client is updated
+            Cache::forget('clients_list_active');
+
+            return redirect()->route('clients.show', $client)
+                ->with('success', 'Cliente atualizado com sucesso!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Update the client credit limit.
+     */
+    public function updateCreditLimit(UpdateClientCreditLimitRequest $request, Client $client)
+    {
+        $this->authorize('manageCreditLimit', $client);
+
+        try {
+            $creditLimit = (float) $request->input('credit_limit');
+
+            DB::transaction(function () use ($client, $creditLimit) {
+                $client->load('balance');
+
+                if ($client->balance) {
+                    $client->balance->update(['credit_limit' => $creditLimit]);
+                } else {
+                    ClientBalance::create([
+                        'client_id' => $client->id,
+                        'balance' => 0,
+                        'credit_limit' => $creditLimit,
+                    ]);
+                }
+            });
+
+            // Invalidate cache when credit limit is updated
+            Cache::forget('clients_list_active');
+
+            return back()->with('success', 'Limite de crédito atualizado com sucesso!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }

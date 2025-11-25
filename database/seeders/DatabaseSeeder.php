@@ -2,13 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\Client;
 use App\Models\Product;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
+    // use WithoutModelEvents;
 
     /**
      * Seed the application's database.
@@ -25,18 +26,19 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminUserSeeder::class);
 
         $this->demoItems();
+        $this->demoClients();
     }
 
     public function demoItems(): void
     {
-        if (!app()->environment(['dev', 'local', 'staging'])) {
+        if (app()->isProduction()) {
             return;
         }
 
-        $this->demoProducts();
+        $this->demoProducts(app()->environment(['dev', 'local', 'staging', 'testing']));
     }
 
-    protected function demoProducts(bool $fake = true): void
+    protected function demoProducts(?bool $fake = null): void
     {
         $products = [
             [
@@ -72,6 +74,27 @@ class DatabaseSeeder extends Seeder
 
         if ($fake) {
             Product::factory(20)->create();
+        }
+    }
+
+    protected function demoClients(?bool $fake = null): void
+    {
+        $fake ??= app()->environment(['dev', 'local', 'staging', 'testing']);
+
+        $clients = [
+            [
+                'name' => 'Tiago França',
+                'email' => 'tiago@mail.com',
+                'phone' => '+5541988887777',
+                'cpf_cnpj' => null,
+            ]
+        ];
+
+        foreach ($clients as $client) {
+            Client::updateOrCreate([
+                'email' => $client['email'],
+                'phone' => $client['phone'],
+            ], $client);
         }
     }
 }

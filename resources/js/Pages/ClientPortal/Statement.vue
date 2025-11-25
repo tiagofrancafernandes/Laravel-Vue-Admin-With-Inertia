@@ -74,8 +74,12 @@
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import {
+    formatCurrency,
+    formatDate,
+} from '@/Utils/helpers';
+import { Link } from '@inertiajs/vue3';
 
 defineProps({
     transactions: {
@@ -83,19 +87,4 @@ defineProps({
         required: true,
     },
 });
-
-const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    }).format(value);
-};
-
-const formatDate = (date) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    }).format(new Date(date));
-};
 </script>
