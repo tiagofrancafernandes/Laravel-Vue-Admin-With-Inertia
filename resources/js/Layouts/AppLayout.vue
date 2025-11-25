@@ -310,6 +310,103 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center space-x-2">
+                        <button
+                            @click="toggleDarkMode"
+                            :title="`Alternar para ${isDarkMode ? 'modo claro' : 'modo escuro'}`"
+                            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                            aria-label="Toggle dark mode"
+                        >
+                            <svg
+                                v-if="isDarkMode"
+                                class="w-5 h-5"
+                                fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <svg
+                                v-else
+                                class="w-5 h-5"
+                                fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                            </svg>
+                        </button>
+                        <button
+                            @click="showingNavigationDropdown = !showingNavigationDropdown"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition duration-150 ease-in-out"
+                            aria-label="Toggle navigation"
+                        >
+                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path
+                                    v-if="!showingNavigationDropdown"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                />
+                                <path
+                                    v-else
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Navigation Menu -->
+                <div
+                    v-if="showingNavigationDropdown"
+                    class="md:hidden border-t border-gray-200 dark:border-gray-700"
+                >
+                    <div class="space-y-1 px-2 pb-3 pt-2">
+                        <Link
+                            v-for="item in navItems"
+                            :key="item.name"
+                            :href="item.href"
+                            :class="[
+                                'block px-3 py-2 rounded-md text-base font-medium transition-colors w-full text-left',
+                                {
+                                    'bg-blue-600 text-white': isActive(item?.href),
+                                    'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700':
+                                        !isActive(item?.href),
+                                },
+                            ]"
+                            @click="showingNavigationDropdown = false"
+                        >
+                            {{ item.name }}
+                        </Link>
+                    </div>
+                    <div class="border-t border-gray-200 dark:border-gray-700 px-2 py-3 space-y-2">
+                        <div class="text-sm font-medium text-gray-600 dark:text-gray-400 px-3">
+                            {{ $page.props.auth.user?.name }}
+                        </div>
+                        <Link
+                            :href="route('profile.edit')"
+                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            @click="showingNavigationDropdown = false"
+                        >
+                            Perfil
+                        </Link>
+                        <Link
+                            :href="route('logout')"
+                            method="post"
+                            as="button"
+                            class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            @click="showingNavigationDropdown = false"
+                        >
+                            Sair
+                        </Link>
+                    </div>
                 </div>
             </div>
         </nav>

@@ -50,20 +50,33 @@
                 <label for="file" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Arquivo (JPEG, PNG, PDF - máx 5MB) <span class="text-red-500">*</span>
                 </label>
-                <input
-                  id="file"
-                  ref="fileInput"
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  class="mt-1 block w-full"
-                  @change="onFileSelected"
-                />
+                <div class="relative">
+                  <input
+                    id="file"
+                    ref="fileInput"
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    @change="onFileSelected"
+                  />
+                  <div class="mt-1 block w-full px-4 py-3 md:py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer transition-colors text-center">
+                    <svg class="mx-auto h-8 w-8 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-12l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 20l3.172-3.172a4 4 0 015.656 0L20 28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <p class="mt-2 text-sm font-medium">
+                      Clique para selecionar ou arraste o arquivo
+                    </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      PNG, JPG ou PDF até 5MB
+                    </p>
+                  </div>
+                </div>
                 <InputError :message="errors.file" class="mt-2" />
 
                 <!-- File Preview -->
-                <div v-if="filePreview" class="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded">
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Arquivo selecionado: <strong>{{ filePreview }}</strong>
+                <div v-if="filePreview" class="mt-4 p-3 md:p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
+                  <p class="text-sm text-green-800 dark:text-green-200">
+                    ✓ Arquivo selecionado: <strong class="break-all">{{ filePreview }}</strong>
                   </p>
                 </div>
               </div>

@@ -16,7 +16,7 @@
 
             <!-- Search Card -->
             <Card title="Filtrar Clientes">
-                <form @submit.prevent="search" class="flex gap-4">
+                <form @submit.prevent="search" class="flex flex-col md:flex-row gap-3 md:gap-4">
                     <div class="flex-1">
                         <Input
                             v-model="form.search"
@@ -25,8 +25,8 @@
                             type="text"
                         />
                     </div>
-                    <div class="flex items-end">
-                        <Button type="submit" variant="primary">Filtrar</Button>
+                    <div class="flex items-end w-full md:w-auto">
+                        <Button type="submit" variant="primary" class="w-full md:w-auto">Filtrar</Button>
                     </div>
                 </form>
             </Card>
