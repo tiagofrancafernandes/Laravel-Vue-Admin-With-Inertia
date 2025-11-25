@@ -90,7 +90,16 @@ class SaleController extends Controller
         try {
             $sale = $this->saleService->createSale($request->validated());
 
-            return redirect()->route('sales.show', $sale)->with('success', 'Venda criada com sucesso!');
+            // Pass sale data to frontend for confirmation/notification
+            return redirect()->route('sales.create')->with([
+                'success' => 'Venda criada com sucesso!',
+                'sale' => [
+                    'id' => $sale->id,
+                    'sale_number' => $sale->code,
+                    'total_amount' => $sale->total_amount,
+                    'created_at' => $sale->created_at,
+                ],
+            ])->with('redirectToSale', $sale->id);
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }

@@ -16,6 +16,14 @@
                 </Link>
             </div>
 
+            <!-- Success Alert -->
+            <Alert
+                v-if="showSuccessAlert && successMessage"
+                type="success"
+                :message="successMessage"
+                @click="showSuccessAlert = false"
+            />
+
             <form @submit.prevent="submitForm" class="space-y-6">
                 <!-- Client Selection -->
                 <Card title="Cliente">
@@ -34,7 +42,7 @@
                             <div>
                                 <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Saldo Disponível</p>
                                 <p class="text-lg font-semibold text-green-600 dark:text-green-400 mt-1">
-                                     {{ formatCurrency(clientBalance.balance) }}
+                                    {{ formatCurrency(clientBalance.balance) }}
                                 </p>
                             </div>
                             <div v-if="clientBalance.credit_limit > 0">
@@ -42,7 +50,7 @@
                                     Limite de Crédito Total
                                 </p>
                                 <p class="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-1">
-                                     {{ formatCurrency(clientBalance.credit_limit) }}
+                                    {{ formatCurrency(clientBalance.credit_limit) }}
                                 </p>
                             </div>
                         </div>
@@ -55,7 +63,7 @@
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-sm font-medium">
-                                        Crédito Disponível:  {{ formatCurrency(availableCreditForSale) }}
+                                        Crédito Disponível: {{ formatCurrency(availableCreditForSale) }}
                                     </span>
                                     <span
                                         :class="[
@@ -179,7 +187,7 @@
                                     <div
                                         class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-gray-100 font-medium"
                                     >
-                                         {{ formatCurrency(item.quantity * item.price) }}
+                                        {{ formatCurrency(item.quantity * item.price) }}
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +203,7 @@
                         <div class="flex justify-between">
                             <span class="text-gray-600 dark:text-gray-400">Subtotal</span>
                             <span class="font-medium text-gray-900 dark:text-gray-100">
-                                 {{ formatCurrency(subtotal) }}
+                                {{ formatCurrency(subtotal) }}
                             </span>
                         </div>
 
@@ -213,7 +221,7 @@
                         >
                             <span class="font-semibold text-gray-900 dark:text-gray-100">Total</span>
                             <span class="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                                 {{ formatCurrency(total) }}
+                                {{ formatCurrency(total) }}
                             </span>
                         </div>
                     </div>
@@ -243,7 +251,7 @@
                         class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg"
                     >
                         <p class="text-green-800 dark:text-green-200 text-sm">
-                            ✓ Pagamentos conferem:  {{ formatCurrency(paymentTotal) }}
+                            ✓ Pagamentos conferem: {{ formatCurrency(paymentTotal) }}
                         </p>
                     </div>
                 </Card>
@@ -252,9 +260,7 @@
                 <Card :hideBody="!showNotes">
                     <template v-slot:title>
                         <div class="w-full flex justify-between content-center items-center px-3">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 w-full">
-                                Observações
-                            </h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 w-full">Observações</h3>
                             <div class="w-4/12">
                                 <button
                                     type="button"
@@ -274,6 +280,27 @@
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 resize-none"
                         rows="3"
                     />
+                </Card>
+
+                <!-- Stay on Sales Page Preference -->
+                <Card title="Preferências">
+                    <div class="flex items-center gap-3">
+                        <input
+                            v-model="stayOnPage"
+                            type="checkbox"
+                            id="stay_on_sales_page"
+                            class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:focus:ring-blue-500 cursor-pointer"
+                        />
+                        <label for="stay_on_sales_page" class="cursor-pointer flex flex-col gap-1">
+                            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                Permanecer nesta tela após registrar
+                            </span>
+                            <span class="text-xs text-gray-600 dark:text-gray-400">
+                                Quando marcado, você verá a confirmação da venda e poderá registrar uma nova venda
+                                imediatamente
+                            </span>
+                        </label>
+                    </div>
                 </Card>
 
                 <!-- Form Actions -->
@@ -299,11 +326,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    ref,
-    watch,
-} from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import ClientSelect from '@/Components/Clients/ClientSelect.vue';
 import Button from '@/Components/Forms/Button.vue';
@@ -311,12 +334,10 @@ import Input from '@/Components/Forms/Input.vue';
 import ProductSelect from '@/Components/Products/ProductSelect.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
 import Card from '@/Components/UI/Card.vue';
+import Alert from '@/Components/UI/Alert.vue';
 import { formatCurrency } from '@/Utils/helpers';
-import {
-    Head,
-    Link,
-    useForm,
-} from '@inertiajs/vue3';
+import { useStaySalesPage } from '@/Composables/useStaySalesPage';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/vue3';
 
 interface PaymentMethod {
     id: number;
@@ -347,7 +368,12 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const page = usePage();
 const clientBalance = ref<any>(null);
+const { stayOnPage } = useStaySalesPage();
+const lastCreatedSale = ref<any>(null);
+const successMessage = ref<string>('');
+const showSuccessAlert = ref<boolean>(false);
 
 const onBalanceLoaded = (balance: any) => {
     clientBalance.value = balance;
@@ -364,6 +390,39 @@ const form = useForm({
 });
 
 const showNotes = ref<boolean>(Boolean((form.notes || '')?.trim()));
+
+// Handle sale success - either show notification or redirect
+watch(
+    () => (page.props.flash as any)?.sale,
+    (saleData) => {
+        if (!saleData) return;
+
+        if (stayOnPage.value) {
+            // Store sale data and show success message
+            lastCreatedSale.value = saleData;
+
+            const saleNumber = saleData.sale_number || 'N/A';
+            const saleTotal = formatCurrency(saleData.total_amount || 0);
+
+            successMessage.value = `Venda #${saleNumber} registrada com sucesso! Total: ${saleTotal}`;
+            showSuccessAlert.value = true;
+
+            // Reset form for next sale
+            resetForm();
+
+            // Auto-hide success message after 5 seconds
+            setTimeout(() => {
+                showSuccessAlert.value = false;
+            }, 5000);
+        } else {
+            // Redirect to sale detail page
+            const saleId = (page.props.flash as any)?.redirectToSale;
+            if (saleId) {
+                router.visit(`/sales/${saleId}`);
+            }
+        }
+    }
+);
 
 // Reset client balance when client is deselected
 watch(
@@ -421,6 +480,17 @@ const removeItem = (index: number) => {
     form.items.splice(index, 1);
 };
 
+const resetForm = () => {
+    form.reset();
+    form.items = [];
+    form.discount = 0;
+    form.payments = [];
+    form.notes = '';
+    clientBalance.value = null;
+    showNotes.value = false;
+    showSuccessAlert.value = false;
+};
+
 const submitForm = () => {
     // Transform items to match backend expectations
     const items = form.items.map((item) => ({
@@ -447,10 +517,6 @@ const submitForm = () => {
         items: items,
         payments: payments,
         notes: data.notes || null,
-    })).post('/sales', {
-        onSuccess: () => {
-            // Redirect handled by Inertia
-        },
-    });
+    })).post('/sales');
 };
 </script>
