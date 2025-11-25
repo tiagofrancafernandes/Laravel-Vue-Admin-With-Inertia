@@ -50,6 +50,19 @@
 
                 <!-- Payment input for selected methods -->
                 <div v-if="isSelected(method.id)" class="w-full md:w-auto flex flex-col md:flex-row gap-2">
+                    <div class="md:w-48">
+                        <button
+                            v-show="remainingAmount > 0"
+                            :disabled="remainingAmount <= 0"
+                            type="button"
+                            @click="fillRemainingAmount(method.id)"
+                            :title="`Preencher com o valor restante de R$ ${formatCurrency(remainingAmount)}`"
+                            class="w-full px-3 py-2 text-sm font-medium rounded border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                        >
+                            Valor restante: R$ {{ formatCurrency(remainingAmount) }}
+                        </button>
+                    </div>
+
                     <input
                         :value="getPaymentAmount(method.id)"
                         @input="setPaymentAmount(method.id, ($event.target as HTMLInputElement).value)"
@@ -63,15 +76,6 @@
                             'border-gray-300 dark:border-gray-600 focus:ring-blue-500',
                         ]"
                     />
-                    <button
-                        v-if="remainingAmount > 0"
-                        type="button"
-                        @click="fillRemainingAmount(method.id)"
-                        :title="`Preencher com o valor restante de R$ ${formatCurrency(remainingAmount)}`"
-                        class="md:w-48 px-3 py-2 text-sm font-medium rounded border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
-                    >
-                        Valor restante: R$ {{ formatCurrency(remainingAmount) }}
-                    </button>
                 </div>
             </div>
         </div>
@@ -225,7 +229,7 @@ const formatCurrency = (value: number): string => {
 
 const fillRemainingAmount = (methodId: number) => {
     if (remainingAmount.value > 0) {
-        setPaymentAmount(methodId, remainingAmount.value.toString());
+        setPaymentAmount(methodId, remainingAmount.value.toFixed(2));
     }
 };
 

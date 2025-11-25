@@ -423,12 +423,23 @@
 
             <!-- Page Content -->
             <slot />
+
+            <div class="pt-6">
+                <template v-for="(error, errorIndex) in errors" :key="errorIndex">
+                    <div v-if="Object.keys(errors).length" class="mb-4">
+                        <Alert type="error" :message="error" />
+                    </div>
+                </template>
+            </div>
         </main>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import {
+    computed,
+    ref,
+} from 'vue';
 
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -438,9 +449,18 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import Alert from '@/Components/UI/Alert.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
 import { User } from '@/types/app-types.d';
-import { route, strEndsWith } from '@/Utils/helpers';
-import { PageProps, router } from '@inertiajs/core';
-import { Link, usePage } from '@inertiajs/vue3';
+import {
+    route,
+    strEndsWith,
+} from '@/Utils/helpers';
+import {
+    PageProps,
+    router,
+} from '@inertiajs/core';
+import {
+    Link,
+    usePage,
+} from '@inertiajs/vue3';
 
 interface FlashMessages {
     danger?: string;
@@ -459,6 +479,12 @@ const pageProps = page?.props;
 const flashMessages = computed<FlashMessages>(() => pageProps.flash || {});
 const { isDarkMode, toggleDarkMode } = useDarkMode();
 
+type AnyObject = Record<string, unknown>;
+type ResponseError = Record<string, unknown>;
+type ValidationErrors = Record<string, string>;
+
+const errors = computed<ValidationErrors>(() => pageProps?.errors || {});
+
 const navItems = [
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Vendas', href: '/sales' },
@@ -472,5 +498,8 @@ const isActive = (href: string): boolean => {
 };
 
 const showingNavigationDropdown = ref(false);
-console.log('route', route, route('dashboard'));
+
+console.log('page', page);
+console.log('pageProps', pageProps);
+console.log('flashMessages', flashMessages);
 </script>

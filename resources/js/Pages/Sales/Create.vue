@@ -307,8 +307,11 @@ interface Item {
 }
 
 interface Payment {
-    method_id: number;
+    payment_method_id?: number;
+    method_id?: number;
     amount: number;
+    add_change_as_balance?: boolean;
+    use_change_for_credit?: boolean;
 }
 
 interface Props {
@@ -395,7 +398,32 @@ const formatCurrency = (value: number): string => {
 };
 
 const submitForm = () => {
-    form.post('/sales', {
+    // Transform items to match backend expectations
+    const items = form.items.map((item) => ({
+        name: item.description,
+        quantity: parseFloat(item.quantity.toString()),
+        unit_price: parseFloat(item.price.toString()),
+        subtotal: item.quantity * item.price,
+    }));
+
+    // Transform payments to match backend expectations
+    const payments = form.payments.map((payment) => ({
+        payment_method_id: payment.payment_method_id,
+        amount: parseFloat(payment.amount.toString()),
+        add_change_as_balance: payment.add_change_as_balance || false,
+        use_change_for_credit: payment.use_change_for_credit || false,
+    }));
+
+    // Post with transformed data
+    form.transform((data) => ({
+        ...data,
+        client_id: data.client_id || null,
+        total_amount: total.value,
+        discount: parseFloat(data.discount.toString()),
+        items: items,
+        payments: payments,
+        notes: data.notes || null,
+    })).post('/sales', {
         onSuccess: () => {
             // Redirect handled by Inertia
         },
