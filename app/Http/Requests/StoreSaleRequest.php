@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Client;
 use App\Models\Sale;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,6 +30,8 @@ class StoreSaleRequest extends FormRequest
             'payments.*.payment_method_id' => 'required|exists:payment_methods,id',
             'payments.*.amount' => 'required|numeric|min:0',
             'payments.*.metadata' => 'nullable|array',
+            'payments.*.add_change_as_balance' => 'nullable|boolean',
+            'payments.*.use_change_for_credit' => 'nullable|boolean',
             'items' => 'nullable|array',
             'items.*.name' => 'required_with:items|string|max:255',
             'items.*.quantity' => 'required_with:items|numeric|min:0.01',
@@ -44,21 +47,54 @@ class StoreSaleRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            // Validar soma dos pagamentos
-            $totalPayments = collect($this->payments)->sum('amount');
+            $totalPayments = collect($this->input('payments', []))->sum('amount');
+            $totalAmount = (float) $this->input('total_amount', 0);
+            $clientId = $this->input('client_id');
 
-            if (abs($totalPayments - $this->total_amount) > 0.01) {
-                $validator->errors()->add(
-                    'payments',
-                    'A soma dos pagamentos deve ser igual ao total da venda.'
-                );
+            // Validar se pagamento é menor que o total
+            if ($totalPayments < $totalAmount - 0.01) {
+                // Cliente é obrigatório quando há débito
+                if (!$clientId) {
+                    $validator->errors()->add(
+                        'client_id',
+                        'Cliente é obrigatório quando o pagamento é menor que o total da venda.'
+                    );
+                } else {
+                    // Validar se cliente tem crédito disponível
+                    $client = Client::find($clientId);
+
+                    if ($client) {
+                        $balance = $client->balance;
+
+                        if (!$balance || ((float) $balance->credit_limit < ($totalAmount - $totalPayments))) {
+                            $availableCredit = $balance ? (float) $balance->credit_limit : 0;
+                            $needed = $totalAmount - $totalPayments;
+                            $validator->errors()->add(
+                                'payments',
+                                "Crédito insuficiente. Necessário: R$ " . number_format($needed, 2, ',', '.') .
+                                " | Disponível: R$ " . number_format($availableCredit, 2, ',', '.')
+                            );
+                        }
+                    }
+                }
+            }
+
+            // Validar se pagamento é maior que o total
+            if ($totalPayments > $totalAmount + 0.01) {
+                // Cliente é obrigatório quando há troco
+                if (!$clientId) {
+                    $validator->errors()->add(
+                        'client_id',
+                        'Cliente é obrigatório quando há troco (pagamento maior que o total).'
+                    );
+                }
             }
 
             // Validar soma dos itens se informados
-            if ($this->items && count($this->items) > 0) {
-                $totalItems = collect($this->items)->sum('subtotal');
+            if ($this->input('items') && count($this->input('items', [])) > 0) {
+                $totalItems = collect($this->input('items', []))->sum('subtotal');
 
-                if (abs($totalItems - $this->total_amount) > 0.01) {
+                if (abs($totalItems - $totalAmount) > 0.01) {
                     $validator->errors()->add(
                         'items',
                         'A soma dos itens deve ser igual ao total da venda.'
@@ -84,6 +120,7 @@ class StoreSaleRequest extends FormRequest
             'payments.*.amount.required' => 'O valor do pagamento é obrigatório.',
             'payments.*.amount.numeric' => 'O valor do pagamento deve ser um número.',
             'payments.*.amount.min' => 'O valor do pagamento deve ser maior ou igual a zero.',
+            'client_id.exists' => 'Cliente inválido.',
         ];
     }
 }

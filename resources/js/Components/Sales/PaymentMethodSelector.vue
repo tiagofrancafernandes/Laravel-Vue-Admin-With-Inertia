@@ -49,11 +49,14 @@
             </div>
         </div>
 
-        <!-- Special handling for cash method -->
+        <!-- Special handling for change -->
         <div
-            v-if="selectedMethods.has(getCashMethodId())"
-            class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700"
+            v-if="shouldShowChangeOptions()"
+            class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3"
         >
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Opções para troco:
+            </p>
             <label class="flex items-center space-x-2">
                 <input
                     v-model="addChangeAsBalance"
@@ -61,6 +64,14 @@
                     class="rounded border-gray-300 text-green-600 focus:ring-green-500"
                 />
                 <span class="text-sm text-gray-700 dark:text-gray-300">Adicionar troco como saldo do cliente</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input
+                    v-model="useChangeForCredit"
+                    type="checkbox"
+                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span class="text-sm text-gray-700 dark:text-gray-300">Usar troco para quitar crédito do cliente</span>
             </label>
         </div>
 
@@ -71,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 interface PaymentMethod {
     id: number;
@@ -82,20 +93,20 @@ interface PaymentMethod {
 
 interface Props {
     paymentMethods: PaymentMethod[];
-    modelValue: Array<{ method_id: number; amount: number }>;
+    modelValue: Array<any>;
     error?: string;
 }
 
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-    'update:modelValue': [value: Array<{ method_id: number; amount: number }>];
-    'update:addChangeAsBalance': [value: boolean];
+    'update:modelValue': [value: Array<any>];
 }>();
 
 const selectedMethods = ref(new Set<number>());
 const paymentAmounts = ref(new Map<number, number>());
 const addChangeAsBalance = ref(false);
+const useChangeForCredit = ref(false);
 
 const isSelected = (methodId: number): boolean => {
     return selectedMethods.value.has(methodId);
@@ -126,11 +137,23 @@ const getCashMethodId = (): number => {
     return props.paymentMethods.find((m) => m.code === 'cash')?.id || 0;
 };
 
+const shouldShowChangeOptions = (): boolean => {
+    // Show change options when cash method is selected
+    return selectedMethods.value.has(getCashMethodId());
+};
+
 const emitUpdate = () => {
     const payments = Array.from(selectedMethods.value).map((methodId) => ({
-        method_id: methodId,
+        payment_method_id: methodId,
         amount: paymentAmounts.value.get(methodId) || 0,
+        add_change_as_balance: addChangeAsBalance.value,
+        use_change_for_credit: useChangeForCredit.value,
     }));
     emit('update:modelValue', payments);
 };
+
+// Watch for changes in the checkboxes
+watch([addChangeAsBalance, useChangeForCredit], () => {
+    emitUpdate();
+});
 </script>

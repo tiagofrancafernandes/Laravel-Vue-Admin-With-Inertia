@@ -39,17 +39,47 @@ class SaleService
                 'notes' => $data['notes'] ?? null,
             ]);
 
-            // Process payments
-            $totalPaid = 0;
+            // Calculate total payments
+            $totalPayments = collect($data['payments'] ?? [])->sum('amount');
+            $saleTotal = (float) $sale->total_amount;
 
+            // Process payments
             foreach ($data['payments'] as $paymentData) {
                 $payment = $this->paymentService->processPayment($sale, $paymentData);
-                $totalPaid += (float) $payment->amount;
             }
 
-            // Validate total paid
-            if (abs($totalPaid - (float) $sale->total_amount) > 0.01) {
-                throw new \Exception('Total paid does not match sale total');
+            // Handle payment discrepancies
+            $difference = $totalPayments - $saleTotal;
+
+            // If payment is less than total, add to client's credit/tab
+            if ($difference < -0.01) {
+                $debitAmount = abs($difference);
+                $this->balanceService->addTabDebit(
+                    $sale->client_id,
+                    $debitAmount,
+                    "Compra a prazo - venda {$sale->sale_number}",
+                    $sale->id
+                );
+            }
+            // If payment is more than total, handle change
+            elseif ($difference > 0.01) {
+                if ($data['payments'][0]['use_change_for_credit'] ?? false) {
+                    // Use change to pay off credit
+                    $this->balanceService->payTab(
+                        $sale->client_id,
+                        $difference,
+                        "Quitar crédito - venda {$sale->sale_number}",
+                        $sale->id
+                    );
+                } elseif ($data['payments'][0]['add_change_as_balance'] ?? false) {
+                    // Add change as customer balance/prepaid
+                    $this->balanceService->addBalance(
+                        $sale->client_id,
+                        $difference,
+                        "Troco adicionado como saldo - venda {$sale->sale_number}",
+                        $sale->id
+                    );
+                }
             }
 
             return $sale->load(['client', 'user', 'payments.paymentMethod']);
