@@ -21,26 +21,35 @@ class ProductController extends Controller
         $limit = $limit > 0 ? $limit : 10;
         $offset = $offset >= 0 ? $offset : 10;
 
-        $products = Product::query()
-            ->orderByPopularity()
-            ->limit($limit)
-            ->offset($offset)
-            ->when($search, function (Builder $query, string $_search) {
-                $_search = '%' . strtolower($_search) . '%';
+        $cacheKey = implode('-', [
+            __METHOD__,
+            $limit,
+            $offset,
+            $search,
+        ]);
 
-                $query
-                    ->whereRaw('LOWER(name) LIKE ?', [$_search])
-                    ->orWhereRaw('LOWER(description) LIKE ?', [$_search]);
-            })
-            ->get()
-            // ->map(function ($product) {
-            //     $product->sales_count = Product::getProductPopularity($product->name);
-            //     return $product;
-            // })
-            // ->sortByDesc('sort_val', SORT_DESC)
-            // ->sortByDesc('sort_val', SORT_ASC)
-            // ->sortByDesc('sales_count', SORT_ASC)
-            ->values();
+        $products = cache()->remember($cacheKey, 300, function () use ($limit, $offset, $search) {
+            return Product::query()
+                ->orderByPopularity()
+                ->limit($limit)
+                ->offset($offset)
+                ->when($search, function (Builder $query, string $_search) {
+                    $_search = '%' . strtolower($_search) . '%';
+
+                    $query
+                        ->whereRaw('LOWER(name) LIKE ?', [$_search])
+                        ->orWhereRaw('LOWER(description) LIKE ?', [$_search]);
+                })
+                ->get()
+                // ->map(function ($product) {
+                //     $product->sales_count = Product::getProductPopularity($product->name);
+                //     return $product;
+                // })
+                // ->sortByDesc('sort_val', SORT_DESC)
+                // ->sortByDesc('sort_val', SORT_ASC)
+                // ->sortByDesc('sales_count', SORT_ASC)
+                ->values();
+        });
 
         return response()->json([
             'data' => $products,

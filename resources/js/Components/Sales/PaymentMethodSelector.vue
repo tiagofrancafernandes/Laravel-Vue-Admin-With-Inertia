@@ -31,32 +31,36 @@
                 </div>
 
                 <!-- Payment input for selected methods -->
-                <div v-if="isSelected(method.id)" class="w-full md:w-40">
+                <div v-if="isSelected(method.id)" class="w-full md:w-auto flex flex-col md:flex-row gap-2">
                     <input
                         :value="getPaymentAmount(method.id)"
-                        @input="setPaymentAmount(method.id, $event.target.value)"
+                        @input="setPaymentAmount(method.id, ($event.target as HTMLInputElement).value)"
                         type="number"
                         placeholder="0.00"
                         step="0.01"
                         min="0"
                         :class="[
-                            'w-full px-3 py-2 border rounded text-right',
+                            'flex-1 md:w-40 px-3 py-2 border rounded text-right',
                             'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100',
                             'border-gray-300 dark:border-gray-600 focus:ring-blue-500',
                         ]"
                     />
+                    <button
+                        v-if="remainingAmount > 0"
+                        type="button"
+                        @click="fillRemainingAmount(method.id)"
+                        :title="`Preencher com o valor restante de R$ ${formatCurrency(remainingAmount)}`"
+                        class="md:w-48 px-3 py-2 text-sm font-medium rounded border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                    >
+                        Valor restante: R$ {{ formatCurrency(remainingAmount) }}
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Special handling for change -->
-        <div
-            v-if="shouldShowChangeOptions()"
-            class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3"
-        >
-            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Opções para troco:
-            </p>
+        <div v-if="shouldShowChangeOptions()" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Opções para troco:</p>
             <label class="flex items-center space-x-2">
                 <input
                     v-model="addChangeAsBalance"
@@ -82,7 +86,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import {
+    computed,
+    ref,
+    watch,
+} from 'vue';
 
 interface PaymentMethod {
     id: number;
@@ -94,6 +102,7 @@ interface PaymentMethod {
 interface Props {
     paymentMethods: PaymentMethod[];
     modelValue: Array<any>;
+    total: number;
     error?: string;
 }
 
@@ -140,6 +149,30 @@ const getCashMethodId = (): number => {
 const shouldShowChangeOptions = (): boolean => {
     // Show change options when cash method is selected
     return selectedMethods.value.has(getCashMethodId());
+};
+
+// Calculate total already paid
+const paymentTotal = computed(() => {
+    return Array.from(selectedMethods.value).reduce(
+        (sum, methodId) => sum + (paymentAmounts.value.get(methodId) || 0),
+        0
+    );
+});
+
+// Calculate remaining amount to pay
+const remainingAmount = computed(() => {
+    const remaining = props.total - paymentTotal.value;
+    return Math.max(0, remaining);
+});
+
+const formatCurrency = (value: number): string => {
+    return value.toFixed(2).replace('.', ',');
+};
+
+const fillRemainingAmount = (methodId: number) => {
+    if (remainingAmount.value > 0) {
+        setPaymentAmount(methodId, remainingAmount.value.toString());
+    }
 };
 
 const emitUpdate = () => {

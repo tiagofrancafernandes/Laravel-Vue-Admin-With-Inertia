@@ -133,7 +133,7 @@
                             <div class="flex justify-between items-start">
                                 <h4 class="font-medium text-gray-900 dark:text-gray-100">Item {{ index + 1 }}</h4>
                                 <button
-                                    v-if="form.items.length > 1"
+                                    v-if="form.items.length"
                                     type="button"
                                     @click="removeItem(index)"
                                     class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm"
@@ -220,6 +220,7 @@
                     <PaymentMethodSelector
                         v-model="form.payments"
                         :payment-methods="paymentMethods"
+                        :total="total"
                         :error="form.errors.payments"
                     />
                     <div
@@ -271,7 +272,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import {
+    computed,
+    ref,
+    watch,
+} from 'vue';
 
 import ClientSelect from '@/Components/Clients/ClientSelect.vue';
 import Button from '@/Components/Forms/Button.vue';
@@ -279,7 +284,11 @@ import Input from '@/Components/Forms/Input.vue';
 import ProductSelect from '@/Components/Products/ProductSelect.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
 import Card from '@/Components/UI/Card.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {
+    Head,
+    Link,
+    useForm,
+} from '@inertiajs/vue3';
 
 interface PaymentMethod {
     id: number;
@@ -315,7 +324,9 @@ const onBalanceLoaded = (balance: any) => {
 
 const form = useForm({
     client_id: null as number | null,
-    items: [{ description: '', quantity: 1, price: 0 }] as Item[],
+    items: [
+        // { description: '', quantity: 1, price: 0 },
+    ] as Item[],
     discount: 0,
     payments: [] as Payment[],
     notes: '',
