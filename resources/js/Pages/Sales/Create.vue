@@ -17,7 +17,25 @@
             <form @submit.prevent="submitForm" class="space-y-6">
                 <!-- Client Selection -->
                 <Card title="Cliente">
-                    <ClientSelect v-model="form.client_id" :error="form.errors.client_id" required />
+                    <ClientSelect v-model="form.client_id" :error="form.errors.client_id" required @balance-loaded="onBalanceLoaded" />
+                </Card>
+
+                <!-- Client Balance Info -->
+                <Card v-if="clientBalance" title="Informações do Cliente">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Saldo Disponível</p>
+                            <p class="text-lg font-semibold text-green-600 dark:text-green-400 mt-1">
+                                R$ {{ formatCurrency(clientBalance.balance) }}
+                            </p>
+                        </div>
+                        <div v-if="clientBalance.credit_limit > 0">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Limite de Crédito</p>
+                            <p class="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-1">
+                                R$ {{ formatCurrency(clientBalance.credit_limit) }}
+                            </p>
+                        </div>
+                    </div>
                 </Card>
 
                 <!-- Items Section -->
@@ -159,7 +177,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import ClientSelect from '@/Components/Clients/ClientSelect.vue';
 import Button from '@/Components/Forms/Button.vue';
@@ -194,12 +212,28 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const clientBalance = ref<any>(null);
+
+const onBalanceLoaded = (balance: any) => {
+    clientBalance.value = balance;
+};
+
 const form = useForm({
     client_id: null as number | null,
     items: [{ description: '', quantity: 1, price: 0 }] as Item[],
     discount: 0,
     payments: [] as Payment[],
 });
+
+// Reset client balance when client is deselected
+watch(
+    () => form.client_id,
+    (newClientId) => {
+        if (!newClientId) {
+            clientBalance.value = null;
+        }
+    }
+);
 
 const subtotal = computed(() => {
     return form.items.reduce((sum, item) => sum + item.quantity * item.price, 0);

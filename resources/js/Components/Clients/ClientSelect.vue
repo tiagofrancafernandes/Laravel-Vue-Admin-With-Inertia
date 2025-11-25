@@ -24,12 +24,10 @@
                         @click="selectClient(client)"
                     >
                         <div class="font-medium text-gray-900">
-                            {{ client.name }}
+                            {{ client.name }}<span v-if="client.phone" class="text-gray-600 font-normal"> - {{ formatPhone(client.phone) }}</span>
                         </div>
-                        <div v-if="client.email || client.phone" class="text-sm text-gray-500 mt-1">
-                            <span v-if="client.email">{{ client.email }}</span>
-                            <span v-if="client.email && client.phone" class="mx-1">•</span>
-                            <span v-if="client.phone">{{ formatPhone(client.phone) }}</span>
+                        <div v-if="client.email" class="text-sm text-gray-500 mt-1">
+                            {{ client.email }}
                         </div>
                         <div v-if="client.balance" class="text-xs text-gray-400 mt-1 flex gap-4">
                             <span class="text-green-600">
