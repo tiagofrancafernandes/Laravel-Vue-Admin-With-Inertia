@@ -4,13 +4,13 @@
     <AdminAppLayout>
         <div class="space-y-6">
             <!-- Page Header -->
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Nova Venda</h1>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1">Registre uma nova transação</p>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Nova Venda</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">Registre uma nova transação</p>
                 </div>
-                <Link href="/sales" class="inline-block">
-                    <Button variant="secondary">← Voltar</Button>
+                <Link href="/sales" class="w-full md:w-auto">
+                    <Button variant="secondary" class="w-full md:w-auto">← Voltar</Button>
                 </Link>
             </div>
 
@@ -22,7 +22,7 @@
 
                 <!-- Client Balance Info -->
                 <Card v-if="clientBalance" title="Informações do Cliente">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div>
                             <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Saldo Disponível</p>
                             <p class="text-lg font-semibold text-green-600 dark:text-green-400 mt-1">
@@ -41,6 +41,12 @@
                 <!-- Items Section -->
                 <Card title="Itens">
                     <div class="space-y-4">
+                        <!-- Product Selector -->
+                        <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Selecione um Produto</p>
+                            <ProductSelect @select="onProductSelected" />
+                        </div>
+
                         <div
                             v-for="(item, index) in form.items"
                             :key="index"
@@ -65,7 +71,7 @@
                                 required
                             />
 
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Input
                                     v-model="item.quantity"
                                     label="Quantidade"
@@ -84,20 +90,20 @@
                                     placeholder="0.00"
                                     required
                                 />
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Subtotal
-                                    </label>
-                                    <div
-                                        class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-gray-100 font-medium"
-                                    >
-                                        R$ {{ formatCurrency(item.quantity * item.price) }}
-                                    </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Subtotal
+                                </label>
+                                <div
+                                    class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-gray-100 font-medium"
+                                >
+                                    R$ {{ formatCurrency(item.quantity * item.price) }}
                                 </div>
                             </div>
                         </div>
 
-                        <Button type="button" variant="secondary" @click="addItem">+ Adicionar Item</Button>
+                        <Button type="button" variant="secondary" @click="addItem">+ Adicionar Item Manualmente</Button>
                     </div>
                 </Card>
 
@@ -180,6 +186,7 @@
 import { computed, ref, watch } from 'vue';
 
 import ClientSelect from '@/Components/Clients/ClientSelect.vue';
+import ProductSelect from '@/Components/Products/ProductSelect.vue';
 import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
@@ -249,6 +256,10 @@ const paymentTotal = computed(() => {
 
 const addItem = () => {
     form.items.push({ description: '', quantity: 1, price: 0 });
+};
+
+const onProductSelected = (product: Item) => {
+    form.items.push(product);
 };
 
 const removeItem = (index: number) => {

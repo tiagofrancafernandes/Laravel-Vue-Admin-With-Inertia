@@ -5,6 +5,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\AdminProofController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +58,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/api/clients/select', [ClientController::class, 'selectList'])->name('api.clients.select');
     Route::get('/api/clients/{client}/balance', [ClientController::class, 'balance'])->name('api.clients.balance');
+    Route::get('/api/products/select', [ProductController::class, 'select'])->name('api.products.select');
 });
 
 require __DIR__ . '/auth.php';

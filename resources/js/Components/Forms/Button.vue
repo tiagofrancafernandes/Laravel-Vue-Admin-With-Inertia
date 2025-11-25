@@ -49,11 +49,11 @@ const variantClasses = computed(() => {
 const sizeClasses = computed(() => {
     switch (props.size) {
         case 'sm':
-            return 'px-3 py-1 text-sm';
+            return 'px-3 py-2 md:py-1 text-sm';
         case 'lg':
-            return 'px-6 py-3 text-lg';
+            return 'px-6 py-3 md:py-3 text-lg';
         default:
-            return 'px-4 py-2 text-base';
+            return 'px-4 py-3 md:py-2 text-base';
     }
 });
 </script>

@@ -74,6 +74,12 @@
             <!-- Balance Display -->
             <BalanceDisplay :balance="balance?.balance || 0" :credit-limit="balance?.credit_limit || 0" />
 
+            <!-- Add Balance Form -->
+            <AddBalanceForm :client-id="client.id" />
+
+            <!-- Add Credit Item Form -->
+            <AddCreditItemForm :client-id="client.id" />
+
             <!-- Recent Sales -->
             <Card title="Últimas Compras">
                 <div v-if="recentSales && recentSales.length > 0" class="overflow-x-auto">
@@ -210,6 +216,8 @@
 </template>
 
 <script setup lang="ts">
+import AddBalanceForm from '@/Components/Clients/AddBalanceForm.vue';
+import AddCreditItemForm from '@/Components/Clients/AddCreditItemForm.vue';
 import BalanceDisplay from '@/Components/Clients/BalanceDisplay.vue';
 import Button from '@/Components/Forms/Button.vue';
 import Card from '@/Components/UI/Card.vue';

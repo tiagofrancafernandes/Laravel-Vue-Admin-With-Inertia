@@ -73,17 +73,17 @@
                     </Table>
 
                     <!-- Pagination -->
-                    <div v-if="clients.links" class="mt-6 flex items-center justify-between">
+                    <div v-if="clients.links" class="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <p class="text-sm text-gray-600 dark:text-gray-400">
                             Exibindo {{ clients.from }} a {{ clients.to }} de {{ clients.total }} clientes
                         </p>
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap gap-2">
                             <Link
                                 v-for="link in clients.links"
                                 :key="link.label"
                                 :href="link.url || '#'"
                                 :class="[
-                                    'px-3 py-1 rounded text-sm',
+                                    'px-3 py-2 md:py-1 rounded text-sm font-medium',
                                     link.active
                                         ? 'bg-blue-600 text-white dark:bg-blue-500'
                                         : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600',

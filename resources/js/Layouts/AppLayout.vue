@@ -13,8 +13,8 @@
                         </Link>
                     </div>
 
-                    <!-- Navigation Links -->
-                    <div class="flex items-center space-x-8">
+                    <!-- Navigation Links (Desktop) -->
+                    <div class="hidden md:flex items-center space-x-8">
                         <Link
                             v-for="item in navItems"
                             :key="item.name"
@@ -315,7 +315,7 @@
         </nav>
 
         <!-- Main Content -->
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 pb-12">
+        <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 pb-12">
             <!-- Flash Messages -->
             <div v-if="flashMessages?.success" class="mb-4">
                 <Alert type="success" :message="flashMessages.success" />

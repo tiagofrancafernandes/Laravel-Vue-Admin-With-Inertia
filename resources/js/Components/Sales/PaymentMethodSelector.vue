@@ -5,27 +5,29 @@
             <span class="text-red-500">*</span>
         </label>
 
-        <div class="space-y-3">
-            <div v-for="method in paymentMethods" :key="method.id" class="flex items-start">
-                <input
-                    :id="`method-${method.id}`"
-                    type="checkbox"
-                    :value="method.id"
-                    :checked="isSelected(method.id)"
-                    @change="toggleMethod(method.id)"
-                    class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <label :for="`method-${method.id}`" class="ml-3 flex-1 cursor-pointer">
-                    <div class="font-medium text-gray-900 dark:text-gray-100">
-                        {{ method.name }}
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        {{ method.description }}
-                    </div>
-                </label>
+        <div class="space-y-4">
+            <div v-for="method in paymentMethods" :key="method.id" class="flex flex-col md:flex-row md:items-start gap-3">
+                <div class="flex items-start flex-1">
+                    <input
+                        :id="`method-${method.id}`"
+                        type="checkbox"
+                        :value="method.id"
+                        :checked="isSelected(method.id)"
+                        @change="toggleMethod(method.id)"
+                        class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <label :for="`method-${method.id}`" class="ml-3 flex-1 cursor-pointer">
+                        <div class="font-medium text-gray-900 dark:text-gray-100">
+                            {{ method.name }}
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            {{ method.description }}
+                        </div>
+                    </label>
+                </div>
 
                 <!-- Payment input for selected methods -->
-                <div v-if="isSelected(method.id)" class="ml-4 w-32">
+                <div v-if="isSelected(method.id)" class="w-full md:w-40">
                     <input
                         :value="getPaymentAmount(method.id)"
                         @input="setPaymentAmount(method.id, $event.target.value)"
@@ -34,7 +36,7 @@
                         step="0.01"
                         min="0"
                         :class="[
-                            'w-full px-2 py-1 border rounded text-right',
+                            'w-full px-3 py-2 border rounded text-right',
                             'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100',
                             'border-gray-300 dark:border-gray-600 focus:ring-blue-500',
                         ]"

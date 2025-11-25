@@ -1,6 +1,6 @@
 <template>
     <div class="relative">
-        <div class="flex gap-2">
+        <div class="flex flex-col md:flex-row gap-2">
             <!-- Search Input -->
             <div class="flex-1 relative">
                 <Input
@@ -14,7 +14,7 @@
                 <!-- Dropdown -->
                 <div
                     v-if="showDropdown && clients.length > 0"
-                    class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+                    class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-40 md:max-h-60 overflow-auto"
                 >
                     <button
                         v-for="client in clients"
@@ -42,7 +42,7 @@
             </div>
 
             <!-- New Client Button -->
-            <Button type="button" variant="secondary" @click="openNewClientModal">+ Novo</Button>
+            <Button type="button" variant="secondary" @click="openNewClientModal" class="w-full md:w-auto">+ Novo</Button>
         </div>
 
         <!-- Selected Client Display -->
