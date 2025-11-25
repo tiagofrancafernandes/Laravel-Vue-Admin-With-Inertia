@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientPortalController;
+use App\Http\Controllers\AdminProofController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,15 @@ Route::middleware(['auth', 'verified', 'client_portal'])->prefix('client-portal'
     Route::post('/proof', [ClientPortalController::class, 'submitProof'])->name('client.portal.proof.store');
     Route::get('/proofs', [ClientPortalController::class, 'proofHistory'])->name('client.portal.proofs');
     Route::get('/proof/{proof}/download', [ClientPortalController::class, 'downloadProof'])->name('client.portal.proof.download');
+});
+
+// Admin Proof Management Routes
+Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+    Route::get('/proofs', [AdminProofController::class, 'index'])->name('admin.proofs.index');
+    Route::get('/proofs/{proof}', [AdminProofController::class, 'show'])->name('admin.proofs.show');
+    Route::post('/proofs/{proof}/approve', [AdminProofController::class, 'approve'])->name('admin.proofs.approve');
+    Route::post('/proofs/{proof}/reject', [AdminProofController::class, 'reject'])->name('admin.proofs.reject');
+    Route::get('/proofs/{proof}/download', [AdminProofController::class, 'download'])->name('admin.proofs.download');
 });
 
 // API routes
