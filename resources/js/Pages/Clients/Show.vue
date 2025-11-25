@@ -118,7 +118,7 @@
                                     {{ sale.sale_number }}
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm text-gray-900 dark:text-gray-100">
-                                     {{ formatCurrency(sale.total) }}
+                                     {{ formatCurrency(sale.total_amount) }}
                                 </td>
                                 <td class="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-400">
                                     {{ formatDate(sale.created_at) }}
@@ -252,9 +252,15 @@ interface ClientBalance {
 interface Sale {
     id: number;
     sale_number: string;
-    total: string;
+    client_id?: number;
+    client?: {
+        id: number;
+        name: string;
+    };
+    total_amount: string;
     status: 'completed' | 'cancelled';
     created_at: string;
+    updated_at: string;
 }
 
 interface Transaction {
