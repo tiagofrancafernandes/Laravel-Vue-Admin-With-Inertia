@@ -7,7 +7,7 @@
 
         <div class="space-y-4">
             <div
-                v-for="method in paymentMethods"
+                v-for="method in paymentMethods.filter((m) => shouldShowMethod(m))"
                 :key="method.id"
                 class="flex flex-col md:flex-row md:items-start gap-3"
             >
@@ -20,11 +20,29 @@
                         @change="toggleMethod(method.id)"
                         class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <label :for="`method-${method.id}`" class="ml-3 flex-1 cursor-pointer">
-                        <div class="font-medium text-gray-900 dark:text-gray-100">
-                            {{ method.name }}
+                    <label :for="`method-${method.id}`" class="ml-3 flex-1 cursor-pointer select-none">
+                        <div class="font-medium text-gray-900 dark:text-gray-100 select-none">
+                            {{ getMethodDisplayName(method) }}
+                            <span
+                                v-if="method.requires_client && !clientId"
+                                class="ml-2 text-xs text-gray-500 dark:text-gray-400"
+                            >
+                                (requer cliente)
+                            </span>
+                            <span
+                                v-else-if="method.code === 'balance' && clientBalance?.balance === 0"
+                                class="ml-2 text-xs text-orange-600 dark:text-orange-400"
+                            >
+                                (saldo indisponível)
+                            </span>
+                            <span
+                                v-else-if="method.code === 'account' && clientBalance?.credit_limit === 0"
+                                class="ml-2 text-xs text-orange-600 dark:text-orange-400"
+                            >
+                                (crédito indisponível)
+                            </span>
                         </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                        <div class="text-sm text-gray-500 dark:text-gray-400 select-none">
                             {{ method.description }}
                         </div>
                     </label>
@@ -97,12 +115,15 @@ interface PaymentMethod {
     name: string;
     code: string;
     description?: string;
+    requires_client?: boolean;
 }
 
 interface Props {
     paymentMethods: PaymentMethod[];
     modelValue: Array<any>;
     total: number;
+    clientId?: number | null;
+    clientBalance?: any;
     error?: string;
 }
 
@@ -149,6 +170,39 @@ const getCashMethodId = (): number => {
 const shouldShowChangeOptions = (): boolean => {
     // Show change options when cash method is selected
     return selectedMethods.value.has(getCashMethodId());
+};
+
+const shouldShowMethod = (method: PaymentMethod): boolean => {
+    // If method doesn't require client, always show it
+    if (!method.requires_client) {
+        return true;
+    }
+
+    // If method requires client but none is selected, hide it
+    if (!props.clientId) {
+        return false;
+    }
+
+    // For balance and account methods, check if client has them enabled
+    if (method.code === 'balance') {
+        return props.clientBalance?.balance > 0 || false;
+    }
+
+    if (method.code === 'account') {
+        return props.clientBalance?.credit_limit > 0 || false;
+    }
+
+    return true;
+};
+
+const getMethodDisplayName = (method: PaymentMethod): string => {
+    let name = method.name;
+
+    if (method.requires_client) {
+        name += ' *';
+    }
+
+    return name;
 };
 
 // Calculate total already paid

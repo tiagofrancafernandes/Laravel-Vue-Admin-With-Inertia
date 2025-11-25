@@ -149,7 +149,7 @@
                                 required
                             />
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 <Input
                                     v-model="item.quantity"
                                     label="Quantidade"
@@ -168,15 +168,15 @@
                                     placeholder="0.00"
                                     required
                                 />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Subtotal
-                                </label>
-                                <div
-                                    class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-gray-100 font-medium"
-                                >
-                                    R$ {{ formatCurrency(item.quantity * item.price) }}
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Subtotal
+                                    </label>
+                                    <div
+                                        class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-gray-100 font-medium"
+                                    >
+                                        R$ {{ formatCurrency(item.quantity * item.price) }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -221,6 +221,8 @@
                         v-model="form.payments"
                         :payment-methods="paymentMethods"
                         :total="total"
+                        :client-id="form.client_id"
+                        :client-balance="clientBalance"
                         :error="form.errors.payments"
                     />
                     <div

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $code
  * @property bool $is_active
+ * @property bool $requires_client
  * @property int $display_order
  * @property string|null $description
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereDisplayOrder($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereRequiresClient($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PaymentMethod whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -66,12 +68,14 @@ class PaymentMethod extends Model
         'name',
         'code',
         'is_active',
+        'requires_client',
         'display_order',
         'description',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'requires_client' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -106,5 +110,27 @@ class PaymentMethod extends Model
     public function isCashType(): bool
     {
         return $this->code === 'cash';
+    }
+
+    /**
+     * Check if this payment method requires a client to be selected.
+     */
+    public function requiresClient(): bool
+    {
+        return (bool) $this->requires_client;
+    }
+
+    /**
+     * Get a user-friendly label for this payment method.
+     */
+    public function getLabel(): string
+    {
+        $label = $this->name;
+
+        if ($this->requiresClient()) {
+            $label .= ' *';
+        }
+
+        return $label;
     }
 }
