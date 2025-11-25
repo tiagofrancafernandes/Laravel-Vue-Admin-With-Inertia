@@ -78,7 +78,7 @@ class ProductSelectionTest extends TestCase
         $response->assertStatus(200);
         $data = $response->json('data');
         $this->assertNotEmpty($data);
-        $this->assertArrayHasKey('sales_count', $data[0]);
+        $this->assertArrayHasKey('salesCount', $data[0]);
     }
 
     public function testProductSelectCalculatesPopularityCorrectly(): void
@@ -91,7 +91,7 @@ class ProductSelectionTest extends TestCase
             'client_id' => $client->id,
             'items' => json_encode([
                 [
-                    'description' => 'Popular Product',
+                    'name' => 'Popular Product',
                     'quantity' => 2,
                     'price' => 50.00,
                 ],
@@ -106,7 +106,7 @@ class ProductSelectionTest extends TestCase
 
         $popularProduct = collect($data)->firstWhere('name', 'Popular Product');
         $this->assertNotNull($popularProduct);
-        $this->assertEquals(1, $popularProduct['sales_count']);
+        $this->assertEquals(1, $popularProduct['salesCount']);
     }
 
     public function testProductSelectCountsMultipleSalesOfSameProduct(): void
@@ -120,7 +120,7 @@ class ProductSelectionTest extends TestCase
             'client_id' => $client1->id,
             'items' => json_encode([
                 [
-                    'description' => 'Best Seller',
+                    'name' => 'Best Seller',
                     'quantity' => 1,
                     'price' => 50.00,
                 ],
@@ -131,7 +131,7 @@ class ProductSelectionTest extends TestCase
             'client_id' => $client2->id,
             'items' => json_encode([
                 [
-                    'description' => 'Best Seller',
+                    'name' => 'Best Seller',
                     'quantity' => 3,
                     'price' => 50.00,
                 ],
@@ -146,7 +146,7 @@ class ProductSelectionTest extends TestCase
 
         $bestSeller = collect($data)->firstWhere('name', 'Best Seller');
         $this->assertNotNull($bestSeller);
-        $this->assertEquals(2, $bestSeller['sales_count']);
+        $this->assertEquals(2, $bestSeller['salesCount']);
     }
 
     public function testProductSelectSortsByCreatedAtDescending(): void
@@ -162,7 +162,7 @@ class ProductSelectionTest extends TestCase
         $data = $response->json('data');
 
         // Since both have 0 sales, they should be sorted by created_at DESC (newest first)
-        // Product 2 (created last) should appear first when sales_count is equal
+        // Product 2 (created last) should appear first when salesCount is equal
         $this->assertEquals('Product 2', $data[0]['name']);
         $this->assertEquals('Product 1', $data[1]['name']);
     }
@@ -178,7 +178,7 @@ class ProductSelectionTest extends TestCase
             'client_id' => $client->id,
             'items' => json_encode([
                 [
-                    'description' => 'Popular',
+                    'name' => 'Popular',
                     'quantity' => 1,
                     'price' => 50.00,
                 ],
@@ -191,7 +191,7 @@ class ProductSelectionTest extends TestCase
         $response->assertStatus(200);
         $data = $response->json('data');
 
-        // Popular product should come first due to having sales_count > 0
+        // Popular product should come first due to having salesCount > 0
         $this->assertEquals('Popular', $data[0]['name']);
     }
 

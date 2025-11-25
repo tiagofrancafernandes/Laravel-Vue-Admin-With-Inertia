@@ -46,7 +46,11 @@
         <div v-if="rows.length === 0" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
             Nenhum registro encontrado
         </div>
-        <div v-for="row in rows" :key="row.id" class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3 border border-gray-200 dark:border-gray-700">
+        <div
+            v-for="row in rows"
+            :key="row.id"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3 border border-gray-200 dark:border-gray-700"
+        >
             <div v-for="column in columns" :key="column.key" class="flex justify-between items-start">
                 <span class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ column.label }}</span>
                 <span class="text-sm text-gray-900 dark:text-gray-100 text-right font-medium">

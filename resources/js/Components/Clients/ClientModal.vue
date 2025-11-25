@@ -6,13 +6,7 @@
             <form @submit.prevent="submit" class="space-y-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
-                    <Input
-                        id="name"
-                        v-model="form.name"
-                        required
-                        :error="errors.name"
-                        placeholder="Nome do cliente"
-                    />
+                    <Input id="name" v-model="form.name" required :error="errors.name" placeholder="Nome do cliente" />
                 </div>
 
                 <div>
@@ -69,7 +63,7 @@ const submit = async () => {
     try {
         const response = await axios.post(route('clients.store'), form.value, {
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
             },
         });
 

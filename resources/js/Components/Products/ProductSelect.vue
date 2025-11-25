@@ -64,11 +64,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+
 import axios from 'axios';
+
+import Input from '@/Components/Common/Input.vue';
 import { useDebounce } from '@/Composables/useDebounce';
 import { formatCurrency } from '@/Utils/helpers';
-import Input from '@/Components/Common/Input.vue';
 
 interface Product {
     id: number;
@@ -105,7 +107,10 @@ const popularProducts = computed(() => {
 
 const onSearch = useDebounce(async () => {
     try {
-        const response = await axios.get(route('api.products.select'));
+        const response = await axios.get(route('api.products.select'), {
+            params: { search: search.value },
+        });
+
         products.value = response.data.data || [];
     } catch (error) {
         console.error('Erro ao buscar produtos:', error);

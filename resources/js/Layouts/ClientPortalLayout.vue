@@ -104,11 +104,7 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
 
                                     <template #content>
                                         <DropdownLink :href="route('profile.edit')">Perfil</DropdownLink>
-                                        <DropdownLink
-                                            :href="route('logout')"
-                                            method="post"
-                                            as="button"
-                                        >
+                                        <DropdownLink :href="route('logout')" method="post" as="button">
                                             Sair
                                         </DropdownLink>
                                     </template>
@@ -209,11 +205,7 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
                             </button>
 
                             <ResponsiveNavLink :href="route('profile.edit')">Perfil</ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
-                            >
+                            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Sair
                             </ResponsiveNavLink>
                         </div>

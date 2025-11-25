@@ -22,21 +22,10 @@
             />
 
             <div class="flex gap-3">
-                <Button
-                    type="submit"
-                    variant="primary"
-                    :disabled="form.processing"
-                    class="flex-1"
-                >
+                <Button type="submit" variant="primary" :disabled="form.processing" class="flex-1">
                     {{ form.processing ? 'Registrando...' : 'Registrar Débito' }}
                 </Button>
-                <Button
-                    type="button"
-                    variant="secondary"
-                    @click="resetForm"
-                    :disabled="form.processing"
-                    class="flex-1"
-                >
+                <Button type="button" variant="secondary" @click="resetForm" :disabled="form.processing" class="flex-1">
                     Limpar
                 </Button>
             </div>

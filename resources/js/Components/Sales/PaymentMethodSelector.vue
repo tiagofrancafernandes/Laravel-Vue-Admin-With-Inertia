@@ -6,7 +6,11 @@
         </label>
 
         <div class="space-y-4">
-            <div v-for="method in paymentMethods" :key="method.id" class="flex flex-col md:flex-row md:items-start gap-3">
+            <div
+                v-for="method in paymentMethods"
+                :key="method.id"
+                class="flex flex-col md:flex-row md:items-start gap-3"
+            >
                 <div class="flex items-start flex-1">
                     <input
                         :id="`method-${method.id}`"

@@ -326,7 +326,9 @@
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                             >
-                                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                <path
+                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                                />
                             </svg>
                             <svg
                                 v-else
@@ -364,10 +366,7 @@
                 </div>
 
                 <!-- Mobile Navigation Menu -->
-                <div
-                    v-if="showingNavigationDropdown"
-                    class="md:hidden border-t border-gray-200 dark:border-gray-700"
-                >
+                <div v-if="showingNavigationDropdown" class="md:hidden border-t border-gray-200 dark:border-gray-700">
                     <div class="space-y-1 px-2 pb-3 pt-2">
                         <Link
                             v-for="item in navItems"
@@ -429,10 +428,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    ref,
-} from 'vue';
+import { computed, ref } from 'vue';
 
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -442,18 +438,9 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import Alert from '@/Components/UI/Alert.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
 import { User } from '@/types/app-types.d';
-import {
-    route,
-    strEndsWith,
-} from '@/Utils/helpers';
-import {
-    PageProps,
-    router,
-} from '@inertiajs/core';
-import {
-    Link,
-    usePage,
-} from '@inertiajs/vue3';
+import { route, strEndsWith } from '@/Utils/helpers';
+import { PageProps, router } from '@inertiajs/core';
+import { Link, usePage } from '@inertiajs/vue3';
 
 interface FlashMessages {
     danger?: string;

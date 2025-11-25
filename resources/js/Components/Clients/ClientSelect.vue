@@ -24,15 +24,16 @@
                         @click="selectClient(client)"
                     >
                         <div class="font-medium text-gray-900">
-                            {{ client.name }}<span v-if="client.phone" class="text-gray-600 font-normal"> - {{ formatPhone(client.phone) }}</span>
+                            {{ client.name }}
+                            <span v-if="client.phone" class="text-gray-600 font-normal">
+                                - {{ formatPhone(client.phone) }}
+                            </span>
                         </div>
                         <div v-if="client.email" class="text-sm text-gray-500 mt-1">
                             {{ client.email }}
                         </div>
                         <div v-if="client.balance" class="text-xs text-gray-400 mt-1 flex gap-4">
-                            <span class="text-green-600">
-                                Saldo: {{ formatCurrency(client.balance.balance) }}
-                            </span>
+                            <span class="text-green-600">Saldo: {{ formatCurrency(client.balance.balance) }}</span>
                             <span v-if="client.balance.credit_limit > 0" class="text-red-600">
                                 Limite: {{ formatCurrency(client.balance.credit_limit) }}
                             </span>
@@ -42,7 +43,9 @@
             </div>
 
             <!-- New Client Button -->
-            <Button type="button" variant="secondary" @click="openNewClientModal" class="w-full md:w-auto">+ Novo</Button>
+            <Button type="button" variant="secondary" @click="openNewClientModal" class="w-full md:w-auto">
+                + Novo
+            </Button>
         </div>
 
         <!-- Selected Client Display -->

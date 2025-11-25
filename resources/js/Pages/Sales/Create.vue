@@ -7,7 +7,9 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Nova Venda</h1>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">Registre uma nova transação</p>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">
+                        Registre uma nova transação
+                    </p>
                 </div>
                 <Link href="/sales" class="w-full md:w-auto">
                     <Button variant="secondary" class="w-full md:w-auto">← Voltar</Button>
@@ -17,7 +19,12 @@
             <form @submit.prevent="submitForm" class="space-y-6">
                 <!-- Client Selection -->
                 <Card title="Cliente">
-                    <ClientSelect v-model="form.client_id" :error="form.errors.client_id" required @balance-loaded="onBalanceLoaded" />
+                    <ClientSelect
+                        v-model="form.client_id"
+                        :error="form.errors.client_id"
+                        required
+                        @balance-loaded="onBalanceLoaded"
+                    />
                 </Card>
 
                 <!-- Client Balance Info -->
@@ -42,8 +49,12 @@
                 <Card title="Itens">
                     <div class="space-y-4">
                         <!-- Product Selector -->
-                        <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Selecione um Produto</p>
+                        <div
+                            class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                        >
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                Selecione um Produto
+                            </p>
                             <ProductSelect @select="onProductSelected" />
                         </div>
 
@@ -145,7 +156,7 @@
                         :error="form.errors.payments"
                     />
                     <div
-                        v-if="paymentTotal !== total && form.payments.length > 0"
+                        v-if="paymentTotal < total && form.payments.length > 0"
                         class="mt-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg"
                     >
                         <p class="text-red-800 dark:text-red-200 text-sm">
@@ -172,7 +183,7 @@
                         type="submit"
                         variant="primary"
                         class="flex-1"
-                        :disabled="form.processing || paymentTotal !== total"
+                        :disabled="form.processing || paymentTotal < total"
                     >
                         {{ form.processing ? 'Registrando...' : 'Registrar Venda' }}
                     </Button>
@@ -186,9 +197,9 @@
 import { computed, ref, watch } from 'vue';
 
 import ClientSelect from '@/Components/Clients/ClientSelect.vue';
-import ProductSelect from '@/Components/Products/ProductSelect.vue';
 import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
+import ProductSelect from '@/Components/Products/ProductSelect.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
 import Card from '@/Components/UI/Card.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';

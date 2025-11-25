@@ -3,47 +3,49 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Sale;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
     public function select(Request $request)
     {
+        $str = fn ($v) => filter_var($v, FILTER_DEFAULT, FILTER_NULL_ON_FAILURE);
+        $search = $str($request->input('q') ?? $request->input('search'));
+
+        $limit = $request->integer('limit', 10);
+        $offset = $request->integer('offset', 0);
+
+        $search = trim("{$search}");
+
+        $limit = $limit > 0 ? $limit : 10;
+        $offset = $offset >= 0 ? $offset : 10;
+
         $products = Product::query()
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($product) {
-                $product->sales_count = $this->getProductPopularity($product->name);
-                return $product;
+            ->orderByPopularity()
+            ->limit($limit)
+            ->offset($offset)
+            ->when($search, function (Builder $query, string $_search) {
+                $_search = '%' . strtolower($_search) . '%';
+
+                $query
+                    ->whereRaw('LOWER(name) LIKE ?', [$_search])
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$_search]);
             })
-            ->sortByDesc('sales_count')
+            ->get()
+            // ->map(function ($product) {
+            //     $product->sales_count = Product::getProductPopularity($product->name);
+            //     return $product;
+            // })
+            // ->sortByDesc('sort_val', SORT_DESC)
+            // ->sortByDesc('sort_val', SORT_ASC)
+            // ->sortByDesc('sales_count', SORT_ASC)
             ->values();
 
         return response()->json([
             'data' => $products,
+            'limit' => $limit,
+            'offset' => $offset,
         ]);
-    }
-
-    private function getProductPopularity(string $productName): int
-    {
-        $sales = Sale::all();
-        $count = 0;
-
-        foreach ($sales as $sale) {
-            if (is_string($sale->items)) {
-                $items = json_decode($sale->items, true);
-            } else {
-                $items = $sale->items ?? [];
-            }
-
-            foreach ($items as $item) {
-                if (isset($item['description']) && $item['description'] === $productName) {
-                    $count++;
-                }
-            }
-        }
-
-        return $count;
     }
 }

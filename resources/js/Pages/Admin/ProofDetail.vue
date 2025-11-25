@@ -71,12 +71,8 @@ const rejectProof = () => {
         <template #header>
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                        Comprovante #{{ proof.id }}
-                    </h2>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1">
-                        Revisar e gerenciar comprovante de cliente
-                    </p>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Comprovante #{{ proof.id }}</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1">Revisar e gerenciar comprovante de cliente</p>
                 </div>
                 <Link
                     :href="route('admin.proofs.index')"
@@ -93,7 +89,12 @@ const rejectProof = () => {
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700 p-6">
                     <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Status</p>
                     <div class="mt-2">
-                        <span :class="['inline-block px-3 py-1 rounded-full text-xs font-medium', getStatusBadge(proof.status).class]">
+                        <span
+                            :class="[
+                                'inline-block px-3 py-1 rounded-full text-xs font-medium',
+                                getStatusBadge(proof.status).class,
+                            ]"
+                        >
                             {{ getStatusBadge(proof.status).label }}
                         </span>
                     </div>
@@ -126,9 +127,7 @@ const rejectProof = () => {
                 <div class="lg:col-span-2 space-y-6">
                     <!-- File Preview -->
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                            Arquivo
-                        </h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Arquivo</h3>
 
                         <div v-if="proof.file_available" class="space-y-4">
                             <!-- File info -->
@@ -184,9 +183,7 @@ const rejectProof = () => {
                                 v-if="!proof.file_path.endsWith('.pdf')"
                                 class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
                             >
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                                    Preview:
-                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Preview:</p>
                                 <div class="max-h-96 flex items-center justify-center">
                                     <img
                                         :src="route('admin.proofs.download', proof.id)"
@@ -197,10 +194,11 @@ const rejectProof = () => {
                             </div>
                         </div>
 
-                        <div v-else class="flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <p class="text-gray-600 dark:text-gray-400">
-                                Arquivo não disponível
-                            </p>
+                        <div
+                            v-else
+                            class="flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                        >
+                            <p class="text-gray-600 dark:text-gray-400">Arquivo não disponível</p>
                         </div>
                     </div>
 
@@ -213,17 +211,13 @@ const rejectProof = () => {
                         <div class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                                        Tipo
-                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Tipo</p>
                                     <p class="text-gray-900 dark:text-gray-100">
                                         {{ getTypeLabel(proof.type) }}
                                     </p>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                                        Valor
-                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Valor</p>
                                     <p class="text-lg font-semibold text-green-600 dark:text-green-400">
                                         {{ formatCurrency(proof.amount) }}
                                     </p>
@@ -232,9 +226,7 @@ const rejectProof = () => {
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                                        Enviado em
-                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Enviado em</p>
                                     <p class="text-gray-900 dark:text-gray-100">
                                         {{ proof.created_at }}
                                     </p>
@@ -280,9 +272,7 @@ const rejectProof = () => {
 
                         <div class="space-y-4">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                                    Nome
-                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Nome</p>
                                 <Link
                                     :href="route('clients.show', proof.client.id)"
                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 font-medium"
@@ -292,9 +282,7 @@ const rejectProof = () => {
                             </div>
 
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                                    Email
-                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Email</p>
                                 <a
                                     :href="`mailto:${proof.client.email}`"
                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 font-medium break-all"
@@ -304,9 +292,7 @@ const rejectProof = () => {
                             </div>
 
                             <div v-if="proof.client.phone">
-                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                                    Telefone
-                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Telefone</p>
                                 <a
                                     :href="`tel:${proof.client.phone}`"
                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 font-medium"
@@ -325,34 +311,34 @@ const rejectProof = () => {
                     </div>
 
                     <!-- Admin Action / History -->
-                    <div v-if="proof.status !== 'pending'" class="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                            Histórico da Ação
-                        </h3>
+                    <div
+                        v-if="proof.status !== 'pending'"
+                        class="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700 p-6"
+                    >
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Histórico da Ação</h3>
 
                         <div class="space-y-3">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                                    Revisor
-                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Revisor</p>
                                 <p class="text-gray-900 dark:text-gray-100 font-medium">
                                     {{ proof.admin.name }}
                                 </p>
                             </div>
 
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                                    Ação
-                                </p>
-                                <p :class="['inline-block px-3 py-1 rounded-full text-xs font-medium', getStatusBadge(proof.status).class]">
+                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Ação</p>
+                                <p
+                                    :class="[
+                                        'inline-block px-3 py-1 rounded-full text-xs font-medium',
+                                        getStatusBadge(proof.status).class,
+                                    ]"
+                                >
                                     {{ getStatusBadge(proof.status).label }}
                                 </p>
                             </div>
 
                             <div v-if="proof.notes" class="pt-3 border-t border-gray-200 dark:border-gray-700">
-                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-2">
-                                    Observações
-                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-2">Observações</p>
                                 <p class="text-gray-900 dark:text-gray-100 text-sm">
                                     {{ proof.notes }}
                                 </p>
@@ -400,7 +386,8 @@ const rejectProof = () => {
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Motivo da Rejeição <span class="text-red-500">*</span>
+                                        Motivo da Rejeição
+                                        <span class="text-red-500">*</span>
                                     </label>
                                     <textarea
                                         v-model="rejectNotes"
