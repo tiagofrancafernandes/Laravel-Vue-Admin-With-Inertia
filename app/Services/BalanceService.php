@@ -24,9 +24,8 @@ class BalanceService
         }
 
         DB::transaction(function () use ($clientId, $amount, $description, $saleId) {
-            $balance = ClientBalance::where('client_id', $clientId)
-                ->lockForUpdate()
-                ->firstOrFail();
+            $balance = ClientBalance::getBalanceByClientOrCreate($clientId, true);
+            abort_if(!$balance, 404, 'Not founf balance for this client.');
 
             $previousBalance = (float) $balance->balance;
             $balance->increment('balance', $amount);
@@ -61,9 +60,8 @@ class BalanceService
         }
 
         DB::transaction(function () use ($clientId, $amount, $description, $saleId) {
-            $balance = ClientBalance::where('client_id', $clientId)
-                ->lockForUpdate()
-                ->firstOrFail();
+            $balance = ClientBalance::getBalanceByClientOrCreate($clientId, true);
+            abort_if(!$balance, 404, 'Not founf balance for this client.');
 
             $currentBalance = (float) $balance->balance;
 
@@ -103,9 +101,8 @@ class BalanceService
         }
 
         DB::transaction(function () use ($clientId, $amount, $description, $saleId) {
-            $balance = ClientBalance::where('client_id', $clientId)
-                ->lockForUpdate()
-                ->firstOrFail();
+            $balance = ClientBalance::getBalanceByClientOrCreate($clientId, true);
+            abort_if(!$balance, 404, 'Not founf balance for this client.');
 
             $previousTabBalance = (float) $balance->credit_limit;
             $balance->increment('credit_limit', $amount);
@@ -126,31 +123,35 @@ class BalanceService
 
     /**
      * Pay off client's tab debt.
+     * If payment amount exceeds tab balance, only pays what's owed.
      *
      * @param int $clientId
      * @param float $amount
      * @param string $description
      * @param int|null $saleId
-     * @return void
+     * @return float Amount paid towards tab (may be less than requested if tab is lower)
      */
-    public function payTab(int $clientId, float $amount, string $description, ?int $saleId = null): void
+    public function payTab(int $clientId, float $amount, string $description, ?int $saleId = null): float
     {
         if ($amount <= 0) {
             throw new \Exception('Amount must be greater than zero');
         }
 
-        DB::transaction(function () use ($clientId, $amount, $description, $saleId) {
-            $balance = ClientBalance::where('client_id', $clientId)
-                ->lockForUpdate()
-                ->firstOrFail();
+        return DB::transaction(function () use ($clientId, $amount, $description, $saleId) {
+            $balance = ClientBalance::getBalanceByClientOrCreate($clientId, true);
+            abort_if(!$balance, 404, 'Not founf balance for this client.');
 
             $currentTab = (float) $balance->credit_limit;
 
-            if ($currentTab < $amount) {
-                throw new \Exception("Payment exceeds tab balance. Tab: {$currentTab}, Payment: {$amount}");
+            // Only pay what's owed, even if amount is higher
+            $amountToPay = min($amount, $currentTab);
+
+            // If nothing to pay, return 0
+            if ($amountToPay <= 0) {
+                return 0;
             }
 
-            $balance->decrement('credit_limit', $amount);
+            $balance->decrement('credit_limit', $amountToPay);
             $balance->touch('last_transaction_at');
 
             ClientLedger::create([
@@ -158,11 +159,14 @@ class BalanceService
                 'sale_id' => $saleId,
                 'user_id' => auth()->id(),
                 'type' => 'tab_credit',
-                'amount' => $amount,
+                'amount' => $amountToPay,
                 'balance_before' => $currentTab,
-                'balance_after' => $currentTab - $amount,
+                'balance_after' => $currentTab - $amountToPay,
                 'description' => $description,
             ]);
+
+            // Return amount that was paid towards tab
+            return $amountToPay;
         });
     }
 }

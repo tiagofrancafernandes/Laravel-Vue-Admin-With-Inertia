@@ -64,15 +64,27 @@ class SaleService
             // If payment is more than total, handle change
             elseif ($difference > 0.01) {
                 if ($data['payments'][0]['use_change_for_credit'] ?? false) {
-                    // Use change to pay off credit
-                    $this->balanceService->payTab(
+                    // Use change to pay off credit/tab first, then add remainder as balance
+                    $amountPaidToTab = $this->balanceService->payTab(
                         $sale->client_id,
                         $difference,
                         "Quitar crédito - venda {$sale->sale_number}",
                         $sale->id
                     );
+
+                    // If there's a remainder after paying tab, add it as balance
+                    $remainder = $difference - $amountPaidToTab;
+
+                    if ($remainder > 0.01) {
+                        $this->balanceService->addBalance(
+                            $sale->client_id,
+                            $remainder,
+                            "Saldo do troco após quitar crédito - venda {$sale->sale_number}",
+                            $sale->id
+                        );
+                    }
                 } elseif ($data['payments'][0]['add_change_as_balance'] ?? false) {
-                    // Add change as customer balance/prepaid
+                    // Add change as customer balance/prepaid (no credit limit validation applies here)
                     $this->balanceService->addBalance(
                         $sale->client_id,
                         $difference,

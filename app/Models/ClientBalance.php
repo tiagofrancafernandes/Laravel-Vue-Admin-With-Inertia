@@ -68,4 +68,31 @@ class ClientBalance extends Model
     {
         return (float) $this->credit_limit >= $amount;
     }
+
+    public static function getBalanceByClientOrCreate(
+        string|int|Client $client,
+        ?bool $lockForUpdate = null,
+    ): ClientBalance {
+        /** @var Client */
+        $client = is_a($client, Client::class) ? $client : Client::findOrFail($client);
+
+        $lockForUpdate ??= true;
+
+        /** @var ?ClientBalance */
+        $balance = ClientBalance::where('client_id', $client?->id)
+            ->when($lockForUpdate, fn ($q) => $q->lockForUpdate())
+            ->first();
+
+        if ($balance) {
+            return $balance;
+        }
+
+        $balance = ClientBalance::create([
+            'client_id' => $client?->id,
+            'balance' => 0,
+            'credit_limit' => 0,
+        ]);
+
+        return $balance;
+    }
 }

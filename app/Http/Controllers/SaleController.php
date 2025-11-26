@@ -101,6 +101,10 @@ class SaleController extends Controller
                 ],
             ])->with('redirectToSale', $sale->id);
         } catch (\Exception $e) {
+            if (app()->environment(['local', 'dev']) && config('app.debug')) {
+                throw $e;
+            }
+
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
