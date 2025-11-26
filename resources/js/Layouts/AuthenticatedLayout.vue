@@ -35,6 +35,20 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
+                                <NavLink
+                                    v-if="$page.props.auth.user?.role === 'admin'"
+                                    :href="route('users.index')"
+                                    :active="route().current('users.*')"
+                                >
+                                    Users
+                                </NavLink>
+                                <NavLink
+                                    v-if="$page.props.auth.user?.role === 'admin'"
+                                    :href="route('products.index')"
+                                    :active="route().current('products.*')"
+                                >
+                                    Products
+                                </NavLink>
                             </div>
                         </div>
 
@@ -142,6 +156,20 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user?.role === 'admin'"
+                            :href="route('users.index')"
+                            :active="route().current('users.*')"
+                        >
+                            Users
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user?.role === 'admin'"
+                            :href="route('products.index')"
+                            :active="route().current('products.*')"
+                        >
+                            Products
                         </ResponsiveNavLink>
                     </div>
 
