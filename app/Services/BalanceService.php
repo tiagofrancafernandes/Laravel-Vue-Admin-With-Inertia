@@ -55,7 +55,11 @@ class BalanceService
      */
     public function debitBalance(int $clientId, float $amount, string $description, ?int $saleId = null): void
     {
-        if ($amount <= 0) {
+        if ($amount === 0) {
+            return;
+        }
+
+        if ($amount < 0) {
             throw new \Exception('Amount must be greater than zero');
         }
 
