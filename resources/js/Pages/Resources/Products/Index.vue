@@ -14,15 +14,19 @@ const maxPrice = ref(props.filters.max_price || '');
 const stockStatus = ref(props.filters.stock_status || '');
 
 const searchProducts = () => {
-    router.get('/products', {
-        search: search.value,
-        min_price: minPrice.value,
-        max_price: maxPrice.value,
-        stock_status: stockStatus.value,
-    }, {
-        preserveState: true,
-        replace: true,
-    });
+    router.get(
+        '/products',
+        {
+            search: search.value,
+            min_price: minPrice.value,
+            max_price: maxPrice.value,
+            stock_status: stockStatus.value,
+        },
+        {
+            preserveState: true,
+            replace: true,
+        }
+    );
 };
 
 const deleteProduct = (product) => {
@@ -38,9 +42,7 @@ const deleteProduct = (product) => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl leading-tight text-gray-800 dark:text-gray-200">
-                    Products
-                </h2>
+                <h2 class="font-semibold text-xl leading-tight text-gray-800 dark:text-gray-200">Products</h2>
                 <Link
                     :href="route('products.create')"
                     class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -124,19 +126,29 @@ const deleteProduct = (product) => {
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                                    >
                                         Name
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                                    >
                                         Price
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                                    >
                                         Stock
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                                    >
                                         Created By
                                     </th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                                    >
                                         Actions
                                     </th>
                                 </tr>
@@ -147,7 +159,10 @@ const deleteProduct = (product) => {
                                         <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
                                             {{ product.name }}
                                         </div>
-                                        <div v-if="product.description" class="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">
+                                        <div
+                                            v-if="product.description"
+                                            class="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs"
+                                        >
                                             {{ product.description }}
                                         </div>
                                     </td>
@@ -155,13 +170,17 @@ const deleteProduct = (product) => {
                                         ${{ parseFloat(product.price).toFixed(2) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span :class="[
-                                            'px-2 py-1 text-xs rounded-full',
-                                            {
-                                                'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200': product.stock > 0,
-                                                'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': product.stock === 0
-                                            }
-                                        ]">
+                                        <span
+                                            :class="[
+                                                'px-2 py-1 text-xs rounded-full',
+                                                {
+                                                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
+                                                        product.stock > 0,
+                                                    'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
+                                                        product.stock === 0,
+                                                },
+                                            ]"
+                                        >
                                             {{ product.stock }} units
                                         </span>
                                     </td>
@@ -194,7 +213,10 @@ const deleteProduct = (product) => {
                     </div>
 
                     <!-- Pagination -->
-                    <div v-if="products.data.length > 0" class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                    <div
+                        v-if="products.data.length > 0"
+                        class="px-6 py-4 border-t border-gray-200 dark:border-gray-700"
+                    >
                         <div class="flex items-center justify-between">
                             <div class="text-sm text-gray-700 dark:text-gray-300">
                                 Showing {{ products.from }} to {{ products.to }} of {{ products.total }} products

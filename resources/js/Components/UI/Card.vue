@@ -10,7 +10,7 @@
                 {{ title }}
             </h3>
             <template v-else-if="$slots.title">
-                <slot name="title"/>
+                <slot name="title" />
             </template>
         </div>
         <div
@@ -18,7 +18,7 @@
                 'px-6',
                 {
                     'py-4': !(noPadding || hideBody),
-                    'p-0': (noPadding || hideBody),
+                    'p-0': noPadding || hideBody,
                 },
             ]"
         >

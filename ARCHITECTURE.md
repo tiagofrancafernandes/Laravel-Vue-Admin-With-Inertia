@@ -28,7 +28,6 @@ app/
 │   ├── Client.php
 │   ├── Sale.php
 │   ├── SalePayment.php
-│   ├── PaymentMethod.php
 │   ├── ClientBalance.php
 │   └── ClientLedger.php
 ├── Http/

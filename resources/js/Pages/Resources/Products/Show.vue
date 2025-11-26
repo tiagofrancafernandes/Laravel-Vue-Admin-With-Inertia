@@ -19,9 +19,7 @@ const deleteProduct = () => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Product Details
-                </h2>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Product Details</h2>
                 <div class="flex gap-2">
                     <Link
                         :href="`/products/${product.id}/edit`"
@@ -73,13 +71,17 @@ const deleteProduct = () => {
                                 <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                                     Stock
                                 </label>
-                                <span :class="[
-                                    'inline-flex px-3 py-1 text-sm rounded-full font-semibold',
-                                    {
-                                        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200': product.stock > 0,
-                                        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': product.stock === 0
-                                    }
-                                ]">
+                                <span
+                                    :class="[
+                                        'inline-flex px-3 py-1 text-sm rounded-full font-semibold',
+                                        {
+                                            'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
+                                                product.stock > 0,
+                                            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
+                                                product.stock === 0,
+                                        },
+                                    ]"
+                                >
                                     {{ product.stock }} units
                                 </span>
                             </div>

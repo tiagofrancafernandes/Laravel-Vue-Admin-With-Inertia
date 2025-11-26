@@ -33,10 +33,11 @@ const handleReset = () => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Users
-                </h2>
-                <Link :href="route('users.create')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Users</h2>
+                <Link
+                    :href="route('users.create')"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                     Add User
                 </Link>
             </div>
@@ -60,9 +61,7 @@ const handleReset = () => {
                             />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Role
-                            </label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
                             <select
                                 v-model="roleFilter"
                                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
@@ -98,21 +97,31 @@ const handleReset = () => {
                                 <th class="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Email</th>
                                 <th class="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Role</th>
                                 <th class="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Joined</th>
-                                <th class="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Actions</th>
+                                <th class="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-300">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in users_list" :key="user.id" class="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <tr
+                                v-for="user in users_list"
+                                :key="user.id"
+                                class="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            >
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ user.name }}</td>
                                 <td class="px-6 py-4 text-gray-700 dark:text-gray-300">{{ user.email }}</td>
                                 <td class="px-6 py-4">
-                                    <span :class="[
-                                        'px-3 py-1 rounded-full text-sm font-medium',
-                                        {
-                                            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': user.role === 'admin',
-                                            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200': user.role === 'user',
-                                        }
-                                    ]">
+                                    <span
+                                        :class="[
+                                            'px-3 py-1 rounded-full text-sm font-medium',
+                                            {
+                                                'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
+                                                    user.role === 'admin',
+                                                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
+                                                    user.role === 'user',
+                                            },
+                                        ]"
+                                    >
                                         {{ user.role }}
                                     </span>
                                 </td>
@@ -120,10 +129,16 @@ const handleReset = () => {
                                     {{ new Date(user.created_at).toLocaleDateString() }}
                                 </td>
                                 <td class="px-6 py-4 space-x-2">
-                                    <Link :href="route('users.show', user.id)" class="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400">
+                                    <Link
+                                        :href="route('users.show', user.id)"
+                                        class="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400"
+                                    >
                                         View
                                     </Link>
-                                    <Link :href="route('users.edit', user.id)" class="text-green-600 hover:text-green-900 dark:hover:text-green-400">
+                                    <Link
+                                        :href="route('users.edit', user.id)"
+                                        class="text-green-600 hover:text-green-900 dark:hover:text-green-400"
+                                    >
                                         Edit
                                     </Link>
                                     <Link
@@ -140,7 +155,9 @@ const handleReset = () => {
                     </table>
 
                     <!-- Pagination -->
-                    <div class="px-6 py-4 flex justify-between items-center border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+                    <div
+                        class="px-6 py-4 flex justify-between items-center border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-700"
+                    >
                         <div class="text-sm text-gray-600 dark:text-gray-400">
                             Showing {{ users.from }} to {{ users.to }} of {{ users.total }} results
                         </div>
@@ -152,7 +169,10 @@ const handleReset = () => {
                             >
                                 ← Previous
                             </Link>
-                            <span v-else class="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded text-gray-400 dark:text-gray-600">
+                            <span
+                                v-else
+                                class="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded text-gray-400 dark:text-gray-600"
+                            >
                                 ← Previous
                             </span>
 
@@ -163,7 +183,10 @@ const handleReset = () => {
                             >
                                 Next →
                             </Link>
-                            <span v-else class="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded text-gray-400 dark:text-gray-600">
+                            <span
+                                v-else
+                                class="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded text-gray-400 dark:text-gray-600"
+                            >
                                 Next →
                             </span>
                         </div>

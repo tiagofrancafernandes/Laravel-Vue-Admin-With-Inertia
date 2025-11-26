@@ -28,9 +28,7 @@ const page = usePage();
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Dashboard
-            </h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>
         </template>
 
         <div class="py-12">
@@ -40,9 +38,7 @@ const page = usePage();
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
                         Welcome back, {{ page.props.auth.user.name }}!
                     </h1>
-                    <p class="text-gray-600 dark:text-gray-400 mt-2">
-                        Here's an overview of your application.
-                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2">Here's an overview of your application.</p>
                 </div>
 
                 <!-- Stats Grid -->
@@ -51,16 +47,12 @@ const page = usePage();
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                                    Total Users
-                                </p>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Users</p>
                                 <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">
                                     {{ stats.totalUsers }}
                                 </p>
                             </div>
-                            <div class="text-4xl text-blue-500 opacity-10">
-                                👥
-                            </div>
+                            <div class="text-4xl text-blue-500 opacity-10">👥</div>
                         </div>
                     </div>
 
@@ -68,16 +60,12 @@ const page = usePage();
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                                    Admin Users
-                                </p>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Admin Users</p>
                                 <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">
                                     {{ stats.adminUsers }}
                                 </p>
                             </div>
-                            <div class="text-4xl text-red-500 opacity-10">
-                                🔐
-                            </div>
+                            <div class="text-4xl text-red-500 opacity-10">🔐</div>
                         </div>
                     </div>
 
@@ -85,16 +73,12 @@ const page = usePage();
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                                    Regular Users
-                                </p>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Regular Users</p>
                                 <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">
                                     {{ stats.regularUsers }}
                                 </p>
                             </div>
-                            <div class="text-4xl text-green-500 opacity-10">
-                                ✓
-                            </div>
+                            <div class="text-4xl text-green-500 opacity-10">✓</div>
                         </div>
                     </div>
 
@@ -102,16 +86,12 @@ const page = usePage();
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                                    Verified Users
-                                </p>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Verified Users</p>
                                 <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">
                                     {{ stats.verifiedUsers }}
                                 </p>
                             </div>
-                            <div class="text-4xl text-yellow-500 opacity-10">
-                                ✉️
-                            </div>
+                            <div class="text-4xl text-yellow-500 opacity-10">✉️</div>
                         </div>
                     </div>
                 </div>
@@ -119,10 +99,11 @@ const page = usePage();
                 <!-- Recent Users -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="px-6 py-4 border-b dark:border-gray-700 flex justify-between items-center">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Recent Users
-                        </h3>
-                        <Link :href="route('users.index')" class="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400 text-sm font-medium">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Users</h3>
+                        <Link
+                            :href="route('users.index')"
+                            class="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400 text-sm font-medium"
+                        >
                             View all →
                         </Link>
                     </div>
@@ -137,7 +118,11 @@ const page = usePage();
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in recentUsers" :key="user.id" class="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <tr
+                                v-for="user in recentUsers"
+                                :key="user.id"
+                                class="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            >
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                     <Link :href="route('users.show', user.id)" class="text-blue-600 hover:underline">
                                         {{ user.name }}
@@ -145,13 +130,17 @@ const page = usePage();
                                 </td>
                                 <td class="px-6 py-4 text-gray-700 dark:text-gray-300">{{ user.email }}</td>
                                 <td class="px-6 py-4">
-                                    <span :class="[
-                                        'px-3 py-1 rounded-full text-sm font-medium',
-                                        {
-                                            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': user.role === 'admin',
-                                            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200': user.role === 'user',
-                                        }
-                                    ]">
+                                    <span
+                                        :class="[
+                                            'px-3 py-1 rounded-full text-sm font-medium',
+                                            {
+                                                'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
+                                                    user.role === 'admin',
+                                                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
+                                                    user.role === 'user',
+                                            },
+                                        ]"
+                                    >
                                         {{ user.role }}
                                     </span>
                                 </td>
@@ -164,18 +153,28 @@ const page = usePage();
                 </div>
 
                 <!-- Getting Started Section -->
-                <div class="mt-8 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-4">
-                        Getting Started
-                    </h3>
+                <div
+                    class="mt-8 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-6"
+                >
+                    <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-4">Getting Started</h3>
                     <ul class="space-y-2 text-blue-800 dark:text-blue-300">
                         <li class="flex items-center">
                             <span class="mr-3">📚</span>
-                            <span>Read the <a href="#" class="underline hover:no-underline">BOILERPLATE_SETUP.md</a> guide to learn how to extend this boilerplate</span>
+                            <span>
+                                Read the
+                                <a href="#" class="underline hover:no-underline">BOILERPLATE_SETUP.md</a>
+                                guide to learn how to extend this boilerplate
+                            </span>
                         </li>
                         <li class="flex items-center">
                             <span class="mr-3">👥</span>
-                            <span>Manage users by visiting the <Link :href="route('users.index')" class="underline hover:no-underline">Users Management</Link> page</span>
+                            <span>
+                                Manage users by visiting the
+                                <Link :href="route('users.index')" class="underline hover:no-underline">
+                                    Users Management
+                                </Link>
+                                page
+                            </span>
                         </li>
                         <li class="flex items-center">
                             <span class="mr-3">⚙️</span>

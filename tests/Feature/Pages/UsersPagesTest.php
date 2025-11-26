@@ -493,11 +493,13 @@ class UsersPagesTest extends TestCase
         $user1 = User::factory()->create(['email' => 'user1@example.com']);
         $user2 = User::factory()->create(['email' => 'user2@example.com']);
 
-        $response = $this->actingAs($admin)->patch("/users/{$user2->id}", [
-            'name' => 'User Two',
-            'email' => $user1->email,
-            'role' => 'user',
-        ]);
+        $response = $this->actingAs($admin)
+            ->from("/users/{$user2->id}/edit")
+            ->patch("/users/{$user2->id}", [
+                'name' => 'User Two',
+                'email' => $user1->email,
+                'role' => 'user',
+            ]);
 
         $response->assertSessionHasErrors('email');
     }
@@ -510,11 +512,13 @@ class UsersPagesTest extends TestCase
         $admin = User::factory()->admin()->create();
         $user = User::factory()->create(['email' => 'user@example.com']);
 
-        $response = $this->actingAs($admin)->patch("/users/{$user->id}", [
-            'name' => 'Updated Name',
-            'email' => 'user@example.com',
-            'role' => 'user',
-        ]);
+        $response = $this->actingAs($admin)
+            ->from("/users/{$user->id}/edit")
+            ->patch("/users/{$user->id}", [
+                'name' => 'Updated Name',
+                'email' => 'user@example.com',
+                'role' => 'user',
+            ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('users', [
@@ -532,13 +536,15 @@ class UsersPagesTest extends TestCase
         $user = User::factory()->create();
         $newPassword = 'NewPassword123!';
 
-        $this->actingAs($admin)->patch("/users/{$user->id}", [
-            'name' => $user->name,
-            'email' => $user->email,
-            'password' => $newPassword,
-            'password_confirmation' => $newPassword,
-            'role' => 'user',
-        ]);
+        $this->actingAs($admin)
+            ->from("/users/{$user->id}/edit")
+            ->patch("/users/{$user->id}", [
+                'name' => $user->name,
+                'email' => $user->email,
+                'password' => $newPassword,
+                'password_confirmation' => $newPassword,
+                'role' => 'user',
+            ]);
 
         $user->refresh();
         $this->assertTrue(Hash::check($newPassword, $user->password));
@@ -572,7 +578,7 @@ class UsersPagesTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->delete("/users/{$user->id}");
+        $response = $this->from("/users")->delete("/users/{$user->id}");
 
         $response->assertRedirect('/login');
     }

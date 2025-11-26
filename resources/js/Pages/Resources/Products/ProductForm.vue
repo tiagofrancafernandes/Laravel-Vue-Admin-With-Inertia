@@ -40,7 +40,8 @@ const submit = () => {
         <!-- Name -->
         <div>
             <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Product Name <span class="text-red-500">*</span>
+                Product Name
+                <span class="text-red-500">*</span>
             </label>
             <input
                 id="name"
@@ -75,7 +76,8 @@ const submit = () => {
         <!-- Price -->
         <div>
             <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Price <span class="text-red-500">*</span>
+                Price
+                <span class="text-red-500">*</span>
             </label>
             <div class="mt-1 relative rounded-md shadow-sm">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -100,7 +102,8 @@ const submit = () => {
         <!-- Stock -->
         <div>
             <label for="stock" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Stock <span class="text-red-500">*</span>
+                Stock
+                <span class="text-red-500">*</span>
             </label>
             <input
                 id="stock"
@@ -131,10 +134,10 @@ const submit = () => {
                 class="px-4 py-2 bg-blue-600 text-white rounded-md transition-colors"
                 :class="{
                     'hover:bg-blue-700': !form.processing,
-                    'opacity-50 cursor-not-allowed': form.processing
+                    'opacity-50 cursor-not-allowed': form.processing,
                 }"
             >
-                {{ form.processing ? 'Saving...' : (isEdit ? 'Update Product' : 'Create Product') }}
+                {{ form.processing ? 'Saving...' : isEdit ? 'Update Product' : 'Create Product' }}
             </button>
         </div>
     </form>

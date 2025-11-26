@@ -40,9 +40,7 @@ const submit = () => {
     <form @submit.prevent="submit" class="space-y-6">
         <!-- Name -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Name
-            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
             <input
                 v-model="form.name"
                 type="text"
@@ -56,9 +54,7 @@ const submit = () => {
 
         <!-- Email -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email
-            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
             <input
                 v-model="form.email"
                 type="email"
@@ -97,9 +93,7 @@ const submit = () => {
 
         <!-- Password Confirmation -->
         <div v-if="form.password">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Confirm Password
-            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm Password</label>
             <input
                 v-model="form.password_confirmation"
                 type="password"
@@ -109,9 +103,7 @@ const submit = () => {
 
         <!-- Role -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Role
-            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
             <select
                 v-model="form.role"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
@@ -132,7 +124,7 @@ const submit = () => {
                 :disabled="form.processing"
                 class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
-                {{ form.processing ? 'Saving...' : (isEditing ? 'Update User' : 'Create User') }}
+                {{ form.processing ? 'Saving...' : isEditing ? 'Update User' : 'Create User' }}
             </button>
             <button
                 type="button"

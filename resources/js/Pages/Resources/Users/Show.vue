@@ -20,7 +20,10 @@ defineProps({
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                     {{ user.name }}
                 </h2>
-                <Link :href="route('users.edit', user)" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <Link
+                    :href="route('users.edit', user)"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                     Edit User
                 </Link>
             </div>
@@ -33,9 +36,7 @@ defineProps({
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Basic Info -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                Basic Information
-                            </h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Basic Information</h3>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
@@ -53,13 +54,17 @@ defineProps({
                                     <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                                         Role
                                     </label>
-                                    <span :class="[
-                                        'px-3 py-1 rounded-full text-sm font-medium inline-block',
-                                        {
-                                            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': user.role === 'admin',
-                                            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200': user.role === 'user',
-                                        }
-                                    ]">
+                                    <span
+                                        :class="[
+                                            'px-3 py-1 rounded-full text-sm font-medium inline-block',
+                                            {
+                                                'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
+                                                    user.role === 'admin',
+                                                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
+                                                    user.role === 'user',
+                                            },
+                                        ]"
+                                    >
                                         {{ user.role }}
                                     </span>
                                 </div>
@@ -108,7 +113,10 @@ defineProps({
                         >
                             Edit User
                         </Link>
-                        <Link :href="route('users.index')" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                        <Link
+                            :href="route('users.index')"
+                            class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                        >
                             Back to Users
                         </Link>
                     </div>

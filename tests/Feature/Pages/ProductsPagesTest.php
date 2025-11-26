@@ -258,12 +258,14 @@ class ProductsPagesTest extends TestCase
         $admin = User::factory()->admin()->create();
         $product = Product::factory()->create(['created_by' => $admin->id]);
 
-        $response = $this->actingAs($admin)->put(route('products.update', $product), [
-            'name' => 'Updated Product Name',
-            'description' => 'Updated description',
-            'price' => 149.99,
-            'stock' => 75,
-        ]);
+        $response = $this->actingAs($admin)
+            ->from(route('products.edit', $product))
+            ->put(route('products.update', $product), [
+                'name' => 'Updated Product Name',
+                'description' => 'Updated description',
+                'price' => 149.99,
+                'stock' => 75,
+            ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('products', [
