@@ -45,7 +45,7 @@ class DashboardPageTest extends TestCase
     {
         // Create multiple users with different roles
         $adminUser = User::factory()->admin()->create();
-        $regularUsers = User::factory()->count(3)->create();
+        $regularUsers = User::factory()->count(3)->unverified()->create();
         $verifiedUser = User::factory()->create(['email_verified_at' => now()]);
 
         $response = $this->actingAs($adminUser)->get('/dashboard');
@@ -56,7 +56,7 @@ class DashboardPageTest extends TestCase
             ->where('stats.totalUsers', 5)
             ->where('stats.adminUsers', 1)
             ->where('stats.regularUsers', 4)
-            ->where('stats.verifiedUsers', 1)
+            ->where('stats.verifiedUsers', 2) // admin + verifiedUser
         );
     }
 

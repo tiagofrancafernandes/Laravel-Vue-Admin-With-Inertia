@@ -67,7 +67,7 @@ class UsersPagesTest extends TestCase
         $response->assertInertia(
             fn ($page) => $page
             ->has('users.data', 15) // Default pagination is 15
-            ->has('users.total', 21) // 20 created + 1 admin
+            ->where('users.total', 21) // 20 created + 1 admin
         );
     }
 

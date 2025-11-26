@@ -99,7 +99,14 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update($request->validated());
+        $data = $request->validated();
+
+        // Only update password if it's provided
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
+        $user->update($data);
 
         if ($request->wantsJson()) {
             return response()->json(['user' => $user]);

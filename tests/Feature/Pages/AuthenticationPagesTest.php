@@ -124,8 +124,9 @@ class AuthenticationPagesTest extends TestCase
         ]);
 
         $response->assertRedirect('/dashboard');
-        // Token should be set in cookies
-        $this->assertNotNull($response->getCookie('remember_web_59ba36addc2b2f9401580f014c7f58ea4737b34c'));
+
+        // Verify remember token was set in database
+        $this->assertNotNull($user->fresh()->remember_token);
     }
 
     /**

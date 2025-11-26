@@ -33,7 +33,7 @@ class ProfilePageTest extends TestCase
         $response->assertInertia(
             fn ($page) => $page
             ->component('Profile/Edit')
-            ->has('user')
+            ->has('auth.user')
         );
     }
 
