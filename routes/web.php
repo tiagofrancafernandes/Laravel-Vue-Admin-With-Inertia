@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,6 +24,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Users management (admin only)
     Route::resource('users', UserController::class);
+
+    // Products management (admin only)
+    Route::resource('products', ProductController::class);
 });
 
 require __DIR__ . '/auth.php';

@@ -9,7 +9,7 @@ Sistema de registro de vendas para estabelecimento comercial com suporte a múlt
 - Inertia.js
 - Vue 3 (Composition API)
 - TailwindCSS (via Breeze)
-- MySQL/PostgreSQL
+- PostgreSQL
 
 ## Princípios Fundamentais
 

@@ -18,7 +18,8 @@ class GeneralPagesTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Welcome')
             ->has('canLogin')
             ->has('canRegister')
@@ -34,7 +35,8 @@ class GeneralPagesTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->where('canLogin', true)
             ->where('canRegister', true)
         );

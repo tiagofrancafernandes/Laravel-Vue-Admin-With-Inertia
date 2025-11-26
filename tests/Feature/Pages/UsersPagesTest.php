@@ -45,7 +45,8 @@ class UsersPagesTest extends TestCase
         $response = $this->actingAs($admin)->get('/users');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Resources/Users/Index')
             ->has('users')
             ->has('filters')
@@ -63,7 +64,8 @@ class UsersPagesTest extends TestCase
         $response = $this->actingAs($admin)->get('/users');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->has('users.data', 15) // Default pagination is 15
             ->has('users.total', 21) // 20 created + 1 admin
         );
@@ -81,7 +83,8 @@ class UsersPagesTest extends TestCase
         $response = $this->actingAs($admin)->get('/users?search=john');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->has('users.data', 1)
             ->where('users.data.0.name', 'John Doe')
         );
@@ -98,7 +101,8 @@ class UsersPagesTest extends TestCase
         $response = $this->actingAs($admin)->get('/users?role=admin');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->has('users.data', 1)
             ->where('users.data.0.role', 'admin')
         );
@@ -115,7 +119,8 @@ class UsersPagesTest extends TestCase
         $response = $this->actingAs($admin)->get('/users?role=user&page=2');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->has('users.data')
             ->has('users.next_page_url')
         );
@@ -155,7 +160,8 @@ class UsersPagesTest extends TestCase
         $response = $this->actingAs($admin)->get('/users/create');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Resources/Users/Create')
         );
     }
@@ -344,7 +350,8 @@ class UsersPagesTest extends TestCase
         $response = $this->actingAs($admin)->get("/users/{$user->id}");
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Resources/Users/Show')
             ->where('user.id', $user->id)
             ->where('user.name', 'John Doe')
@@ -401,7 +408,8 @@ class UsersPagesTest extends TestCase
         $response = $this->actingAs($admin)->get("/users/{$user->id}/edit");
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Resources/Users/Edit')
             ->where('user.id', $user->id)
         );

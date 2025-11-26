@@ -12,7 +12,7 @@ This checklist guides you through using this boilerplate to build your next appl
 - [ ] Update `.env` with your database configuration
 
 ### Database Setup (2 minutes)
-- [ ] Configure your database in `.env` (SQLite, MySQL, PostgreSQL supported)
+- [ ] Configure your database in `.env` (PostgreSQL supported)
 - [ ] Run `php artisan migrate`
 - [ ] (Optional) Run `php artisan tinker` to create a test admin user
 - [ ] Verify Users table has `id`, `name`, `email`, `password`, `role`, `email_verified_at`, `created_at`, `updated_at`

@@ -22,7 +22,8 @@ class AuthenticationPagesTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Auth/Login')
         );
     }
@@ -149,7 +150,8 @@ class AuthenticationPagesTest extends TestCase
         $response = $this->get('/register');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Auth/Register')
         );
     }
@@ -358,7 +360,8 @@ class AuthenticationPagesTest extends TestCase
         $response = $this->actingAs($user)->get('/verify-email');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Auth/VerifyEmail')
         );
     }
@@ -434,7 +437,8 @@ class AuthenticationPagesTest extends TestCase
         $response = $this->get('/forgot-password');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Auth/ForgotPassword')
         );
     }
@@ -478,7 +482,8 @@ class AuthenticationPagesTest extends TestCase
         $response = $this->get("/reset-password/{$token}");
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Auth/ResetPassword')
             ->has('token')
         );

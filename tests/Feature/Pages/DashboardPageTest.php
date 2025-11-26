@@ -30,7 +30,8 @@ class DashboardPageTest extends TestCase
         $response = $this->actingAs($user)->get('/dashboard');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->component('Dashboard')
             ->has('stats')
             ->has('recentUsers')
@@ -50,7 +51,8 @@ class DashboardPageTest extends TestCase
         $response = $this->actingAs($adminUser)->get('/dashboard');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->where('stats.totalUsers', 5)
             ->where('stats.adminUsers', 1)
             ->where('stats.regularUsers', 4)
@@ -69,7 +71,8 @@ class DashboardPageTest extends TestCase
         $response = $this->actingAs($user)->get('/dashboard');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->has('recentUsers', 6)
         );
     }
@@ -108,7 +111,8 @@ class DashboardPageTest extends TestCase
 
         $response = $this->actingAs($verifiedUser)->get('/dashboard');
 
-        $response->assertInertia(fn ($page) => $page
+        $response->assertInertia(
+            fn ($page) => $page
             ->where('stats.verifiedUsers', 1)
         );
     }
