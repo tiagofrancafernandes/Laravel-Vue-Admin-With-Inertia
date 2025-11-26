@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -17,13 +16,9 @@ use Illuminate\Notifications\Notifiable;
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string $type
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ClientLedger> $ledgerEntries
- * @property-read int|null $ledger_entries_count
+ * @property string $role
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Sale> $sales
- * @property-read int|null $sales_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -35,7 +30,7 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -54,7 +49,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'type',
+        'role',
         'email_verified_at',
     ];
 
@@ -82,50 +77,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all sales created by this user.
+     * Check if user has admin role.
      */
-    public function sales(): HasMany
+    public function isAdmin(): bool
     {
-        return $this->hasMany(Sale::class);
+        return $this->role === 'admin';
     }
 
     /**
-     * Get all ledger entries created by this user.
+     * Check if user has a specific role.
      */
-    public function ledgerEntries(): HasMany
+    public function hasRole(string $role): bool
     {
-        return $this->hasMany(ClientLedger::class);
-    }
-
-    /**
-     * Get all client proofs reviewed by this user (as admin).
-     */
-    public function reviewedProofs(): HasMany
-    {
-        return $this->hasMany(ClientProof::class, 'admin_id');
-    }
-
-    /**
-     * Check if user is a super admin.
-     */
-    public function isSuperAdmin(): bool
-    {
-        return $this->type === 'super_admin';
-    }
-
-    /**
-     * Check if user is an attendant.
-     */
-    public function isAttendant(): bool
-    {
-        return $this->type === 'attendant';
-    }
-
-    /**
-     * Check if user is a client.
-     */
-    public function isClient(): bool
-    {
-        return $this->type === 'client';
+        return $this->role === $role;
     }
 }
