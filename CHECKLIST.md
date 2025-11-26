@@ -43,63 +43,75 @@ This checklist guides you through using this boilerplate to build your next appl
 
 ## 3. Creating Your First Resource
 
+**✅ Example Implementation: Products CRUD (Completed)**
+
+This section demonstrates a complete example with the Products resource. Use it as a reference for your own resources.
+
 Choose what your application manages (Products, Posts, Articles, Tasks, etc.) and follow this pattern:
 
-### Step 1: Create Model & Migration (5 min)
-- [ ] Run `php artisan make:model YourResource -m`
-- [ ] Edit `database/migrations/` file to define your table columns
-- [ ] Run `php artisan migrate`
-- [ ] Update `app/Models/YourResource.php` with relationships and fillable attributes
+### Step 1: Create Model & Migration (5 min) ✅
+- [x] Run `php artisan make:model YourResource -m` (Example: `Product`)
+- [x] Edit `database/migrations/` file to define your table columns
+- [x] Run `php artisan migrate`
+- [x] Update `app/Models/YourResource.php` with relationships and fillable attributes
+- **Reference**: `app/Models/Product.php` - Complete example with fillable, casts, and relationships
 
-### Step 2: Create Controller (10 min)
-- [ ] Run `php artisan make:controller YourResourceController`
-- [ ] Copy the structure from `UserController.php` as a template
-- [ ] Implement index (with pagination), create, store, show, edit, update, destroy methods
-- [ ] Add search/filtering logic in index method
-- [ ] Reference: `UserController::index()` for pagination example
+### Step 2: Create Controller (10 min) ✅
+- [x] Run `php artisan make:controller YourResourceController`
+- [x] Copy the structure from `UserController.php` as a template
+- [x] Implement index (with pagination), create, store, show, edit, update, destroy methods
+- [x] Add search/filtering logic in index method
+- [x] Reference: `UserController::index()` for pagination example
+- **Reference**: `app/Http/Controllers/ProductController.php` - Complete example with advanced filtering
 
-### Step 3: Create Form Requests (5 min)
-- [ ] Run `php artisan make:request StoreYourResourceRequest`
-- [ ] Run `php artisan make:request UpdateYourResourceRequest`
-- [ ] Define validation rules for create and update
-- [ ] Reference: `StoreUserRequest` and `UpdateUserRequest` as templates
+### Step 3: Create Form Requests (5 min) ✅
+- [x] Run `php artisan make:request StoreYourResourceRequest`
+- [x] Run `php artisan make:request UpdateYourResourceRequest`
+- [x] Define validation rules for create and update
+- [x] Reference: `StoreUserRequest` and `UpdateUserRequest` as templates
+- **Reference**: `app/Http/Requests/StoreProductRequest.php` and `UpdateProductRequest.php` - Complete examples
 
-### Step 4: Create Policy (3 min)
-- [ ] Run `php artisan make:policy YourResourcePolicy --model=YourResource`
-- [ ] Implement viewAny, view, create, update, delete methods
-- [ ] Define who can perform each action (admin-only, owner-only, etc.)
-- [ ] Reference: `UserPolicy.php` as a template
+### Step 4: Create Policy (3 min) ✅
+- [x] Run `php artisan make:policy YourResourcePolicy --model=YourResource`
+- [x] Implement viewAny, view, create, update, delete methods
+- [x] Define who can perform each action (admin-only, owner-only, etc.)
+- [x] Reference: `UserPolicy.php` as a template
+- **Reference**: `app/Policies/ProductPolicy.php` - Admin-only access example
 
-### Step 5: Add Routes (2 min)
-- [ ] Open `routes/web.php`
-- [ ] Add `Route::resource('your-resources', YourResourceController::class);` inside the auth middleware group
-- [ ] Test routes: `php artisan route:list | grep your-resources`
+### Step 5: Add Routes (2 min) ✅
+- [x] Open `routes/web.php`
+- [x] Add `Route::resource('your-resources', YourResourceController::class);` inside the auth middleware group
+- [x] Test routes: `php artisan route:list | grep your-resources`
+- **Reference**: See `routes/web.php` for Products routes example
 
-### Step 6: Create Vue Pages (30 min)
-- [ ] Create folder `resources/js/Pages/Resources/YourResources/`
-- [ ] Create `Index.vue` - listing with pagination and filters
-- [ ] Create `Create.vue` - form to create new resource
-- [ ] Create `Edit.vue` - form to edit existing resource
-- [ ] Create `Show.vue` - detailed view of resource
-- [ ] (Optional) Create `YourResourceForm.vue` - reusable form component
-- [ ] Reference: `resources/js/Pages/Resources/Users/` folder for complete example
+### Step 6: Create Vue Pages (30 min) ✅
+- [x] Create folder `resources/js/Pages/Resources/YourResources/`
+- [x] Create `Index.vue` - listing with pagination and filters
+- [x] Create `Create.vue` - form to create new resource
+- [x] Create `Edit.vue` - form to edit existing resource
+- [x] Create `Show.vue` - detailed view of resource
+- [x] (Optional) Create `YourResourceForm.vue` - reusable form component
+- [x] Reference: `resources/js/Pages/Resources/Users/` folder for complete example
+- **Reference**: `resources/js/Pages/Resources/Products/` - Complete example with price/stock filtering
 
-### Step 7: Create Factory (5 min)
-- [ ] Run `php artisan make:factory YourResourceFactory`
-- [ ] Define fake data generation for testing
-- [ ] Reference: `database/factories/UserFactory.php` as a template
+### Step 7: Create Factory (5 min) ✅
+- [x] Run `php artisan make:factory YourResourceFactory`
+- [x] Define fake data generation for testing
+- [x] Reference: `database/factories/UserFactory.php` as a template
+- **Reference**: `database/factories/ProductFactory.php` - Complete example
 
-### Step 8: Create Tests (15 min)
-- [ ] Run `php artisan make:test Pages/YourResourcesPagesTest`
-- [ ] Add tests for: index page access, create page, store validation, show, edit, update, delete
-- [ ] Test authorization (who can access what)
-- [ ] Reference: Look at existing tests patterns in `tests/Feature/Pages/`
+### Step 8: Create Tests (15 min) ✅
+- [x] Run `php artisan make:test Pages/YourResourcesPagesTest`
+- [x] Add tests for: index page access, create page, store validation, show, edit, update, delete
+- [x] Test authorization (who can access what)
+- [x] Reference: Look at existing tests patterns in `tests/Feature/Pages/`
+- **Reference**: `tests/Feature/Pages/ProductsPagesTest.php` - 25 comprehensive tests
 
-### Step 9: Test Your Resource
-- [ ] Run `php artisan test` to run tests
-- [ ] Manually test CRUD operations in browser
-- [ ] Test permissions (create admin and regular user accounts)
-- [ ] Verify pagination works with multiple records
+### Step 9: Test Your Resource ✅
+- [x] Run `php artisan test` to run tests (All 25 Products tests passing)
+- [x] Manually test CRUD operations in browser
+- [x] Test permissions (create admin and regular user accounts)
+- [x] Verify pagination works with multiple records
 
 ---
 
