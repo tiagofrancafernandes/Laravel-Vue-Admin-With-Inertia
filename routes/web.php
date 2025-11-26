@@ -1,11 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SaleController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ClientPortalController;
-use App\Http\Controllers\AdminProofController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,42 +19,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Sales routes
-    Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
-    Route::post('sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
-
-    // Clients routes
-    Route::resource('clients', ClientController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
-    Route::post('clients/{client}/add-balance', [ClientController::class, 'addBalance'])->name('clients.add-balance');
-    Route::post('clients/{client}/pay-tab', [ClientController::class, 'payTab'])->name('clients.pay-tab');
-    Route::put('clients/{client}/credit-limit', [ClientController::class, 'updateCreditLimit'])->name('clients.update-credit-limit');
-});
-
-// Client Portal Routes
-Route::middleware(['auth', 'verified', 'client_portal'])->prefix('client-portal')->group(function () {
-    Route::get('/', [ClientPortalController::class, 'dashboard'])->name('client.portal.dashboard');
-    Route::get('/statement', [ClientPortalController::class, 'statement'])->name('client.portal.statement');
-    Route::get('/proof/submit', [ClientPortalController::class, 'proofSubmitForm'])->name('client.portal.proof.form');
-    Route::post('/proof', [ClientPortalController::class, 'submitProof'])->name('client.portal.proof.store');
-    Route::get('/proofs', [ClientPortalController::class, 'proofHistory'])->name('client.portal.proofs');
-    Route::get('/proof/{proof}/download', [ClientPortalController::class, 'downloadProof'])->name('client.portal.proof.download');
-});
-
-// Admin Proof Management Routes
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    Route::get('/proofs', [AdminProofController::class, 'index'])->name('admin.proofs.index');
-    Route::get('/proofs/{proof}', [AdminProofController::class, 'show'])->name('admin.proofs.show');
-    Route::post('/proofs/{proof}/approve', [AdminProofController::class, 'approve'])->name('admin.proofs.approve');
-    Route::post('/proofs/{proof}/reject', [AdminProofController::class, 'reject'])->name('admin.proofs.reject');
-    Route::get('/proofs/{proof}/download', [AdminProofController::class, 'download'])->name('admin.proofs.download');
-});
-
-// API routes
-Route::middleware('auth')->group(function () {
-    Route::get('/api/clients/select', [ClientController::class, 'selectList'])->name('api.clients.select');
-    Route::get('/api/clients/{client}/balance', [ClientController::class, 'balance'])->name('api.clients.balance');
-    Route::get('/api/products/select', [ProductController::class, 'select'])->name('api.products.select');
 });
 
 require __DIR__ . '/auth.php';
