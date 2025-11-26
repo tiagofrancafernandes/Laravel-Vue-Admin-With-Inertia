@@ -333,11 +333,11 @@ import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
 import ProductSelect from '@/Components/Products/ProductSelect.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
-import Card from '@/Components/UI/Card.vue';
 import Alert from '@/Components/UI/Alert.vue';
-import { formatCurrency } from '@/Utils/helpers';
+import Card from '@/Components/UI/Card.vue';
 import { useStaySalesPage } from '@/Composables/useStaySalesPage';
-import { Head, Link, useForm, usePage, router } from '@inertiajs/vue3';
+import { formatCurrency, route } from '@/Utils/helpers';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 
 interface PaymentMethod {
     id: number;
@@ -361,17 +361,14 @@ interface Payment {
     use_change_for_credit?: boolean;
 }
 
-interface Props {
+defineProps<{
     paymentMethods: PaymentMethod[];
     anonymousClientId: number;
-}
-
-const props = defineProps<Props>();
+}>();
 
 const page = usePage();
 const clientBalance = ref<any>(null);
 const { stayOnPage } = useStaySalesPage();
-const lastCreatedSale = ref<any>(null);
 const successMessage = ref<string>('');
 const showSuccessAlert = ref<boolean>(false);
 
@@ -391,29 +388,23 @@ const form = useForm({
 
 const showNotes = ref<boolean>(Boolean((form.notes || '')?.trim()));
 
-// Handle sale success - either show notification or redirect
+// Handle sale success - either refresh page or redirect
 watch(
     () => (page.props.flash as any)?.sale,
     (saleData) => {
         if (!saleData) return;
 
         if (stayOnPage.value) {
-            // Store sale data and show success message
-            lastCreatedSale.value = saleData;
-
             const saleNumber = saleData.sale_number || 'N/A';
             const saleTotal = formatCurrency(saleData.total_amount || 0);
 
             successMessage.value = `Venda #${saleNumber} registrada com sucesso! Total: ${saleTotal}`;
             showSuccessAlert.value = true;
 
-            // Reset form for next sale
-            resetForm();
-
-            // Auto-hide success message after 5 seconds
+            // Refresh page after short delay to show success message first
             setTimeout(() => {
-                showSuccessAlert.value = false;
-            }, 5000);
+                router.visit(route('sales.create'), { replace: true });
+            }, 2000);
         } else {
             // Redirect to sale detail page
             const saleId = (page.props.flash as any)?.redirectToSale;
@@ -478,17 +469,6 @@ const onProductSelected = (product: Item) => {
 
 const removeItem = (index: number) => {
     form.items.splice(index, 1);
-};
-
-const resetForm = () => {
-    form.reset();
-    form.items = [];
-    form.discount = 0;
-    form.payments = [];
-    form.notes = '';
-    clientBalance.value = null;
-    showNotes.value = false;
-    showSuccessAlert.value = false;
 };
 
 const submitForm = () => {
