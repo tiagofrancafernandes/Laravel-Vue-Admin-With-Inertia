@@ -1,650 +1,258 @@
-# CLAUDE.md
+# CLAUDE.md - Laravel + Vue 3 + Inertia.js Admin Boilerplate
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this boilerplate.
 
-## Project Overview
+## 📋 Project Overview
 
-This is a Laravel 11 + Vue 3 + Inertia.js web application for managing sales transactions, client records, and payment processing with support for prepaid balances and ledger-based credit systems. The project uses TailwindCSS v3 for styling and follows PSR-12 PHP standards with Vue 3 Composition API best practices.
+This is a **generic Laravel 11 + Vue 3 + Inertia.js admin boilerplate** designed to be a starting point for building admin panels and web applications. It provides:
 
-## Development Commands
+- **User authentication** with email verification
+- **User management CRUD** as a complete example
+- **Generic dashboard** with system statistics
+- **Role-based authorization** (admin/user)
+- **Responsive UI** with dark mode support using Tailwind CSS v3
+- **Production-ready patterns** following PSR-12 and Vue 3 best practices
 
-### Setup
+**This is NOT a specific application** - it's a foundation to build upon. Use the Users CRUD as a template for your own resources.
+
+## 🚀 Quick Start
+
 ```bash
+# Setup
 composer install && npm install
+cp .env.example .env
+php artisan key:generate
 php artisan migrate
-```
 
-### Development Server
-```bash
+# Development
 composer run dev
-```
-This command runs: Laravel dev server + queue listener + log pail + Vite dev server (concurrently)
 
-### Building for Production
-```bash
-npm run build
-```
+# Testing
+composer run test
 
-### Code Formatting & Linting
-```bash
-# PHP formatting with Pint (PSR-12)
+# Code formatting
 ./vendor/bin/pint
-
-# JavaScript formatting with Prettier
 npx prettier --write resources/js
 ```
 
-### Testing
-```bash
-# Run all tests
-composer run test
+## 📁 Key Project Structure
 
-# Run specific test file
-php artisan test tests/Feature/SaleControllerTest.php
+```
+app/Http/
+├── Controllers/
+│   ├── UserController.php          ← CRUD example to copy
+│   ├── DashboardController.php     ← Generic dashboard
+│   └── ProfileController.php       ← User profile management
+├── Requests/
+│   ├── StoreUserRequest.php        ← Form validation example
+│   └── UpdateUserRequest.php
+└── Middleware/
+    └── HandleInertiaRequests.php   ← Inertia setup
 
-# Run specific test method
-php artisan test tests/Feature/SaleControllerTest.php --filter=testStoreCreatesNewSale
+app/Models/
+└── User.php                        ← Generic user with 'role' field
+
+app/Policies/
+└── UserPolicy.php                  ← Authorization example
+
+resources/js/Pages/
+├── Resources/Users/                ← CRUD UI example
+│   ├── Index.vue
+│   ├── Create.vue
+│   ├── Edit.vue
+│   ├── Show.vue
+│   └── UserForm.vue
+├── Dashboard.vue                   ← Generic dashboard template
+└── Auth/                           ← Authentication pages
+
+routes/web.php                      ← Resource routes go here
 ```
 
-### Testing Strategy for New Features
+## 🎯 How to Use This Boilerplate
 
-**Every new page/feature MUST include tests**. Tests go in `tests/Feature/Pages/` for page access tests.
+### 1. Understanding the Example
+- **Review** `UserController` - complete CRUD controller example
+- **Review** `resources/js/Pages/Resources/Users/` - Vue page examples
+- **Review** `StoreUserRequest` & `UpdateUserRequest` - validation examples
+- **Review** `UserPolicy` - authorization pattern example
 
-#### Page Access Test Pattern
-All pages must have at least one test file with pattern: `{FeatureName}PagesTest.php`
+### 2. Creating Your First Resource
+1. Follow the step-by-step guide in `CHECKLIST.md`
+2. Copy the structure from `UserController` for your own resource
+3. Create migrations, models, form requests, policies, routes, and Vue pages
+4. Reference existing Users CRUD for any patterns you need
 
-**Example from AdminPagesTest.php:**
+### 3. Customize
+- Update `DashboardController` to show your app's data
+- Modify navigation in `AuthenticatedLayout.vue`
+- Add your resource routes to `routes/web.php`
+
+## 🏛️ Architecture Patterns
+
+### Controllers
+- Use `authorizeResource()` in constructor
+- Return `Inertia::render()` for pages
+- Support both HTML and JSON responses
+- Implement proper pagination with `paginate(15)`
+
 ```php
-<?php
-
-namespace Tests\Feature\Pages;
-
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-
-class AdminPagesTest extends TestCase
-{
-    use RefreshDatabase;
-
-    public function testIfCanAccesAdminDashboardPageTest(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->post('/login', [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
-
-        $response = $this->get('/dashboard');
-        $response->assertStatus(200);
-    }
+public function __construct() {
+    $this->authorizeResource(YourModel::class, 'your_model');
 }
 ```
 
-#### Testing Checklist for Each Feature Phase
-
-**Basic Access Tests (Required):**
-- ✅ Unauthenticated user redirected to login
-- ✅ Authenticated user can access page (HTTP 200)
-- ✅ Correct view is returned
-- ✅ Required data is present in response
-
-**Functionality Tests (Recommended where applicable):**
-- ✅ Form submissions work correctly
-- ✅ Search/filter parameters work
-- ✅ Pagination works
-- ✅ User cannot access other users' data (authorization)
-- ✅ Validation messages appear for invalid input
-
-**Example with Functionality:**
-```php
-public function testClientSelectSearchFunctionality(): void
-{
-    $user = User::factory()->create();
-    $clients = Client::factory(5)->create();
-
-    $response = $this->actingAs($user)->get(route('api.clients.select', [
-        'search' => $clients[0]->name
-    ]));
-
-    $response->assertStatus(200);
-    $response->assertJsonCount(1); // Only matching client
-    $response->assertJsonFragment(['name' => $clients[0]->name]);
-}
-```
-
-#### Test File Organization
-```
-tests/Feature/
-├── Pages/
-│   ├── AdminPagesTest.php          ✅ Existing
-│   ├── SalesPagesTest.php          (Phase 1-3)
-│   ├── ClientsPagesTest.php        (Phase 1-3)
-│   └── ClientPortalPagesTest.php   (Phase 4.3-4.4)
-├── Auth/                           ✅ Existing
-└── ...
-```
-
-#### Running Tests by Category
-```bash
-# All page tests
-php artisan test tests/Feature/Pages/
-
-# Specific page tests
-php artisan test tests/Feature/Pages/ClientPortalPagesTest.php
-
-# Single test method
-php artisan test tests/Feature/Pages/ClientPortalPagesTest.php --filter=testClientCanAccessDashboard
-```
-
-## High-Level Architecture
-
-### Backend Stack
-- **Framework**: Laravel 12 with Sanctum authentication
-- **ORM**: Eloquent with relationships
-- **Validation**: Form Requests pattern
-- **Authorization**: Gate/Policy system
-- **Middleware**: Custom middleware for role-based access
-
-### Frontend Stack
-- **Framework**: Vue 3 Composition API
-- **Routing/SSR**: Inertia.js (server-side routing)
-- **Styling**: TailwindCSS v3 with dark mode support
-- **Build tool**: Vite with Laravel Vite Plugin
-- **Icons**: Heroicons Vue
-
-### Database
-SQLite for development, supports MySQL/PostgreSQL in production. Uses soft deletes for non-destructive operations.
-
-### Key Packages
-- `spatie/laravel-activitylog`: Activity auditing
-- `spatie/laravel-permission`: Role and permission management
-- `predis/predis`: Redis client for caching
-- `tightenco/ziggy`: Frontend route generation
-- `@inertiajs/vue3`: Vue 3 adapter for Inertia
-- `@tailwindcss/forms`: Form styling plugin
-
-## Data Flow & Architecture Patterns
-
-### Request Lifecycle
-```
-HTTP Request → Middleware → Controller → Form Request Validation →
-Service Layer (Business Logic) → Models (Data Access) →
-Database → Response (JSON/Inertia)
-```
-
-### Key Architectural Principles
-1. **Separation of Concerns**: Controllers orchestrate, Services contain business logic, Models handle data
-2. **Transactional Integrity**: All financial operations use database transactions
-3. **Authorization**: Policies gate access at the controller level
-4. **Soft Deletes**: Sales and clients use `softDeletes()` for audit trails
-5. **Activity Logging**: Significant actions logged via `spatie/laravel-activitylog`
-
-### Core Models & Relationships
-- **User**: Can be `attendant` (staff) or `super_admin` (owner)
-- **Client**: Customer with optional prepaid balance and credit ledger
-- **Sale**: Transaction with multiple payments and payment methods
-- **ClientBalance**: Tracks prepaid amount per client
-- **ClientLedger**: Audit trail of balance changes
-- **PaymentMethod**: Transaction payment type (cash, credit card, prepaid, etc.)
-- **SalePayment**: Breakdown of how a sale was paid
-
-### Service Layer
-Located in `app/Services/`, these handle complex business logic:
-- `SaleService`: Sale creation, cancellation, payment split calculations
-- `PaymentService`: Payment validation and processing
-- `BalanceService`: Prepaid balance management and ledger updates
+### Models
+- Use `SoftDeletes` for recoverable data
+- Define `$fillable` array for mass assignment
+- Type-hint relationships
+- Use Factories for testing
 
 ### Form Requests
-Located in `app/Http/Requests/`, validate input before controllers process:
-- `StoreSaleRequest`: Sale data validation (items, client, payments)
-- `StoreClientRequest`: Client creation validation
-- Custom field validation using Laravel's built-in rules
+- Validate all input before controller processes it
+- Use `$this->user()->isAdmin()` for authorization
+- Return meaningful error messages
+
+### Policies
+- Define who can perform each action
+- Check roles/ownership in methods
+- Return boolean to allow/deny
+
+### Vue Pages
+- Use Composition API with `<script setup>`
+- Use object syntax for conditional classes
+- Create reusable form components
+- Support dark mode with `dark:` prefixes
+
+## 🧪 Testing
 
-## Frontend Component Architecture
-
-### Page Components (in `resources/js/Pages/`)
-- **Dashboard**: Analytics and overview
-- **Sales/**: Index (list), Create (form), Show (detail)
-- **Clients/**: Index (list), Create (form), Show (detail with ledger)
-- **Users/**: Admin management
-
-### Reusable Components (in `resources/js/Components/`)
-- **Common**: Modal, DataTable, Select, FormInput
-- **Clients**: ClientSelect (dropdown), ClientBalance (display), ClientModal (inline creation)
-- **Sales**: SaleForm (multi-step), PaymentSplit (calculator), ItemsTable (items list)
-- **Layouts**: AuthenticatedLayout, GuestLayout
-
-### Composables (in `resources/js/Composables/`)
-- `useDarkMode()`: Light/dark theme management
-- `usePaymentSplit()`: Payment allocation logic
-- `useClientBalance()`: Balance fetching and updates
-- `useFormValidation()`: Common form validation patterns
-- `useClientSelection()`: Client search and selection
-
-## Styling & Tailwind Configuration
-
-### Configuration
-- Uses Tailwind v3 with PSR-12 preset
-- Dark mode enabled via `class` strategy (apply `dark` class to root)
-- Custom color extensions (extended grays)
-- Forms plugin enabled for styled form elements
-- Print width: 120 characters (Prettier)
-
-### Class Binding Best Practices
-Use object syntax for conditional classes:
-```vue
-:class="{'bg-blue-600 text-white': isActive, 'bg-gray-200 text-gray-800': !isActive}"
-```
-
-For complex multi-condition states:
-```vue
-:class="[
-    'base-classes',
-    {
-        'active-state': status === 'active',
-        'inactive-light': status !== 'active' && !isDark,
-        'inactive-dark': status !== 'active' && isDark,
-    }
-]"
-```
-
-## Authorization & Security
-
-### User Types
-- **Super Admin**: Full system access, user management
-- **Attendant**: Can create sales, manage clients, view dashboard
-
-### Authorization Checks
-- Controllers use `$this->authorize('action', Model)` or Gate checks
-- Policies located in `app/Policies/` define permissions
-- Routes protected by `auth` and `verified` middleware
-- Sensitive actions protected by role-specific middleware
-
-### Security Practices
-- All input validated via Form Requests before database operations
-- Eloquent ORM prevents SQL injection
-- CSRF protection via Laravel middleware
-- Prepared statements for queries
-- Soft deletes prevent data loss
-
-## File Structure Quick Reference
-
-```
-app/
-├── Http/Controllers/        # Controller classes
-├── Http/Requests/           # Form request validation
-├── Http/Middleware/         # Custom middleware
-├── Models/                  # Eloquent models
-├── Policies/                # Authorization policies
-├── Services/                # Business logic services
-└── Providers/               # Service providers
-
-resources/
-├── js/
-│   ├── Components/          # Reusable Vue components
-│   ├── Composables/         # Vue 3 composables
-│   ├── Layouts/             # Page layouts
-│   ├── Pages/               # Inertia page components
-│   ├── Utils/               # Utility functions
-│   └── app.js               # Vue app entry point
-└── css/
-    └── app.css              # Tailwind CSS entry
-
-database/
-├── migrations/              # Schema changes
-├── seeders/                 # Seed data
-└── factories/               # Model factories for testing
-
-tests/
-├── Feature/                 # Integration/controller tests
-├── Unit/                    # Unit tests
-└── Browser/                 # Laravel Dusk browser tests
-```
-
-## Common Development Tasks
-
-### Adding a New Feature
-1. Create migration for new database schema
-2. Create Model with relationships
-3. Create Service to handle business logic
-4. Create Form Request for validation
-5. Create Controller to orchestrate
-6. Create Inertia Pages and Components
-7. Write tests in `tests/Feature/`
-
-### Creating New API Endpoints
-- Use `Route::middleware('auth')->group()` in `routes/web.php`
-- Return JSON responses from controllers
-- Use same validation and authorization patterns
-
-### Testing
-- Feature tests inherit from `Tests\TestCase`
-- Use database transactions for test isolation
-- Mock external dependencies
-- Test authorization via `actingAs(User)`
-
-### Database Changes
-1. Create migration: `php artisan make:migration migration_name`
-2. Define schema in migration file
-3. Run: `php artisan migrate`
-4. Update Model relationships if needed
-
-## Development Preferences
-
-### PHP Code Style
-- PSR-12 enforced via Pint
-- 4-space indentation
-- Arrow functions preferred (`fn =>`)
-- Type hints required on all methods
-- Nullable types for optional values
-
-### JavaScript/Vue Style
-- 4-space indentation (Prettier)
-- Single quotes for strings
-- Semicolons required
-- Composition API for components
-- TypeScript not currently enforced but recommended for new code
-
-### Git Workflow
-- Branch from `claude/sales-app-architecture-planning-*`
-- **Make commits at each significant stage or milestone completed** - don't batch multiple features into one commit
-- Write clear, descriptive commit messages that explain the _why_ behind changes
-- **Omit any reference to Claude Code in commit messages** - commits should read as if written directly by the user
-  - ❌ Bad: "Claude Code implemented user authentication"
-  - ✅ Good: "Implement user authentication with Sanctum"
-- Run tests before committing
-- Use atomic commits (one feature/fix per commit)
-
-## Important Notes
-
-### Financial Operations
-All money-related operations must use database transactions to ensure consistency:
-```php
-DB::transaction(function () {
-    // Debit balance, create ledger entry, update sale
-});
-```
-
-### N+1 Query Prevention
-Always eager load relationships in controllers:
-```php
-$sales = Sale::with(['client', 'payments', 'payments.method'])->paginate();
-```
-
-### Dark Mode
-The application includes dark mode support. Check `useDarkMode()` composable for implementation details.
-
-### Activity Logging
-Significant actions are logged automatically. Check `spatie/laravel-activitylog` package for querying activity history.
-
-### Testing Access to Application
-quando precisar testar acesso à aplicação principalmente no tocante ao navegador, crie um teste para tal funcionalidade e coloque ações como dd, dump, vardump etc para que possa coletar saídas. Use o arquivo @tests/Feature/LocalOnly/CodeDemoTest.php como modelo de teste. Para esse teste por exemplo, se quiser testar o teste por completo execute : `artisan test --stop-on-error --filter=CodeDemoTest` se quiser testar apenas um método: `artisan test --stop-on-error --filter=testCodeDemoTestAccessToDashboard`
-
-Use o arquivo @tests/Feature/LocalOnly/CodeDemoTest.php como modelo para criar outros arquivos de teste
-
-## Fluxo de Ações para Próximas Atividades
-
-### 1. Melhorar Fluxo de Cadastro de Cliente na Tela de Vendas
-
-**Objetivo**: Quando um novo cliente for criado diretamente da tela de vendas (Sales/Create), a aplicação não deve redirecionar para a página do cliente, mas sim exibir uma modal de sucesso/confirmação e manter o usuário na tela de vendas.
-
-**Implementação**:
-- Modificar `ClientController.store()` para detectar se a requisição vem de um contexto de vendas
-- Retornar resposta JSON com o novo cliente ao invés de redirecionamento
-- No frontend (ClientModal.vue), após criação bem-sucedida, fechar a modal e atualizar a lista de clientes
-- Exemplo: Após cadastrar cliente "João Silva", a modal fecha automaticamente e "João Silva" aparece selecionado no campo de cliente
-
-**Arquivos Afetados**:
-- `app/Http/Controllers/ClientController.php` - método `store()`
-- `resources/js/Components/Clients/ClientModal.vue` - tratamento de resposta
-- `resources/js/Pages/Sales/Create.vue` - integração com modal
-
-### 2. Melhorar Seleção e Listagem de Clientes
-
-**Objetivo**: Quando pesquisar/selecionar um cliente, listar no formato `{nome} - {telefone}` para melhor identificação.
-
-**Implementação**:
-- Modificar `api.clients.select` endpoint para retornar campo de telefone
-- No `ClientSelect.vue`, formatear a exibição como `nome - telefone` tanto na lista de seleção quanto no campo selecionado
-- Exemplo: "João Silva - (11) 9999-8888" ao invés de apenas "João Silva"
-
-**Arquivos Afetados**:
-- `app/Http/Controllers/ClientController.php` - método `select()` (API endpoint)
-- `resources/js/Components/Clients/ClientSelect.vue` - formatação da exibição
-- `app/Models/Client.php` - adicionar acessor se necessário
-
-### 3. Carregamento de Saldo do Cliente (Lazy Loading)
-
-**Objetivo**: Quando um cliente é selecionado, seu saldo deve ser carregado em background, mas só exibido na tela de pagamento da venda (não na tela inicial de seleção).
-
-**Implementação**:
-- Ao selecionar cliente em ClientSelect, fazer requisição à `api.clients.{id}.balance`
-- Armazenar saldo em estado local/contexto
-- Exibir saldo APENAS no componente de pagamento (SalePayment ou equivalente)
-- Usar composable `useClientBalance()` para gerenciar este estado
-
-**Fluxo**:
-1. Usuário seleciona cliente "João Silva"
-2. Background: requisição GET `/api/clients/{id}/balance` é feita
-3. Saldo fica disponível mas invisível na tela de criação
-4. Ao chegar na etapa de pagamento: saldo é exibido (ex: "Saldo disponível: R$ 150,00")
-5. Usuário pode usar saldo como forma de pagamento
-
-**Arquivos Afetados**:
-- `resources/js/Components/Clients/ClientSelect.vue` - dispara carregamento de saldo
-- `resources/js/Composables/useClientBalance.js` - gerencia estado do saldo
-- `resources/js/Pages/Sales/Create.vue` - acessa saldo na etapa de pagamento
-- `app/Http/Controllers/ClientController.php` - endpoint `balance()`
-
-### 4. Portal de Acesso do Cliente (Cliente Portal/Dashboard)
-
-**Objetivo**: Criar área restrita onde clientes podem acessar suas informações financeiras, visualizar saldo e débitos, e enviar comprovantes de pagamento para análise pelos administradores.
-
-**Implementação**:
-
-#### Backend:
-- Criar migration: `CreateClientProofsTable` (tabela para armazenar comprovantes)
-  - Campos: id, client_id, sale_id (nullable), type (deposit/payment), amount, file_path, status (pending/approved/rejected), notes, admin_id (quem revisou), created_at, updated_at
-
-- Criar Model: `ClientProof`
-  - Relações: belongsTo(Client), belongsTo(Admin/User), belongsTo(Sale)
-  - Scopes: pending(), approved(), rejected()
-
-- Criar Controller: `ClientPortalController`
-  - `dashboard()` - exibe resumo financeiro do cliente
-  - `statement()` - lista histórico de transações e saldos
-  - `submitProof()` - processa upload de comprovante
-  - `proofHistory()` - lista comprovantes enviados com status
-
-- Criar Form Request: `SubmitClientProofRequest`
-  - Valida: file (imagem/PDF, max 5MB), amount, type, description
-
-- Adicionar rotas autenticadas para cliente:
-  ```php
-  Route::middleware(['auth', 'verified'])->group(function () {
-      Route::get('/client-portal', [ClientPortalController::class, 'dashboard'])->name('client.dashboard');
-      Route::get('/client-portal/statement', [ClientPortalController::class, 'statement'])->name('client.statement');
-      Route::post('/client-portal/proof', [ClientPortalController::class, 'submitProof'])->name('client.proof.store');
-      Route::get('/client-portal/proofs', [ClientPortalController::class, 'proofHistory'])->name('client.proofs');
-  });
-  ```
-
-#### Frontend:
-- Criar layout: `ClientPortalLayout.vue` (parecido com AuthenticatedLayout mas para clientes)
-
-- Criar páginas em `resources/js/Pages/ClientPortal/`:
-  - `Dashboard.vue` - resumo com cards de:
-    - Saldo disponível (se houver)
-    - Total devido
-    - Últimas transações (3-5 últimas)
-    - CTA para enviar comprovante
-
-  - `Statement.vue` - tabela com histórico completo:
-    - Data, descrição, valor, saldo anterior, saldo atual
-    - Filtros por período, tipo (venda, pagamento, ajuste)
-    - Paginação
-
-  - `SubmitProof.vue` - formulário para upload:
-    - Upload de arquivo (imagem/PDF)
-    - Tipo de comprovante (Depósito/Pagamento)
-    - Valor do comprovante
-    - Descrição (opcional)
-    - Referência de venda (opcional, autocomplete)
-    - Preview de arquivo antes de enviar
-
-  - `ProofHistory.vue` - lista de comprovantes enviados:
-    - Cards com status (Pendente, Aprovado, Rejeitado)
-    - Data de submissão
-    - Valor e tipo
-    - Notas do admin
-    - Download do arquivo
-    - Badge de status com cores diferentes
-
-#### Autenticação/Autorização:
-- Middleware: `ClientPortalAccess` - garante que cliente só acesse seus próprios dados
-- Policy: `ClientProofPolicy` - controla ações em proofs (criar, visualizar)
-- Cada cliente só vê seus próprios dados/proofs
-
-**Fluxo de Uso**:
-1. Cliente faz login com suas credenciais
-2. Acessa `/client-portal`
-3. Vê resumo com saldo e débitos atuais
-4. Clica em "Enviar Comprovante"
-5. Faz upload de comprovante (imagem/PDF)
-6. Preenche valor e descrição
-7. Sistema salva com status "Pendente"
-8. Admin recebe notificação/vê na área de admin
-9. Admin aprova/rejeita com nota
-10. Cliente vê atualização no status e na tabela de proofs
-11. Se aprovado, saldo é atualizado automaticamente
-
-**Arquivos a Criar**:
-- Database: `database/migrations/XXXX_create_client_proofs_table.php`
-- Models: `app/Models/ClientProof.php`
-- Controllers: `app/Http/Controllers/ClientPortalController.php`
-- Requests: `app/Http/Requests/SubmitClientProofRequest.php`
-- Policies: `app/Policies/ClientProofPolicy.php`
-- Middleware: `app/Http/Middleware/ClientPortalAccess.php`
-- Composables: `resources/js/Composables/useClientPortal.js`
-- Layouts: `resources/js/Layouts/ClientPortalLayout.vue`
-- Pages: `resources/js/Pages/ClientPortal/{Dashboard,Statement,SubmitProof,ProofHistory}.vue`
-
-**Arquivos a Modificar**:
-- `routes/web.php` - adicionar rotas do cliente
-- `app/Http/Kernel.php` - registrar middleware
-- `app/Models/Client.php` - adicionar relação com proofs
-- `app/Models/User.php` - adicionar relação com proofs revisados
-- `app/Providers/AuthServiceProvider.php` - registrar policies
-
-**Considerações**:
-- Verificar se cliente já tem email verificado (segurança)
-- Armazenar arquivos em disco seguro (`storage/app/client-proofs/`)
-- Gerar URL assinada/temporária para download de arquivos
-- Auditar todas as ações (criação, aprovação de proofs)
-- Notificar cliente quando proof for aprovado/rejeitado
-- Email para admin quando novo proof for enviado (opcional)
-- Validar que arquivo é realmente imagem/PDF (não executável)
-
-### Ordem de Prioridade
-1. **Alta**: Melhorar seleção de cliente (listagem com telefone) - melhora UX imediata
-2. **Alta**: Fluxo de modal para novo cliente - evita redirect desnecessário
-3. **Média**: Lazy loading de saldo - otimização de performance
-4. **Alta**: Portal de acesso do cliente - novo fluxo de negócio importante
-
-### Cronograma de Implementação Sugerido
-
-**IMPORTANTE: Cada fase DEVE incluir testes de acesso básico e funcionalidades**
-
-```
-Fase 1 (Etapa 2): Fluxo Modal
-  → Modifica apenas ClientController e components existentes
-  → Impacto baixo, valor alto
-  → Testes: tests/Feature/Pages/SalesPagesTest.php
-    - testClientModalSubmitsCorrectly()
-    - testClientCreatedCorrectlyAndSelected()
-    - testModalClosesAfterCreation()
-
-Fase 2 (Etapa 1): Listagem com Telefone
-  → Melhorias no ClientSelect.vue e API
-  → Impacto baixo, valor médio
-  → Testes: tests/Feature/Pages/ClientsPagesTest.php
-    - testClientSelectDisplaysPhoneNumber()
-    - testClientSearchByPhoneWorks()
-    - testClientListFormatCorrect()
-
-Fase 3 (Etapa 3): Lazy Loading de Saldo
-  → Usa composable existente
-  → Impacto médio, valor médio
-  → Testes: tests/Feature/Pages/SalesPagesTest.php
-    - testClientBalanceLoadsOnSelection()
-    - testBalanceNotVisibleBeforePaymentStep()
-    - testBalanceDisplaysOnPaymentStep()
-
-Fase 4 (Etapa 4): Portal do Cliente
-  → Nova estrutura grande
-  → Impacto alto, valor muito alto
-  → Recomenda-se fazer por partes:
-
-    4.1: Banco de dados + Models (migrations, models)
-      - Criar migration e model ClientProof
-      - Testes: tests/Unit/Models/ClientProofTest.php
-        - testClientProofRelationsWork()
-        - testProofStatusScopesWork()
-
-    4.2: Backend (controllers, requests, policies)
-      - Controllers, Requests, Policies, Middleware
-      - Testes: tests/Feature/Pages/ClientPortalPagesTest.php
-        - testClientCannotAccessOthersProofs()
-        - testProofSubmissionValidation()
-
-    4.3: Frontend Dashboard (visualização)
-      - Dashboard, Statement pages
-      - Testes: tests/Feature/Pages/ClientPortalPagesTest.php
-        - testClientCanAccessPortalDashboard()
-        - testDashboardShowsBalanceAndDue()
-        - testStatementDisplaysTransactions()
-
-    4.4: Frontend Upload (formulário)
-      - SubmitProof page, file upload
-      - Testes: tests/Feature/Pages/ClientPortalPagesTest.php
-        - testClientCanAccessProofSubmissionForm()
-        - testProofFileUploadWorks()
-        - testProofFileValidation()
-
-    4.5: Admin Dashboard para revisar proofs
-      - Admin proof review interface
-      - Testes: tests/Feature/Pages/AdminProofsTest.php
-        - testAdminCanAccessProofsList()
-        - testAdminCanApproveProof()
-        - testAdminCanRejectProofWithNote()
-```
-
-**Teste cada fase com:**
 ```bash
-# Rodar testes da fase específica
-php artisan test tests/Feature/Pages/ClientPortalPagesTest.php --filter="testClientCanAccessPortalDashboard"
+# All tests
+composer run test
 
-# Rodar todos os testes de páginas
-php artisan test tests/Feature/Pages/
+# Specific file
+php artisan test tests/Feature/Pages/UsersPagesTest.php
 
-# Rodar com output verbose
-php artisan test tests/Feature/Pages/ClientPortalPagesTest.php --verbose
+# Specific test
+php artisan test tests/Feature/Pages/UsersPagesTest.php --filter=testAdminCanAccessUsersIndex
 ```
 
-### Notas de Implementação
-- Manter compatibilidade com fluxo de vendas existente
-- Garantir que saldo carregado seja sempre atualizado (evitar cache stale)
-- Testar com clientes que não têm saldo/telefone vazio
-- Adicionar testes em `tests/Feature/LocalOnly/CodeDemoTest.php` para validar comportamentos
-- Para portal do cliente:
-  - Validar tamanho máximo de arquivo (5MB)
-  - Aceitar apenas imagens (JPG, PNG) e PDF
-  - Limitar a 20 uploads por cliente por mês
-  - Manter histórico completo de todas as actions
-  - Implementar soft delete para proofs (audit trail)
-- ao usar um valor enviado em uma requsição não use o campo diretamente (ex: $request->search) use via métodos das requests do laravel exemplo: $request->input('search') ou $request->boolean('active'), $request->query('search') etc
+**Pattern for page access tests:**
+```php
+public function testAdminCanAccessUsersIndexPage(): void {
+    $user = User::factory()->admin()->create();
+    $response = $this->actingAs($user)->get(route('users.index'));
+    $response->assertStatus(200);
+}
+```
+
+## 💾 Database
+
+- Migrations in `database/migrations/`
+- Factories in `database/factories/`
+- Seeds in `database/seeders/`
+- User table has `role` field: `admin` or `user`
+
+## 🎨 Styling
+
+- **Framework**: Tailwind CSS v3
+- **Dark mode**: Enabled with `dark:` prefixes
+- **Responsive**: Use `md:`, `lg:`, `xl:` breakpoints
+- **Components**: Reusable components in `resources/js/Components/`
+
+## 🔐 Security
+
+- All routes use `auth` middleware by default
+- Policies enforce authorization at controller level
+- Form Requests validate all input
+- CSRF protection enabled by default
+- Soft deletes prevent permanent data loss
+
+## 📚 Important Files to Know
+
+| File | Purpose |
+|------|---------|
+| `BOILERPLATE_SETUP.md` | Detailed implementation guide with examples |
+| `CHECKLIST.md` | Step-by-step checklist for building your app |
+| `UserController.php` | **CRUD example** - copy this structure |
+| `UserPolicy.php` | **Authorization example** - copy this pattern |
+| `StoreUserRequest.php` | **Validation example** - use for own resources |
+| `resources/js/Pages/Resources/Users/` | **Vue pages example** - reference for your UI |
+
+## 🛠️ Common Tasks
+
+### Add a new resource (Product, Post, etc.)
+1. Create model: `php artisan make:model Product -m`
+2. Update migration with columns
+3. Create controller: `php artisan make:controller ProductController`
+4. Copy `UserController` structure as template
+5. Create form requests and policy
+6. Add routes in `web.php`
+7. Create Vue pages in `resources/js/Pages/Resources/Products/`
+8. Create tests in `tests/Feature/Pages/`
+
+### Add authentication check
+```php
+// In controller
+$this->authorize('view', $model);
+
+// In policy
+public function view(User $user, Product $product): bool {
+    return $user->isAdmin();
+}
+```
+
+### Add pagination with filters
+```php
+$query = Product::query();
+if ($request->filled('search')) {
+    $query->where('name', 'like', "%{$request->input('search')}%");
+}
+return $query->paginate(15)->appends($request->query());
+```
+
+## 🚨 Troubleshooting
+
+**Issue**: `Table doesn't exist` error
+- **Fix**: Run `php artisan migrate`
+
+**Issue**: `Class not found` in controller
+- **Fix**: Run `composer dumpautoload`
+
+**Issue**: Vue component not showing
+- **Fix**: Verify component is imported in the page file
+
+**Issue**: Pagination links broken
+- **Fix**: Use `appends()` to preserve query parameters
+
+## 📝 Development Preferences (from CLAUDE.md)
+
+- **PHP**: PSR-12 standards via Pint
+- **Vue**: Composition API with `<script setup>`
+- **Classes**: Use object syntax for conditional bindings
+- **Indentation**: 4 spaces (no tabs)
+- **Commits**: Meaningful messages describing the "why"
+
+## 🎓 Resources
+
+- [Laravel Documentation](https://laravel.com/docs)
+- [Vue 3 Guide](https://vuejs.org/)
+- [Inertia.js Documentation](https://inertiajs.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+## ✅ Boilerplate Checklist
+
+- [x] User authentication (login, register, password reset)
+- [x] User management CRUD (complete example)
+- [x] Role-based authorization
+- [x] Generic dashboard
+- [x] Responsive UI with Tailwind CSS
+- [x] Dark mode support
+- [x] PSR-12 code standards
+- [x] Vue 3 best practices
+- [x] Complete documentation
+- [x] Testing patterns
+- [x] Ready to extend with custom resources
+
+---
+
+**Ready to start?** Follow the `CHECKLIST.md` step-by-step guide to build your application!
