@@ -16,14 +16,6 @@
                 </Link>
             </div>
 
-            <!-- Success Alert -->
-            <Alert
-                v-if="showSuccessAlert && successMessage"
-                type="success"
-                :message="successMessage"
-                @click="showSuccessAlert = false"
-            />
-
             <form @submit.prevent="submitForm" class="space-y-6">
                 <!-- Client Selection -->
                 <Card title="Cliente">
@@ -333,9 +325,9 @@ import Button from '@/Components/Forms/Button.vue';
 import Input from '@/Components/Forms/Input.vue';
 import ProductSelect from '@/Components/Products/ProductSelect.vue';
 import PaymentMethodSelector from '@/Components/Sales/PaymentMethodSelector.vue';
-import Alert from '@/Components/UI/Alert.vue';
 import Card from '@/Components/UI/Card.vue';
 import { useStaySalesPage } from '@/Composables/useStaySalesPage';
+import { useToast } from '@/Composables/useToast';
 import { formatCurrency, route } from '@/Utils/helpers';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 
@@ -369,8 +361,7 @@ defineProps<{
 const page = usePage();
 const clientBalance = ref<any>(null);
 const { stayOnPage } = useStaySalesPage();
-const successMessage = ref<string>('');
-const showSuccessAlert = ref<boolean>(false);
+const { success: showToast } = useToast();
 
 const onBalanceLoaded = (balance: any) => {
     clientBalance.value = balance;
@@ -398,10 +389,11 @@ watch(
             const saleNumber = saleData.sale_number || 'N/A';
             const saleTotal = formatCurrency(saleData.total_amount || 0);
 
-            successMessage.value = `Venda #${saleNumber} registrada com sucesso! Total: ${saleTotal}`;
-            showSuccessAlert.value = true;
+            showToast(`Venda #${saleNumber} registrada com sucesso! Total: ${saleTotal}`, {
+                duration: 2000,
+            });
 
-            // Refresh page after short delay to show success message first
+            // Refresh page after toast is shown
             setTimeout(() => {
                 router.visit(route('sales.create'), { replace: true });
             }, 2000);
