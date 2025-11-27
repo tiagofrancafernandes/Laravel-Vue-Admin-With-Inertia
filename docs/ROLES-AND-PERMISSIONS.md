@@ -273,7 +273,7 @@ public function share(Request $request): array
                 'id' => $request->user()->id,
                 'name' => $request->user()->name,
                 'email' => $request->user()->email,
-                'role' => $request->user()->role,
+                'role' => $request->user()->roles()->latest()->first(),
                 'roles' => $request->user()->getRoleNames(), // Spatie roles
                 'permissions' => $request->user()->getAllPermissions()->pluck('name'), // All permissions
             ] : null,

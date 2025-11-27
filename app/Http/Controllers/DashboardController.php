@@ -32,9 +32,10 @@ class DashboardController extends Controller
     {
         return [
             'totalUsers' => User::count(),
-            'adminUsers' => User::where('role', 'admin')->count(),
-            'regularUsers' => User::where('role', 'user')->count(),
+            'adminUsers' => User::role('admin')->count(),
+            'regularUsers' => User::role('user')->count(),
             'verifiedUsers' => User::whereNotNull('email_verified_at')->count(),
+            'unverifiedUsers' => User::whereNull('email_verified_at')->count(),
         ];
     }
 
@@ -43,7 +44,7 @@ class DashboardController extends Controller
      */
     private function getRecentUsers(): array
     {
-        return User::select(['id', 'name', 'email', 'role', 'created_at'])
+        return User::select(['id', 'name', 'email', 'created_at'])
             ->latest()
             ->take(10)
             ->get()
@@ -52,6 +53,7 @@ class DashboardController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
+                'roles' => $user->roles()->select(['name']),
                 'created_at' => $user->created_at->toISOString(),
             ])
             ->toArray();

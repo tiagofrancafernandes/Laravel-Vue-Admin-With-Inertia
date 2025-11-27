@@ -16,44 +16,7 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = [
-            [
-                'name' => 'Super Admin',
-                'email' => 'superadmin@mail.com',
-                'password' => 'power@123',
-                'role' => 'admin', // Field in users table
-                'email_verified_at' => now(),
-                'roles' => ['super-admin'], // Spatie role
-                'permissions' => [],
-            ],
-            [
-                'name' => 'Admin User',
-                'email' => 'admin@mail.com',
-                'password' => 'power@123',
-                'role' => 'admin',
-                'email_verified_at' => now(),
-                'roles' => ['admin'],
-                'permissions' => [],
-            ],
-            [
-                'name' => 'Manager User',
-                'email' => 'manager@mail.com',
-                'password' => 'power@123',
-                'role' => 'user',
-                'email_verified_at' => now(),
-                'roles' => ['manager'],
-                'permissions' => [],
-            ],
-            [
-                'name' => 'Staff User',
-                'email' => 'staff@mail.com',
-                'password' => 'power@123',
-                'role' => 'user',
-                'email_verified_at' => now(),
-                'roles' => ['staff'],
-                'permissions' => [],
-            ],
-        ];
+        $users = static::initialUsers();
 
         foreach ($users as $u) {
             $roles = Arr::get($u, 'roles', []);
@@ -86,5 +49,10 @@ class AdminUserSeeder extends Seeder
             $this->command->info(sprintf('Password: %s', $password));
             $this->command->newLine();
         }
+    }
+
+    public static function initialUsers(): array
+    {
+        return (array) config('acl-data.users.initial_users', []);
     }
 }

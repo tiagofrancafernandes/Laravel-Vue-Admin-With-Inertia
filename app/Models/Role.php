@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string $guard_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
+ * @property-read Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Role newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Role newQuery()
@@ -38,6 +38,10 @@ class Role extends \Spatie\Permission\Models\Role
     {
         $cacheKey = __METHOD__;
 
+        if (config('app.env') === 'testing') {
+            $cacheClear = true;
+        }
+
         if ($cacheClear) {
             cache()->forget($cacheKey);
         }
@@ -45,7 +49,7 @@ class Role extends \Spatie\Permission\Models\Role
         return cache()->remember(
             $cacheKey,
             600,
-            fn(): Collection => static::select(['name', 'guard_name'])->get()
+            fn (): Collection => static::select(['name', 'guard_name'])->get()
         );
     }
 

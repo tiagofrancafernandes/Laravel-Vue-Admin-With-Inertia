@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -9,11 +10,11 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string $guard_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
+ * @property-read Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property-read Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Permission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Permission newQuery()
@@ -39,6 +40,10 @@ class Permission extends \Spatie\Permission\Models\Permission
     {
         $cacheKey = __METHOD__;
 
+        if (config('app.env') === 'testing') {
+            $cacheClear = true;
+        }
+
         if ($cacheClear) {
             cache()->forget($cacheKey);
         }
@@ -46,7 +51,7 @@ class Permission extends \Spatie\Permission\Models\Permission
         return cache()->remember(
             $cacheKey,
             600,
-            fn(): Collection => static::select(['name', 'guard_name'])->get()
+            fn (): Collection => static::select(['name', 'guard_name'])->get()
         );
     }
 

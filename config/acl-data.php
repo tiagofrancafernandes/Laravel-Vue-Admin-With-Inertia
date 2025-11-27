@@ -49,4 +49,41 @@ return [
         'roles.delete' => 'Delete roles',
         'permissions.assign' => 'Assign permissions',
     ],
+
+    'users' => [
+        'initial_users' => [
+            [
+                'name' => 'Super Admin',
+                'email' => 'superadmin@mail.com',
+                'password' => env('SUPERADMIN_PASSWORD', env('DEFAULT_USER_PASSWORD') ?: 'power@123'),
+                'email_verified_at' => now(),
+                'roles' => ['super-admin'], // Spatie role
+                'permissions' => [],
+            ],
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@mail.com',
+                'password' => env('ADMIN_PASSWORD', env('DEFAULT_USER_PASSWORD') ?: 'power@123'),
+                'email_verified_at' => now(),
+                'roles' => ['admin'],
+                'permissions' => [],
+            ],
+            [
+                'name' => 'Manager User',
+                'email' => 'manager@mail.com',
+                'password' => env('MANAGER_PASSWORD', env('DEFAULT_USER_PASSWORD') ?: 'power@123'),
+                'email_verified_at' => now(),
+                'roles' => ['manager'],
+                'permissions' => [],
+            ],
+            [
+                'name' => 'Staff User',
+                'email' => 'staff@mail.com',
+                'password' => env('STAFF_PASSWORD', env('DEFAULT_USER_PASSWORD') ?: 'power@123'),
+                'email_verified_at' => now(),
+                'roles' => ['staff'],
+                'permissions' => [],
+            ],
+        ]
+    ]
 ];

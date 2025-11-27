@@ -55,7 +55,6 @@ class AuthenticationTest extends TestCase
     public function testUsersCanSeeDashboard(): void
     {
         $user = User::factory()->create();
-
         $response = $this->post('/login', [
             'email' => $user->email,
             'password' => 'password',

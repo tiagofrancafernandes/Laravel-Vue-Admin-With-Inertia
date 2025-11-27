@@ -26,7 +26,14 @@ class StoreUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required', Rules\Password::defaults()],
-            'role' => ['required', 'string', 'in:user,admin'],
+            'role' => [
+                'required',
+                'string',
+                'in:' . implode(
+                    ',',
+                    array_keys((array) config('acl-data.roles'))
+                )
+            ],
         ];
     }
 }

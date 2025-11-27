@@ -60,7 +60,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // Create additional random products in dev/testing environments
-        if (app()->environment(['dev', 'local', 'staging', 'testing'])) {
+        if (app()->environment(['dev', 'local'])) {
             Product::factory(20)->create();
         }
     }
