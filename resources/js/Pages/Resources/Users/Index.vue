@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -15,15 +15,27 @@ const roleFilter = ref(props.filters.role || '');
 const users_list = computed(() => props.users.data);
 
 const handleSearch = () => {
-    const params = new URLSearchParams();
-    if (searchQuery.value) params.append('search', searchQuery.value);
-    if (roleFilter.value) params.append('role', roleFilter.value);
+    const params = {};
+    if (searchQuery.value) params.search = searchQuery.value;
+    if (roleFilter.value) params.role = roleFilter.value;
 
-    window.location.href = route('users.index', Object.fromEntries(params));
+    router.get(route('users.index'), params, {
+        preserveState: true,
+        preserveScroll: true,
+    });
 };
 
 const handleReset = () => {
-    window.location.href = route('users.index');
+    searchQuery.value = '';
+    roleFilter.value = '';
+    router.get(
+        route('users.index'),
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+        }
+    );
 };
 </script>
 

@@ -43,7 +43,7 @@ class DashboardController extends Controller
      */
     private function getRecentUsers(): array
     {
-        return User::select('id', 'name', 'email', 'role', 'created_at')
+        return User::select(['id', 'name', 'email', 'role', 'created_at'])
             ->latest()
             ->take(10)
             ->get()

@@ -2,56 +2,43 @@
 
 namespace Database\Seeders;
 
-use App\Models\Client;
 use App\Models\Product;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    // use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // Seed payment methods
-        $this->call(PaymentMethodSeeder::class);
+        // IMPORTANT: Seed roles and permissions FIRST
+        $this->call(RolesAndPermissionsSeeder::class);
 
-        // Seed default anonymous client
-        $this->call(DefaultClientSeeder::class);
-
-        // Seed admin and attendant users
+        // Then seed users (which will be assigned roles)
         $this->call(AdminUserSeeder::class);
 
-        $this->demoItems();
-        $this->demoClients();
-    }
-
-    public function demoItems(): void
-    {
-        if (app()->isProduction()) {
-            return;
+        // Seed demo data only in non-production environments
+        if (!app()->isProduction()) {
+            $this->seedDemoProducts();
         }
-
-        $this->demoProducts(app()->environment(['dev', 'local', 'staging', 'testing']));
     }
 
-    protected function demoProducts(?bool $fake = null): void
+    /**
+     * Seed demo products for development/testing
+     */
+    protected function seedDemoProducts(): void
     {
         $products = [
             [
-                'name' => 'Produto valor R$ 0.50',
-                'description' => 'Produto genérico valor R$ 0.50',
+                'name' => 'Product R$ 0.50',
+                'description' => 'Generic product priced at R$ 0.50',
                 'price' => '0.50',
-                'sort_val' => 5,
             ],
             [
-                'name' => 'Produto valor R$ 1.00',
-                'description' => 'Produto genérico valor R$ 1.00',
+                'name' => 'Product R$ 1.00',
+                'description' => 'Generic product priced at R$ 1.00',
                 'price' => '1.00',
-                'sort_val' => 10,
             ],
         ];
 
@@ -59,42 +46,22 @@ class DatabaseSeeder extends Seeder
             $priceStr = number_format(1.00 + (0.50 * $v), 2, '.', '');
 
             $products[] = [
-                'name' => 'Produto valor R$ ' . $priceStr,
-                'description' => 'Produto genérico valor R$ ' . $priceStr,
+                'name' => 'Product R$ ' . $priceStr,
+                'description' => 'Generic product priced at R$ ' . $priceStr,
                 'price' => $priceStr,
-                'sort_val' => 10 + $v,
             ];
         }
 
         foreach ($products as $product) {
-            Product::updateOrCreate([
-                'name' => $product['name'],
-            ], $product);
+            Product::updateOrCreate(
+                ['name' => $product['name']],
+                $product
+            );
         }
 
-        if ($fake) {
+        // Create additional random products in dev/testing environments
+        if (app()->environment(['dev', 'local', 'staging', 'testing'])) {
             Product::factory(20)->create();
-        }
-    }
-
-    protected function demoClients(?bool $fake = null): void
-    {
-        $fake ??= app()->environment(['dev', 'local', 'staging', 'testing']);
-
-        $clients = [
-            [
-                'name' => 'Tiago França',
-                'email' => 'tiago@mail.com',
-                'phone' => '+5541988887777',
-                'cpf_cnpj' => null,
-            ]
-        ];
-
-        foreach ($clients as $client) {
-            Client::updateOrCreate([
-                'email' => $client['email'],
-                'phone' => $client['phone'],
-            ], $client);
         }
     }
 }

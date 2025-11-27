@@ -5,42 +5,86 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
 
 class AdminUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * Note: RolesAndPermissionsSeeder must be run before this seeder
      */
     public function run(): void
     {
-        // Create or update super admin user
-        $admin = User::updateOrCreate(
-            ['email' => 'admin@mail.com'],
+        $users = [
+            [
+                'name' => 'Super Admin',
+                'email' => 'superadmin@mail.com',
+                'password' => 'power@123',
+                'role' => 'admin', // Field in users table
+                'email_verified_at' => now(),
+                'roles' => ['super-admin'], // Spatie role
+                'permissions' => [],
+            ],
             [
                 'name' => 'Admin User',
-                'password' => Hash::make('power@123'),
+                'email' => 'admin@mail.com',
+                'password' => 'power@123',
+                'role' => 'admin',
                 'email_verified_at' => now(),
-                'type' => 'super_admin',
-            ]
-        );
-
-        $this->command->info('Admin user created/updated successfully!');
-        $this->command->info('Email: admin@mail.com');
-        $this->command->info('Password: power@123');
-
-        // Create attendant users for testing
-        User::updateOrCreate(
-            ['email' => 'attendant@mail.com'],
+                'roles' => ['admin'],
+                'permissions' => [],
+            ],
             [
-                'name' => 'Attendant User',
-                'password' => Hash::make('power@123'),
+                'name' => 'Manager User',
+                'email' => 'manager@mail.com',
+                'password' => 'power@123',
+                'role' => 'user',
                 'email_verified_at' => now(),
-                'type' => 'attendant',
-            ]
-        );
+                'roles' => ['manager'],
+                'permissions' => [],
+            ],
+            [
+                'name' => 'Staff User',
+                'email' => 'staff@mail.com',
+                'password' => 'power@123',
+                'role' => 'user',
+                'email_verified_at' => now(),
+                'roles' => ['staff'],
+                'permissions' => [],
+            ],
+        ];
 
-        $this->command->info('Attendant user created/updated successfully!');
-        $this->command->info('Email: attendant@mail.com');
-        $this->command->info('Password: power@123');
+        foreach ($users as $u) {
+            $roles = Arr::get($u, 'roles', []);
+            $permissions = Arr::get($u, 'permissions', []);
+            $userData = Arr::except($u, ['roles', 'permissions']);
+            $password = $userData['password'] ?? 'password';
+
+            $userData['password'] = Hash::make($password);
+
+            $user = User::updateOrCreate(
+                ['email' => $userData['email']],
+                $userData
+            );
+
+            // Assign Spatie roles
+            if ($roles) {
+                $user->syncRoles($roles);
+                $this->command->info(sprintf('Assigned roles: %s', implode(', ', $roles)));
+            }
+
+            // Assign additional Spatie permissions (if any)
+            if ($permissions) {
+                $user->givePermissionTo($permissions);
+                $this->command->info(sprintf('Assigned permissions: %s', implode(', ', $permissions)));
+            }
+
+            $this->command->info('User created/updated successfully!');
+            $this->command->info(sprintf('Name: %s', $userData['name']));
+            $this->command->info(sprintf('Email: %s', $userData['email']));
+            $this->command->info(sprintf('Password: %s', $password));
+            $this->command->newLine();
+        }
     }
 }

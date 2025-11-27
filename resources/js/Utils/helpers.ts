@@ -33,6 +33,22 @@ export const ifNumeric = function (value: unknown) {
     return isNumeric(value) ? Number(value) : null;
 };
 
+export const isObject = function (value: unknown) {
+    return value && typeof value === 'object' && !Array.isArray(value);
+};
+
+export const ifObject = function (value: unknown) {
+    return isObject(value) ? value : null;
+};
+
+export const isArray = function (value: unknown) {
+    return value && Array.isArray(value);
+};
+
+export const ifArray = function (value: unknown) {
+    return isArray(value) ? value : null;
+};
+
 export const isFilledString = function (value: unknown) {
     return isString(value) && value.trim()?.length > 0;
 };
@@ -190,80 +206,6 @@ export function formatDocument(document: string) {
     }
 
     return document;
-}
-
-/**
- * Get sale status label
- */
-export function getSaleStatusLabel(status: string) {
-    const labels: AnyObject = {
-        completed: 'Concluída',
-        pending: 'Pendente',
-        cancelled: 'Cancelada',
-    };
-
-    return labels[status] || status;
-}
-
-/**
- * Get sale status color class
- */
-export function getSaleStatusColor(status: string) {
-    const colors: AnyObject = {
-        completed: 'text-green-600 bg-green-50',
-        pending: 'text-yellow-600 bg-yellow-50',
-        cancelled: 'text-red-600 bg-red-50',
-    };
-
-    return colors[status] || 'text-gray-600 bg-gray-50';
-}
-
-/**
- * Get payment method label
- */
-export function getPaymentMethodLabel(code: string) {
-    const labels: AnyObject = {
-        cash: 'Dinheiro',
-        pix: 'PIX',
-        credit_card: 'Cartão de Crédito',
-        debit_card: 'Cartão de Débito',
-        balance: 'Saldo',
-        tab: 'Caderneta',
-    };
-
-    return labels[code] || code;
-}
-
-/**
- * Get ledger type label
- */
-export function getLedgerTypeLabel(type: string) {
-    const labels: AnyObject = {
-        credit: 'Crédito (Saldo)',
-        debit: 'Débito (Saldo)',
-        tab_credit: 'Pagamento (Caderneta)',
-        tab_debit: 'Dívida (Caderneta)',
-    };
-
-    if (type in labels) {
-        return labels[type] || type;
-    }
-
-    return type;
-}
-
-/**
- * Get ledger type color
- */
-export function getLedgerTypeColor(type: string) {
-    const colors: AnyObject = {
-        credit: 'text-green-600',
-        debit: 'text-red-600',
-        tab_credit: 'text-blue-600',
-        tab_debit: 'text-orange-600',
-    };
-
-    return colors[type] || 'text-gray-600';
 }
 
 /**

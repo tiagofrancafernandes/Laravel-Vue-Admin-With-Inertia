@@ -237,9 +237,11 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
                             </div>
 
                             <div class="pt-3 sm:pt-5">
-                                <h2 class="text-xl font-semibold text-black dark:text-white">Sale dashboard</h2>
+                                <h2 class="text-xl font-semibold text-black dark:text-white">Admin Dashboard</h2>
 
-                                <p class="mt-4 text-sm/relaxed">Show sale dashboard.</p>
+                                <p class="mt-4 text-sm/relaxed">
+                                    Access your admin dashboard to manage your application.
+                                </p>
                             </div>
 
                             <svg

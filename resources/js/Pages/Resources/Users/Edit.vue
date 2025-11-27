@@ -1,13 +1,18 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import UserForm from './UserForm.vue';
 import { Head } from '@inertiajs/vue3';
+
+import UserForm from './UserForm.vue';
 
 defineProps({
     user: Object,
     pageType: {
         type: String,
         default: 'page',
+    },
+    availableRoles: {
+        type: Array,
+        default: [],
     },
 });
 </script>
@@ -25,7 +30,7 @@ defineProps({
         <div class="py-12">
             <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <UserForm :user="user" :is-editing="true" />
+                    <UserForm :user="user" :availableRoles="availableRoles" :is-editing="true" />
                 </div>
             </div>
         </div>

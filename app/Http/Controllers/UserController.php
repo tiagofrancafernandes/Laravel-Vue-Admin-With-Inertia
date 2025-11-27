@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Role;
 
 class UserController extends Controller
 {
@@ -54,6 +55,7 @@ class UserController extends Controller
     {
         return Inertia::render('Resources/Users/Create', [
             'pageType' => $request->query('type', 'page'),
+            'availableRoles' => Role::cachedList(),
         ]);
     }
 
@@ -91,6 +93,7 @@ class UserController extends Controller
         return Inertia::render('Resources/Users/Edit', [
             'user' => $user,
             'pageType' => $request->query('type', 'page'),
+            'availableRoles' => Role::cachedList(),
         ]);
     }
 

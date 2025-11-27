@@ -36,7 +36,7 @@ const page = usePage();
                 <!-- Welcome Section -->
                 <div class="mb-8">
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-                        Welcome back, {{ page.props.auth.user.name }}!
+                        Welcome back, {{ page.props.auth.user?.name }}!
                     </h1>
                     <p class="text-gray-600 dark:text-gray-400 mt-2">Here's an overview of your application.</p>
                 </div>

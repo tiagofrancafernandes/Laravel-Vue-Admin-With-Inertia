@@ -1,6 +1,8 @@
 <script setup>
+import { computed, ref } from 'vue';
+
+import { ifArray, ifObject } from '@/Utils/helpers';
 import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
 
 const props = defineProps({
     user: {
@@ -10,6 +12,10 @@ const props = defineProps({
     isEditing: {
         type: Boolean,
         default: false,
+    },
+    availableRoles: {
+        type: Array,
+        default: [],
     },
 });
 
@@ -34,9 +40,27 @@ const submit = () => {
         });
     }
 };
+
+const roles = computed(() => {
+    return (ifArray(props?.availableRoles) || [])?.map((i) => {
+        i = ifObject(i) || { value: i };
+
+        let key = i?.key || i?.name || i?.value;
+        let value = i?.value || i?.name || key;
+        let label = i?.label || value;
+
+        return {
+            ...i,
+            key,
+            value,
+            label,
+        };
+    });
+});
 </script>
 
 <template>
+    <div>{{ roles }}</div>
     <form @submit.prevent="submit" class="space-y-6">
         <!-- Name -->
         <div>
@@ -109,8 +133,10 @@ const submit = () => {
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
                 :class="{ 'border-red-500': form.errors.role }"
             >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
+                <!-- <option value="user">User</option> -->
+                <template v-for="(role, roleIndex) in roles" :key="roleIndex">
+                    <option :value="role?.value">{{ role?.label }}</option>
+                </template>
             </select>
             <p v-if="form.errors.role" class="text-red-500 text-sm mt-1">
                 {{ form.errors.role }}

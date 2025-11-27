@@ -2,15 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\Sale;
-use App\Models\Client;
+use App\Models\Product;
 use App\Models\User;
-use App\Models\ClientProof;
-use App\Policies\SalePolicy;
-use App\Policies\ClientPolicy;
+use App\Policies\ProductPolicy;
 use App\Policies\UserPolicy;
-use App\Policies\ClientProofPolicy;
-use App\Policies\DashboardPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -33,12 +28,7 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
 
         // Register policies
-        Gate::policy(Sale::class, SalePolicy::class);
-        Gate::policy(Client::class, ClientPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
-        Gate::policy(ClientProof::class, ClientProofPolicy::class);
-
-        // Register dashboard authorization
-        Gate::define('viewDashboard', [DashboardPolicy::class, 'viewDashboard']);
+        Gate::policy(Product::class, ProductPolicy::class);
     }
 }

@@ -10,29 +10,17 @@ export function useAuth() {
         return user.value?.can?.[permission] || false;
     };
 
-    const isSuperAdmin = computed(() => user.value?.type === 'super_admin');
+    const isAdmin = computed(() => user.value?.role === 'admin');
 
-    const isAttendant = computed(() => user.value?.type === 'attendant');
+    const isUser = computed(() => user.value?.role === 'user');
 
-    const isClient = computed(() => user.value?.type === 'client');
-
-    const canManageUsers = computed(() => isSuperAdmin.value);
-
-    const canManageSales = computed(() => isSuperAdmin.value || isAttendant.value);
-
-    const canManageClients = computed(() => isSuperAdmin.value || isAttendant.value);
-
-    const canCancelSales = computed(() => isSuperAdmin.value);
+    const canManageUsers = computed(() => isAdmin.value);
 
     return {
         user,
         can,
-        isSuperAdmin,
-        isAttendant,
-        isClient,
+        isAdmin,
+        isUser,
         canManageUsers,
-        canManageSales,
-        canManageClients,
-        canCancelSales,
     };
 }
