@@ -4,28 +4,32 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Database\Seeders\AdminUserSeeder;
+use Spatie\Permission\PermissionRegistrar;
 
 abstract class TestCase extends BaseTestCase
 {
     use RefreshDatabase;
-    use InteractsWithDatabase;
-    use DatabaseTruncation;
 
     protected static int $seederInitialUsersCount = 0;
+    protected $seed = true;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->truncateDatabaseTables();
+        // Reset cached roles and permissions before each test
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Run seeds before each test
-        $this->seed();
+        // Count seeder users
         static::$seederInitialUsersCount = count(AdminUserSeeder::initialUsers());
+    }
 
-        // $this->seed(MySeeder::class);
+    protected function tearDown(): void
+    {
+        // Reset cached roles and permissions after each test
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        parent::tearDown();
     }
 }

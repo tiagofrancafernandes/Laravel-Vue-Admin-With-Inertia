@@ -67,7 +67,7 @@ class UsersPagesTest extends TestCase
         $response->assertInertia(
             fn ($page) => $page
             ->has('users.data', 15) // Default pagination is 15
-            ->where('users.total', 21) // 20 created + 1 admin
+            ->where('users.total', 20 + 1 + static::$seederInitialUsersCount) // 20 created + 1 admin + seeder users
         );
     }
 
@@ -103,7 +103,7 @@ class UsersPagesTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(
             fn ($page) => $page
-            ->has('users.data', 1)
+            ->has('users.data', 2) // 1 from test + 1 from seeder (Admin User)
             ->where('users.data.0.role', 'admin')
         );
     }
@@ -300,7 +300,7 @@ class UsersPagesTest extends TestCase
         $admin = User::factory()->admin()->create();
         $password = 'Password123!';
 
-        $this->actingAs($admin)->post('/users', [
+        $response = $this->actingAs($admin)->post('/users', [
             'name' => 'New User',
             'email' => 'newuser@example.com',
             'password' => $password,
@@ -308,7 +308,10 @@ class UsersPagesTest extends TestCase
             'role' => 'user',
         ]);
 
+        $response->assertRedirect();
+
         $user = User::where('email', 'newuser@example.com')->first();
+        $this->assertNotNull($user, 'User was not created');
         $this->assertTrue(Hash::check($password, $user->password));
     }
 
@@ -667,11 +670,9 @@ class UsersPagesTest extends TestCase
             'role' => 'admin',
         ]);
 
-        $this->assertDatabaseHas('users', [
-            'id' => $user->id,
-            'name' => 'Updated Test User',
-            'role' => 'admin',
-        ]);
+        $user->refresh();
+        $this->assertEquals('Updated Test User', $user->name);
+        $this->assertEquals('admin', $user->role);
 
         // Delete
         $this->actingAs($admin)->delete("/users/{$user->id}");

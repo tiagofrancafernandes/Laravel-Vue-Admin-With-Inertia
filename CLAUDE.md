@@ -256,3 +256,7 @@ return $query->paginate(15)->appends($request->query());
 ---
 
 **Ready to start?** Follow the `CHECKLIST.md` step-by-step guide to build your application!
+- Quando os testes falharem no por exemplo no momento do commit e precisar re executar um teste para ver detalhes do erro ou testar a ressolução, execute com '--filter' e --stop-on-failure/--stop-on-error, exemplo:
+```sh
+php artisan test --stop-on-failure --stop-on-error --cache-result --order-by=defects --filter=UsersPagesTest
+```

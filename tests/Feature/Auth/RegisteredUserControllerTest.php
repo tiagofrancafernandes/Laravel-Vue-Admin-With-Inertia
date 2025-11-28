@@ -44,8 +44,8 @@ class RegisteredUserControllerTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $this->assertAuthenticated();
@@ -60,8 +60,8 @@ class RegisteredUserControllerTest extends TestCase
         $response = $this->post('/register', [
             'name' => '',
             'email' => 'test@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $response->assertSessionHasErrors('name');
@@ -76,8 +76,8 @@ class RegisteredUserControllerTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => '',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $response->assertSessionHasErrors('email');
@@ -92,8 +92,8 @@ class RegisteredUserControllerTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'invalid-email',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $response->assertSessionHasErrors('email');
@@ -110,8 +110,8 @@ class RegisteredUserControllerTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'existing@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $response->assertSessionHasErrors('email');
@@ -142,8 +142,8 @@ class RegisteredUserControllerTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'differentpassword',
+            'password' => 'Password123!',
+            'password_confirmation' => 'DifferentPassword123!',
         ]);
 
         $response->assertSessionHasErrors('password');
@@ -174,8 +174,8 @@ class RegisteredUserControllerTest extends TestCase
         $response = $this->post('/register', [
             'name' => str_repeat('a', 256),
             'email' => 'test@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $response->assertSessionHasErrors('name');
@@ -190,8 +190,8 @@ class RegisteredUserControllerTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => str_repeat('a', 250) . '@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $response->assertSessionHasErrors('email');
@@ -206,8 +206,8 @@ class RegisteredUserControllerTest extends TestCase
         $this->post('/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -224,12 +224,12 @@ class RegisteredUserControllerTest extends TestCase
         $this->post('/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $user = User::where('email', 'john@example.com')->first();
-        $this->assertNotEquals('password123', $user->password);
+        $this->assertNotEquals('Password123!', $user->password);
     }
 
     /**
@@ -240,8 +240,8 @@ class RegisteredUserControllerTest extends TestCase
         $this->post('/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $this->assertAuthenticated();

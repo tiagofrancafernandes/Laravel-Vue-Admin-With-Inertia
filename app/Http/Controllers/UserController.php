@@ -32,9 +32,9 @@ class UserController extends Controller
             });
         }
 
-        // Filter by role
+        // Filter by role (using Spatie Permission)
         if ($request->filled('role')) {
-            $query->where('role', $request->input('role'));
+            $query->role($request->input('role'));
         }
 
         $users = $query->paginate(15)->appends($request->query());
@@ -64,7 +64,10 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $user = User::create($request->validated());
+        $validated = $request->validated();
+        $role = $validated['role'] ?? 'user';
+        $user = User::create(\Arr::except($validated, ['role']));
+        $user->syncRoles([$role]);
 
         if ($request->wantsJson()) {
             return response()->json(['user' => $user], 201);
@@ -104,12 +107,21 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
+        // Extract role before updating (not a fillable field)
+        $role = $data['role'] ?? null;
+        unset($data['role']);
+
         // Only update password if it's provided
         if (empty($data['password'])) {
             unset($data['password']);
         }
 
         $user->update($data);
+
+        // Update Spatie role if provided
+        if ($role) {
+            $user->syncRoles([$role]);
+        }
 
         if ($request->wantsJson()) {
             return response()->json(['user' => $user]);
