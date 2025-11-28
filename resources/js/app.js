@@ -9,6 +9,8 @@ import { setupDarkMode } from '@/composables/useDarkMode';
 import AdminAppLayout from '@/Layouts/AppLayout.vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { ZiggyVue } from '@vendor/tightenco/ziggy';
+import Vue3Toastify from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -22,6 +24,15 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(Vue3Toastify, {
+                autoClose: 3000,
+                position: 'top-right',
+                theme: 'auto',
+                transition: 'slide',
+                closeButton: true,
+                pauseOnHover: true,
+                pauseOnFocusLoss: true,
+            })
             .component('AdminAppLayout', AdminAppLayout)
             .component('AppLayout', AdminAppLayout)
             .component('AuthenticatedLayout', AdminAppLayout)

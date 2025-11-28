@@ -1,59 +1,45 @@
-import Toastify from 'toastify-js';
+import { toast, type ToastOptions } from 'vue3-toastify';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
-interface ToastOptions {
+interface CustomToastOptions extends Omit<ToastOptions, 'type'> {
     duration?: number;
-    position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
-    newWindow?: boolean;
-    close?: boolean;
-    gravity?: 'top' | 'bottom';
 }
 
-const getBackgroundColor = (type: ToastType): string => {
-    const colors: Record<ToastType, string> = {
-        success: '#10b981', // green-500
-        error: '#ef4444', // red-500
-        info: '#3b82f6', // blue-500
-        warning: '#f59e0b', // amber-500
-    };
-    return colors[type];
-};
-
 export const useToast = () => {
-    const show = (message: string, type: ToastType = 'info', options: ToastOptions = {}) => {
-        const defaultOptions = {
-            duration: 3000,
-            position: 'top-right' as const,
-            newWindow: true,
-            close: true,
-            gravity: 'top' as const,
+    const show = (message: string, type: ToastType = 'info', options: CustomToastOptions = {}) => {
+        const defaultOptions: ToastOptions = {
+            autoClose: options.duration || 3000,
+            position: 'top-right',
+            theme: 'auto',
+            transition: 'slide',
+            closeButton: true,
+            pauseOnHover: true,
+            pauseOnFocusLoss: true,
+            ...options,
         };
 
-        const finalOptions = { ...defaultOptions, ...options };
-
-        Toastify({
-            text: message,
-            duration: finalOptions.duration,
-            gravity: finalOptions.gravity,
-            position: finalOptions.position,
-            newWindow: finalOptions.newWindow,
-            close: finalOptions.close,
-            backgroundColor: getBackgroundColor(type),
-            className: 'toastify-toast',
-            style: {
-                fontFamily: 'inherit',
-                fontSize: '14px',
-                padding: '12px 16px',
-                borderRadius: '6px',
-            },
-        }).showToast();
+        switch (type) {
+            case 'success':
+                toast.success(message, defaultOptions);
+                break;
+            case 'error':
+                toast.error(message, defaultOptions);
+                break;
+            case 'warning':
+                toast.warning(message, defaultOptions);
+                break;
+            case 'info':
+            default:
+                toast.info(message, defaultOptions);
+                break;
+        }
     };
 
-    const success = (message: string, options?: ToastOptions) => show(message, 'success', options);
-    const error = (message: string, options?: ToastOptions) => show(message, 'error', options);
-    const info = (message: string, options?: ToastOptions) => show(message, 'info', options);
-    const warning = (message: string, options?: ToastOptions) => show(message, 'warning', options);
+    const success = (message: string, options?: CustomToastOptions) => show(message, 'success', options);
+    const error = (message: string, options?: CustomToastOptions) => show(message, 'error', options);
+    const info = (message: string, options?: CustomToastOptions) => show(message, 'info', options);
+    const warning = (message: string, options?: CustomToastOptions) => show(message, 'warning', options);
 
     return {
         show,
