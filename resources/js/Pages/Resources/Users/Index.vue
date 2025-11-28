@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import TableActions from '@/Components/AppMaker/Table/TableActions.vue';
 
 const props = defineProps({
     users: Object,
@@ -9,10 +10,39 @@ const props = defineProps({
 });
 
 const page = usePage();
+const currentUser = computed(() => page.props.auth.user);
 const searchQuery = ref(props.filters.search || '');
 const roleFilter = ref(props.filters.role || '');
 
 const users_list = computed(() => props.users.data);
+
+// Configuração de actions para a tabela
+const userActions = [
+    {
+        type: 'link',
+        name: 'view',
+        label: 'View',
+        route: 'users.show',
+        color: 'blue',
+    },
+    {
+        type: 'link',
+        name: 'edit',
+        label: 'Edit',
+        route: 'users.edit',
+        color: 'green',
+    },
+    {
+        type: 'delete',
+        name: 'delete',
+        label: 'Delete',
+        route: 'users.destroy',
+        color: 'red',
+        confirmTitle: 'Delete User',
+        confirmMessage: 'Are you sure you want to delete this user? This action cannot be undone.',
+        condition: (user) => user.id !== currentUser.value.id, // Não pode deletar a si mesmo
+    },
+];
 
 const handleSearch = () => {
     const params = {};
@@ -36,6 +66,11 @@ const handleReset = () => {
             preserveScroll: true,
         }
     );
+};
+
+const handleAction = (action, userId) => {
+    // Callback opcional após ação
+    console.log(`Action ${action.name} executed on user ${userId}`);
 };
 </script>
 
@@ -140,27 +175,13 @@ const handleReset = () => {
                                 <td class="px-6 py-4 text-gray-700 dark:text-gray-300">
                                     {{ new Date(user.created_at).toLocaleDateString() }}
                                 </td>
-                                <td class="px-6 py-4 space-x-2">
-                                    <Link
-                                        :href="route('users.show', user.id)"
-                                        class="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400"
-                                    >
-                                        View
-                                    </Link>
-                                    <Link
-                                        :href="route('users.edit', user.id)"
-                                        class="text-green-600 hover:text-green-900 dark:hover:text-green-400"
-                                    >
-                                        Edit
-                                    </Link>
-                                    <Link
-                                        :href="route('users.destroy', user.id)"
-                                        method="delete"
-                                        as="button"
-                                        class="text-red-600 hover:text-red-900 dark:hover:text-red-400"
-                                    >
-                                        Delete
-                                    </Link>
+                                <td class="px-6 py-4">
+                                    <TableActions
+                                        :actions="userActions"
+                                        :record="user"
+                                        resource="users"
+                                        @action="handleAction"
+                                    />
                                 </td>
                             </tr>
                         </tbody>

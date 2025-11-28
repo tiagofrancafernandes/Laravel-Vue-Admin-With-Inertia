@@ -1,7 +1,13 @@
 <script setup>
-import { computed, ref } from 'vue';
+import {
+    computed,
+    ref,
+} from 'vue';
 
-import { ifArray, ifObject } from '@/Utils/helpers';
+import {
+    ifArray,
+    ifObject,
+} from '@/Utils/helpers';
 import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -60,7 +66,6 @@ const roles = computed(() => {
 </script>
 
 <template>
-    <div>{{ roles }}</div>
     <form @submit.prevent="submit" class="space-y-6">
         <!-- Name -->
         <div>
