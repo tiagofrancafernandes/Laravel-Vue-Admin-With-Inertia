@@ -1,6 +1,7 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link } from '@inertiajs/vue3';
+
 import AppMakerInfoList from '../InfoList/InfoList.vue';
 
 const props = defineProps({
@@ -12,29 +13,26 @@ const props = defineProps({
 </script>
 
 <template>
+    <Head :title="`${resourceConfig.singularLabel} Details`" />
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    {{ resourceConfig.singularLabel }} Details
-                </h2>
+        <template #headerTitle>{{ resourceConfig.title }} Details</template>
 
-                <div class="flex gap-2">
-                    <Link
-                        :href="route(`${resource}.edit`, record.id)"
-                        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                    >
-                        Edit
-                    </Link>
+        <template #headerActions>
+            <!-- actions here -->
 
-                    <Link
-                        :href="route(`${resource}.index`)"
-                        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                    >
-                        Back to List
-                    </Link>
-                </div>
-            </div>
+            <Link
+                :href="route(`${resource}.edit`, record.id)"
+                class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+                Edit
+            </Link>
+
+            <Link
+                :href="route(`${resource}.index`)"
+                class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+            >
+                Back to List
+            </Link>
         </template>
 
         <div class="py-12">

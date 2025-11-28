@@ -21,10 +21,16 @@ defineProps({
     <Head :title="`Edit ${user.name}`" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Edit User: {{ user.name }}
-            </h2>
+        <template #headerTitle>Edit User: {{ user.name }}</template>
+
+        <template #headerActions>
+            <!-- actions here -->
+            <Link
+                href="/users"
+                class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+                Back to List
+            </Link>
         </template>
 
         <div class="py-12">

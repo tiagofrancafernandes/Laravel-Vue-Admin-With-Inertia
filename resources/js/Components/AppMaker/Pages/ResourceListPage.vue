@@ -1,7 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+
 import AppMakerTable from '../Table/Table.vue';
 
 const props = defineProps({
@@ -98,21 +100,22 @@ function handleBulkAction(action, ids) {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    {{ resourceConfig.title }}
-                </h2>
+    <Head :title="`Create ${resourceConfig.singularLabel}`" />
 
-                <a
-                    v-if="table.actions.header.length > 0"
-                    :href="route(`${resource}.create`)"
-                    class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                >
-                    Create {{ resourceConfig.singularLabel }}
-                </a>
-            </div>
+    <AuthenticatedLayout>
+        <template #headerTitle>
+            {{ resourceConfig.title }}
+        </template>
+
+        <template #headerActions>
+            <!-- actions here -->
+            <Link
+                v-if="table.actions.header.length > 0"
+                :href="route(`${resource}.create`)"
+                class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+                Create {{ resourceConfig.singularLabel }}
+            </Link>
         </template>
 
         <div class="py-12">

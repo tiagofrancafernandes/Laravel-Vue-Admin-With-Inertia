@@ -1,6 +1,7 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+
 import AppMakerForm from '../Form/Form.vue';
 
 const props = defineProps({
@@ -20,11 +21,12 @@ function handleSubmit() {
 </script>
 
 <template>
+    <Head :title="`Edit ${resourceConfig.singularLabel}`" />
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                Edit {{ resourceConfig.singularLabel }}
-            </h2>
+        <template #headerTitle>Edit {{ resourceConfig.singularLabel }}</template>
+
+        <template #headerActions>
+            <!-- actions here -->
         </template>
 
         <div class="py-12">

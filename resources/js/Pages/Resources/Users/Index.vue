@@ -1,8 +1,9 @@
 <script setup>
+import { computed, ref } from 'vue';
+
+import TableActions from '@/Components/AppMaker/Table/TableActions.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
-import TableActions from '@/Components/AppMaker/Table/TableActions.vue';
 
 const props = defineProps({
     users: Object,
@@ -78,16 +79,16 @@ const handleAction = (action, userId) => {
     <Head title="Users" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Users</h2>
-                <Link
-                    :href="route('users.create')"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    Add User
-                </Link>
-            </div>
+        <template #headerTitle>Users</template>
+
+        <template #headerActions>
+            <!-- actions here -->
+            <Link
+                :href="route('users.create')"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+                Add User
+            </Link>
         </template>
 
         <div class="py-12">

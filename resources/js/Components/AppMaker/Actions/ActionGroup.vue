@@ -2,12 +2,7 @@
     <div class="flex items-center gap-2">
         <template v-for="action in visibleActions" :key="action.name">
             <!-- Link Action -->
-            <ActionLink
-                v-if="action.type === 'link'"
-                :action="action"
-                :record="record"
-                :resource="resource"
-            />
+            <ActionLink v-if="action.type === 'link'" :action="action" :record="record" :resource="resource" />
 
             <!-- Delete Action (com modal de confirmação) -->
             <button

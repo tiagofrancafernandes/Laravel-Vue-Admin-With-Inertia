@@ -1,7 +1,4 @@
-import {
-    fileURLToPath,
-    URL,
-} from 'node:url'; // Use 'node:url' for Node.js built-in module
+import { fileURLToPath, URL } from 'node:url'; // Use 'node:url' for Node.js built-in module
 
 import laravel from 'laravel-vite-plugin';
 import AutoImport from 'unplugin-auto-import/vite';
@@ -29,14 +26,10 @@ export default defineConfig({
                 'vue',
                 'pinia',
                 {
-                    '@inertiajs/vue3': [
-                        'Head',
-                        'Link',
-                        'router',
-                    ],
+                    '@inertiajs/vue3': ['Head', 'Link', 'router'],
                 },
             ],
-            dts: 'resources/js/auto-imports.d.ts'
+            dts: 'resources/js/auto-imports.d.ts',
         }),
         // auto-import para componentes
         Components({
@@ -45,13 +38,13 @@ export default defineConfig({
                 {
                     type: 'component',
                     resolve: (name) => {
-                        if (['Head', 'Link', ].includes(name)) {
+                        if (['Head', 'Link'].includes(name)) {
                             return { name, from: '@inertiajs/vue3' };
                         }
-                    }
-                }
+                    },
+                },
             ],
-            dts: 'resources/js/auto-components.d.ts'
+            dts: 'resources/js/auto-components.d.ts',
         }),
     ],
     build: {

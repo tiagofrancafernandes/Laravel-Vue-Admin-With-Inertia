@@ -34,17 +34,15 @@
             </div>
 
             <!-- Warning Message -->
-            <div class="mb-6 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                <p class="text-sm text-yellow-800 dark:text-yellow-200">
-                    ⚠️ This action cannot be undone.
-                </p>
+            <div
+                class="mb-6 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg"
+            >
+                <p class="text-sm text-yellow-800 dark:text-yellow-200">⚠️ This action cannot be undone.</p>
             </div>
 
             <!-- Actions -->
             <div class="flex justify-end gap-3">
-                <Button variant="ghost" :disabled="loading" @click="handleClose">
-                    Cancel
-                </Button>
+                <Button variant="ghost" :disabled="loading" @click="handleClose">Cancel</Button>
                 <Button variant="danger" :loading="loading" @click="handleConfirm">
                     {{ confirmButtonText }}
                 </Button>

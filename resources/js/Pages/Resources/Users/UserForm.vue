@@ -1,14 +1,8 @@
 <script setup>
-import {
-    computed,
-    ref,
-} from 'vue';
+import { computed, ref } from 'vue';
 
-import {
-    ifArray,
-    ifObject,
-} from '@/Utils/helpers';
-import { useForm } from '@inertiajs/vue3';
+import { ifArray, ifObject } from '@/Utils/helpers';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     user: {
@@ -159,7 +153,7 @@ const roles = computed(() => {
             </button>
             <button
                 type="button"
-                @click="$router.back()"
+                @click="router.visit(user?.id ? route(`users.show`, user?.id) : route(`users.index`))"
                 class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
             >
                 Cancel

@@ -1,6 +1,7 @@
 <script setup>
-import { Head, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, router } from '@inertiajs/vue3';
+
 import ProductForm from './ProductForm.vue';
 
 const props = defineProps({
@@ -16,10 +17,16 @@ const handleCancel = () => {
     <Head title="Edit Product" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Edit Product: {{ product.name }}
-            </h2>
+        <template #headerTitle>Edit Product: {{ product.name }}</template>
+
+        <template #headerActions>
+            <!-- actions here -->
+            <Link
+                href="/products"
+                class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+                Back to List
+            </Link>
         </template>
 
         <div class="py-12">

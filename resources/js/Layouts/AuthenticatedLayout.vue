@@ -11,6 +11,17 @@ import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
 const { isDarkMode, toggleDarkMode } = useDarkMode();
+
+const props = defineProps({
+    headerTitle: {
+        type: String,
+        default: null,
+    },
+    headerActions: {
+        type: Array,
+        default: null,
+    },
+});
 </script>
 
 <template>
@@ -213,9 +224,32 @@ const { isDarkMode, toggleDarkMode } = useDarkMode();
             </nav>
 
             <!-- Page Heading -->
-            <header class="bg-white dark:bg-gray-800 shadow dark:shadow-gray-700" v-if="$slots.header">
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
+            <header class="bg-white dark:bg-gray-800 shadow dark:shadow-gray-700">
+                <div class="flex justify-between items-center mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 md:min-h-20">
+                    <template v-if="$slots.header">
+                        <slot name="header" />
+                    </template>
+                    <template v-else>
+                        <h2 class="font-semibold text-xl leading-tight text-gray-800 dark:text-gray-200 gap-2">
+                            <template v-if="$slots.headerTitle">
+                                <slot name="headerTitle" />
+                            </template>
+                            <template v-else>
+                                {{ props?.headerTitle || '' }}
+                            </template>
+                        </h2>
+
+                        <div class="w-full flex justify-end items-center gap-2 md:w-6/12 md:min-h-12">
+                            <template v-if="$slots.headerTitle">
+                                <slot name="headerActions" />
+                            </template>
+                            <template v-else>
+                                <!--
+                                TODO: implementar loop que implrime as actions passadas via props?.headerActions
+                                -->
+                            </template>
+                        </div>
+                    </template>
                 </div>
             </header>
 

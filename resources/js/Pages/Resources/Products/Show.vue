@@ -1,10 +1,11 @@
 <script setup>
-import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
 import ConfirmDeleteModal from '@/Components/AppMaker/Actions/ConfirmDeleteModal.vue';
 import Button from '@/Components/Common/Button.vue';
 import { useToast } from '@/Composables/useToast';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 const props = defineProps({
     product: Object,
@@ -42,27 +43,23 @@ const confirmDelete = () => {
     <Head :title="`Product: ${product.name}`" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Product Details</h2>
-                <div class="flex gap-2">
-                    <Link
-                        :href="`/products/${product.id}/edit`"
-                        class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-                    >
-                        Edit
-                    </Link>
-                    <Button variant="danger" @click="handleDeleteClick">
-                        Delete
-                    </Button>
-                    <Link
-                        href="/products"
-                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                    >
-                        Back to List
-                    </Link>
-                </div>
-            </div>
+        <template #headerTitle>Product Details</template>
+
+        <template #headerActions>
+            <!-- actions here -->
+            <Link
+                :href="`/products/${product.id}/edit`"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            >
+                Edit
+            </Link>
+            <Button variant="danger" @click="handleDeleteClick">Delete</Button>
+            <Link
+                href="/products"
+                class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+                Back to List
+            </Link>
         </template>
 
         <div class="py-12">

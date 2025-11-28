@@ -355,17 +355,20 @@ const products_list = computed(() => props.products.data);
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <template #header>
-            <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Products
-                </h2>
-                <Link :href="route('products.create')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                    Create Product
-                </Link>
-            </div>
+    <AuthenticatedLayout headerTitle="Products">
+        <template #headerActions>
+            <!-- actions here -->
+            <Link :href="route('products.create')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Create Product
+            </Link>
         </template>
+
+        <!-- Alternative tu set 'headerTitle' -->
+        <!--
+        <template #headerTitle>
+            Create Product
+        </template>
+        -->
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

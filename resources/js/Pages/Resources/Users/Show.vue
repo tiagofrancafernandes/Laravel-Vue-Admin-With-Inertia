@@ -1,10 +1,11 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
+
 import ConfirmDeleteModal from '@/Components/AppMaker/Actions/ConfirmDeleteModal.vue';
 import Button from '@/Components/Common/Button.vue';
 import { useToast } from '@/Composables/useToast';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     user: Object,
@@ -54,18 +55,23 @@ const confirmDelete = () => {
     <Head :title="user.name" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {{ user.name }}
-                </h2>
-                <Link
-                    :href="route('users.edit', user)"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    Edit User
-                </Link>
-            </div>
+        <template #headerTitle>User Details</template>
+
+        <template #headerActions>
+            <!-- actions here -->
+            <Link
+                :href="`/users/${user.id}/edit`"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            >
+                Edit
+            </Link>
+            <Button variant="danger" @click="handleDeleteClick">Delete</Button>
+            <Link
+                href="/users"
+                class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+                Back to List
+            </Link>
         </template>
 
         <div class="py-12">
@@ -152,13 +158,7 @@ const confirmDelete = () => {
                         >
                             Edit User
                         </Link>
-                        <Button
-                            v-if="canDelete"
-                            variant="danger"
-                            @click="handleDeleteClick"
-                        >
-                            Delete User
-                        </Button>
+                        <Button v-if="canDelete" variant="danger" @click="handleDeleteClick">Delete User</Button>
                         <Link
                             :href="route('users.index')"
                             class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"

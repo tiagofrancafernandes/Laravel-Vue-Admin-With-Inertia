@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
 import TableActions from '@/Components/AppMaker/Table/TableActions.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 const props = defineProps({
     products: Object,
@@ -66,16 +67,23 @@ const handleAction = (action, productId) => {
     <Head title="Products" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl leading-tight text-gray-800 dark:text-gray-200">Products</h2>
-                <Link
-                    :href="route('products.create')"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                    Add Product
-                </Link>
-            </div>
+        <template #headerTitle>Products</template>
+
+        <template #headerActions>
+            <!-- actions here -->
+            <Link
+                :href="route('products.create')"
+                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+                Add Product
+            </Link>
+
+            <Link
+                :href="route('products.create')"
+                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+                Add Product
+            </Link>
         </template>
 
         <div class="py-12">
