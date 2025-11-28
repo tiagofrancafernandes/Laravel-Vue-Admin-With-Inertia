@@ -15,11 +15,17 @@ class DashboardController extends Controller
     public function index(): Response
     {
         // Cache key for dashboard stats (cache for 5 minutes)
-        $cacheKey = 'dashboard_stats_' . now()->format('Y-m-d_H-i');
+        $cacheKey = 'dashboard_stats_data';
 
-        $data = Cache::remember($cacheKey, 300, fn () => [
-            'stats' => $this->getStats(),
-            'recentUsers' => $this->getRecentUsers(),
+        $cacheClear = request()->session()->has('clear_dashboard_stats_data');
+
+        if ($cacheClear) {
+            cache()->forget($cacheKey);
+        }
+
+        $data = Cache::remember($cacheKey, 30, fn () => [
+            'stats' => static::getStats(),
+            'recentUsers' => static::getRecentUsers(),
         ]);
 
         return Inertia::render('Dashboard', $data);
@@ -28,7 +34,7 @@ class DashboardController extends Controller
     /**
      * Get generic system statistics.
      */
-    private function getStats(): array
+    protected static function getStats(): array
     {
         return [
             'totalUsers' => User::count(),
@@ -42,7 +48,7 @@ class DashboardController extends Controller
     /**
      * Get recent users (last 10).
      */
-    private function getRecentUsers(): array
+    protected static function getRecentUsers(): array
     {
         return User::select(['id', 'name', 'email', 'created_at'])
             ->latest()
@@ -53,7 +59,7 @@ class DashboardController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
-                'roles' => $user->roles()->select(['name']),
+                'roles' => $user->roles()->select(['name', 'guard_name'])->get(),
                 'created_at' => $user->created_at->toISOString(),
             ])
             ->toArray();

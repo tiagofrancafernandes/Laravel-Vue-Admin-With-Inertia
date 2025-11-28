@@ -1,14 +1,53 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import ConfirmDeleteModal from '@/Components/AppMaker/Actions/ConfirmDeleteModal.vue';
+import Button from '@/Components/Common/Button.vue';
+import { useToast } from '@/Composables/useToast';
 
-defineProps({
+const props = defineProps({
     user: Object,
     pageType: {
         type: String,
         default: 'page',
     },
 });
+
+const page = usePage();
+const currentUser = computed(() => page.props.auth.user);
+const toast = useToast();
+
+const showDeleteModal = ref(false);
+const deleteLoading = ref(false);
+
+// Usuário não pode deletar a si mesmo
+const canDelete = computed(() => props.user.id !== currentUser.value.id);
+
+const handleDeleteClick = () => {
+    if (canDelete.value) {
+        showDeleteModal.value = true;
+    }
+};
+
+const confirmDelete = () => {
+    deleteLoading.value = true;
+
+    router.delete(route('users.destroy', props.user.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            deleteLoading.value = false;
+            showDeleteModal.value = false;
+            toast.success('User deleted successfully');
+            router.visit(route('users.index'));
+        },
+        onError: (errors) => {
+            deleteLoading.value = false;
+            const errorMessage = errors.message || 'Failed to delete user';
+            toast.error(errorMessage);
+        },
+    });
+};
 </script>
 
 <template>
@@ -113,6 +152,13 @@ defineProps({
                         >
                             Edit User
                         </Link>
+                        <Button
+                            v-if="canDelete"
+                            variant="danger"
+                            @click="handleDeleteClick"
+                        >
+                            Delete User
+                        </Button>
                         <Link
                             :href="route('users.index')"
                             class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
@@ -123,5 +169,16 @@ defineProps({
                 </div>
             </div>
         </div>
+
+        <!-- Modal de confirmação de delete -->
+        <ConfirmDeleteModal
+            :show="showDeleteModal"
+            title="Delete User"
+            message="Are you sure you want to delete this user? This action cannot be undone."
+            :item-name="user.name"
+            :loading="deleteLoading"
+            @close="showDeleteModal = false"
+            @confirm="confirmDelete"
+        />
     </AuthenticatedLayout>
 </template>

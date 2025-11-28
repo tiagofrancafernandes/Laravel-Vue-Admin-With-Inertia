@@ -1,15 +1,40 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import ConfirmDeleteModal from '@/Components/AppMaker/Actions/ConfirmDeleteModal.vue';
+import Button from '@/Components/Common/Button.vue';
+import { useToast } from '@/Composables/useToast';
 
 const props = defineProps({
     product: Object,
 });
 
-const deleteProduct = () => {
-    if (confirm(`Are you sure you want to delete "${props.product.name}"?`)) {
-        router.delete(`/products/${props.product.id}`);
-    }
+const toast = useToast();
+const showDeleteModal = ref(false);
+const deleteLoading = ref(false);
+
+const handleDeleteClick = () => {
+    showDeleteModal.value = true;
+};
+
+const confirmDelete = () => {
+    deleteLoading.value = true;
+
+    router.delete(route('products.destroy', props.product.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            deleteLoading.value = false;
+            showDeleteModal.value = false;
+            toast.success('Product deleted successfully');
+            router.visit(route('products.index'));
+        },
+        onError: (errors) => {
+            deleteLoading.value = false;
+            const errorMessage = errors.message || 'Failed to delete product';
+            toast.error(errorMessage);
+        },
+    });
 };
 </script>
 
@@ -27,12 +52,9 @@ const deleteProduct = () => {
                     >
                         Edit
                     </Link>
-                    <button
-                        @click="deleteProduct"
-                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                    >
+                    <Button variant="danger" @click="handleDeleteClick">
                         Delete
-                    </button>
+                    </Button>
                     <Link
                         href="/products"
                         class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
@@ -136,5 +158,16 @@ const deleteProduct = () => {
                 </div>
             </div>
         </div>
+
+        <!-- Modal de confirmação de delete -->
+        <ConfirmDeleteModal
+            :show="showDeleteModal"
+            title="Delete Product"
+            message="Are you sure you want to delete this product? This action cannot be undone."
+            :item-name="product.name"
+            :loading="deleteLoading"
+            @close="showDeleteModal = false"
+            @confirm="confirmDelete"
+        />
     </AuthenticatedLayout>
 </template>

@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import TableActions from '@/Components/AppMaker/Table/TableActions.vue';
 
 const props = defineProps({
     products: Object,
@@ -12,6 +13,33 @@ const search = ref(props.filters.search || '');
 const minPrice = ref(props.filters.min_price || '');
 const maxPrice = ref(props.filters.max_price || '');
 const stockStatus = ref(props.filters.stock_status || '');
+
+// Configuração de actions para produtos
+const productActions = [
+    {
+        type: 'link',
+        name: 'view',
+        label: 'View',
+        route: 'products.show',
+        color: 'blue',
+    },
+    {
+        type: 'link',
+        name: 'edit',
+        label: 'Edit',
+        route: 'products.edit',
+        color: 'green',
+    },
+    {
+        type: 'delete',
+        name: 'delete',
+        label: 'Delete',
+        route: 'products.destroy',
+        color: 'red',
+        confirmTitle: 'Delete Product',
+        confirmMessage: 'Are you sure you want to delete this product? This action cannot be undone.',
+    },
+];
 
 const searchProducts = () => {
     router.get(
@@ -29,10 +57,8 @@ const searchProducts = () => {
     );
 };
 
-const deleteProduct = (product) => {
-    if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
-        router.delete(`/products/${product.id}`);
-    }
+const handleAction = (action, productId) => {
+    console.log(`Action ${action.name} executed on product ${productId}`);
 };
 </script>
 
@@ -188,24 +214,12 @@ const deleteProduct = (product) => {
                                         {{ product.creator?.name || 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <Link
-                                            :href="`/products/${product.id}`"
-                                            class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
-                                        >
-                                            View
-                                        </Link>
-                                        <Link
-                                            :href="`/products/${product.id}/edit`"
-                                            class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3"
-                                        >
-                                            Edit
-                                        </Link>
-                                        <button
-                                            @click="deleteProduct(product)"
-                                            class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                        >
-                                            Delete
-                                        </button>
+                                        <TableActions
+                                            :actions="productActions"
+                                            :record="product"
+                                            resource="products"
+                                            @action="handleAction"
+                                        />
                                     </td>
                                 </tr>
                             </tbody>
